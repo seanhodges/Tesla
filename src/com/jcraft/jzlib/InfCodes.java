@@ -1,21 +1,30 @@
 /* -*-mode:java; c-basic-offset:2; -*- */
-/* JZlib -- zlib in pure Java
- *  
- * Copyright (C) 2000 ymnk, JCraft, Inc.
- *   
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License
- * as published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *   
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- * 
- * You should have received a copy of the GNU Library General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+/*
+Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright 
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the distribution.
+
+  3. The names of the authors may not be used to endorse or promote products
+     derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
  * This program is based on zlib-1.1.3, so all credit should go authors
@@ -80,26 +89,19 @@ final class InfCodes{
   int[] dtree;          // distance tree
   int dtree_index;      // distance tree
 
-  InfCodes(int bl, int bd,
+  InfCodes(){
+  }
+  void init(int bl, int bd,
 	   int[] tl, int tl_index,
 	   int[] td, int td_index, ZStream z){
-    mode = START;
-    lbits = (byte)bl;
-    dbits = (byte)bd;
-    ltree = tl;
+    mode=START;
+    lbits=(byte)bl;
+    dbits=(byte)bd;
+    ltree=tl;
     ltree_index=tl_index;
     dtree = td;
     dtree_index=td_index;
-  }
-
-  InfCodes(int bl, int bd, int[] tl, int[] td, ZStream z){
-    mode = START;
-    lbits = (byte)bl;
-    dbits = (byte)bd;
-    ltree = tl;
-    ltree_index=0;
-    dtree = td;
-    dtree_index=0;
+    tree=null;
   }
 
   int proc(InfBlocks s, ZStream z, int r){ 
@@ -416,6 +418,8 @@ final class InfCodes{
     int d;                // distance back to copy from
     int r;                // copy source pointer
 
+    int tp_index_t_3;     // (tp_index+t)*3
+
     // load input, output, bit values
     p=z.next_in_index;n=z.avail_in;b=s.bitb;k=s.bitk;
     q=s.write;m=q<s.read?s.read-q-1:s.end-q;
@@ -435,20 +439,21 @@ final class InfCodes{
       t= b&ml;
       tp=tl; 
       tp_index=tl_index;
-      if ((e = tp[(tp_index+t)*3]) == 0){
-	b>>=(tp[(tp_index+t)*3+1]); k-=(tp[(tp_index+t)*3+1]);
+      tp_index_t_3=(tp_index+t)*3;
+      if ((e = tp[tp_index_t_3]) == 0){
+	b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
-	s.window[q++] = (byte)tp[(tp_index+t)*3+2];
+	s.window[q++] = (byte)tp[tp_index_t_3+2];
 	m--;
 	continue;
       }
       do {
 
-	b>>=(tp[(tp_index+t)*3+1]); k-=(tp[(tp_index+t)*3+1]);
+	b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
 	if((e&16)!=0){
 	  e &= 15;
-	  c = tp[(tp_index+t)*3+2] + ((int)b & inflate_mask[e]);
+	  c = tp[tp_index_t_3+2] + ((int)b & inflate_mask[e]);
 
 	  b>>=e; k-=e;
 
@@ -461,11 +466,12 @@ final class InfCodes{
 	  t= b&md;
 	  tp=td;
 	  tp_index=td_index;
-	  e = tp[(tp_index+t)*3];
+          tp_index_t_3=(tp_index+t)*3;
+	  e = tp[tp_index_t_3];
 
 	  do {
 
-	    b>>=(tp[(tp_index+t)*3+1]); k-=(tp[(tp_index+t)*3+1]);
+	    b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
 	    if((e&16)!=0){
 	      // get extra bits to add to distance base
@@ -475,7 +481,7 @@ final class InfCodes{
 		b|=(z.next_in[p++]&0xff)<<k;k+=8;
 	      }
 
-	      d = tp[(tp_index+t)*3+2] + (b&inflate_mask[e]);
+	      d = tp[tp_index_t_3+2] + (b&inflate_mask[e]);
 
 	      b>>=(e); k-=(e);
 
@@ -485,8 +491,9 @@ final class InfCodes{
 		//  just copy
 		r=q-d;
 		if(q-r>0 && 2>(q-r)){           
-		  s.window[q++]=s.window[r++]; c--; // minimum count is three,
-		  s.window[q++]=s.window[r++]; c--; // so unroll loop a little
+		  s.window[q++]=s.window[r++]; // minimum count is three,
+		  s.window[q++]=s.window[r++]; // so unroll loop a little
+		  c-=2;
 		}
 		else{
 		  System.arraycopy(s.window, r, s.window, q, 2);
@@ -526,9 +533,10 @@ final class InfCodes{
 	      break;
 	    }
 	    else if((e&64)==0){
-	      t+=tp[(tp_index+t)*3+2];
+	      t+=tp[tp_index_t_3+2];
 	      t+=(b&inflate_mask[e]);
-	      e=tp[(tp_index+t)*3];
+	      tp_index_t_3=(tp_index+t)*3;
+	      e=tp[tp_index_t_3];
 	    }
 	    else{
 	      z.msg = "invalid distance code";
@@ -547,13 +555,14 @@ final class InfCodes{
 	}
 
 	if((e&64)==0){
-	  t+=tp[(tp_index+t)*3+2];
+	  t+=tp[tp_index_t_3+2];
 	  t+=(b&inflate_mask[e]);
-	  if((e=tp[(tp_index+t)*3])==0){
+	  tp_index_t_3=(tp_index+t)*3;
+	  if((e=tp[tp_index_t_3])==0){
 
-	    b>>=(tp[(tp_index+t)*3+1]); k-=(tp[(tp_index+t)*3+1]);
+	    b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
-	    s.window[q++]=(byte)tp[(tp_index+t)*3+2];
+	    s.window[q++]=(byte)tp[tp_index_t_3+2];
 	    m--;
 	    break;
 	  }

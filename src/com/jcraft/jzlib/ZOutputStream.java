@@ -1,21 +1,30 @@
-/* -*-mode:java; c-basic-offset:2; -*- */
-/* JZlib -- zlib in pure Java
- *
- * Copyright (C) 2001 Lapo Luchini.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License
- * as published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
+/*
+Copyright (c) 2001 Lapo Luchini.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright 
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the distribution.
+
+  3. The names of the authors may not be used to endorse or promote products
+     derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS
+OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
  * This program is based on zlib-1.1.3, so all credit should go authors
@@ -35,7 +44,7 @@ public class ZOutputStream extends OutputStream {
                    buf1=new byte[1];
   protected boolean compress;
 
-  private OutputStream out;
+  protected OutputStream out;
 
   public ZOutputStream(OutputStream out) {
     super();
@@ -45,9 +54,12 @@ public class ZOutputStream extends OutputStream {
   }
 
   public ZOutputStream(OutputStream out, int level) {
+    this(out, level, false);
+  }
+  public ZOutputStream(OutputStream out, int level, boolean nowrap) {
     super();
     this.out=out;
-    z.deflateInit(level);
+    z.deflateInit(level, nowrap);
     compress=true;
   }
 
@@ -86,16 +98,41 @@ public class ZOutputStream extends OutputStream {
     this.flush=flush;
   }
 
-  public void close() throws IOException {
-    try {
-      out.flush();
-    } catch (IOException ignored) {
+  public void finish() throws IOException {
+    int err;
+    do{
+      z.next_out=buf;
+      z.next_out_index=0;
+      z.avail_out=bufsize;
+      if(compress){ err=z.deflate(JZlib.Z_FINISH);  }
+      else{ err=z.inflate(JZlib.Z_FINISH); }
+      if(err!=JZlib.Z_STREAM_END && err != JZlib.Z_OK)
+      throw new ZStreamException((compress?"de":"in")+"flating: "+z.msg);
+      if(bufsize-z.avail_out>0){
+	out.write(buf, 0, bufsize-z.avail_out);
+      }
     }
-    z.deflateEnd();
+    while(z.avail_in>0 || z.avail_out==0);
+    flush();
+  }
+  public void end() {
+    if(z==null)
+      return;
+    if(compress){ z.deflateEnd(); }
+    else{ z.inflateEnd(); }
     z.free();
     z=null;
-    out.close();
-    out=null;
+  }
+  public void close() throws IOException {
+    try{
+      try{finish();}
+      catch (IOException ignored) {}
+    }
+    finally{
+      end();
+      out.close();
+      out=null;
+    }
   }
 
   /**

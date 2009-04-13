@@ -1,21 +1,30 @@
 /* -*-mode:java; c-basic-offset:2; -*- */
-/* JZlib -- zlib in pure Java
- *  
- * Copyright (C) 2000-2002 ymnk, JCraft, Inc.
- *   
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License
- * as published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *   
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- * 
- * You should have received a copy of the GNU Library General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+/*
+Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright 
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the distribution.
+
+  3. The names of the authors may not be used to endorse or promote products
+     derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
  * This program is based on zlib-1.1.3, so all credit should go authors
@@ -72,7 +81,7 @@ final class InfBlocks{
   int[] bb=new int[1]; // bit length tree depth 
   int[] tb=new int[1]; // bit length decoding tree 
 
-  InfCodes codes;      // if CODES, current state 
+  InfCodes codes=new InfCodes();      // if CODES, current state 
 
   int last;            // true if this block is the last block 
 
@@ -87,6 +96,8 @@ final class InfBlocks{
   Object checkfn;      // check function 
   long check;          // check on output 
 
+  InfTree inftree=new InfTree();
+
   InfBlocks(ZStream z, Object checkfn, int w){
     hufts=new int[MANY*3];
     window=new byte[w];
@@ -99,7 +110,6 @@ final class InfBlocks{
   void reset(ZStream z, long[] c){
     if(c!=null) c[0]=check;
     if(mode==BTREE || mode==DTREE){
-      blens=null;
     }
     if(mode==CODES){
       codes.free(z);
@@ -164,8 +174,8 @@ final class InfBlocks{
             int[][] tl=new int[1][];
 	    int[][] td=new int[1][];
 
-            InfTree.inflate_trees_fixed(bl, bd, tl, td, z);
-            codes = new InfCodes(bl[0], bd[0], tl[0], td[0], z);
+	    InfTree.inflate_trees_fixed(bl, bd, tl, td, z);
+            codes.init(bl[0], bd[0], tl[0], 0, td[0], 0, z);
           }
 
           {b>>>=(3);k-=(3);}
@@ -293,7 +303,12 @@ final class InfBlocks{
 	    return inflate_flush(z,r);
 	  }
 	t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
-	blens=new int[t];
+	if(blens==null || blens.length<t){
+	  blens=new int[t];
+	}
+	else{
+	  for(int i=0; i<t; i++){blens[i]=0;}
+	}
 
 	{b>>>=(14);k-=(14);}
 
@@ -327,7 +342,7 @@ final class InfBlocks{
 	}
 
 	bb[0] = 7;
-	t = InfTree.inflate_trees_bits(blens, bb, tb, hufts, z);
+	t = inftree.inflate_trees_bits(blens, bb, tb, hufts, z);
 	if (t != Z_OK){
 	  r = t;
 	  if (r == Z_DATA_ERROR){
@@ -438,13 +453,14 @@ final class InfBlocks{
 	  int[] bd=new int[1];
 	  int[] tl=new int[1];
 	  int[] td=new int[1];
-	  InfCodes c;
-
 	  bl[0] = 9;         // must be <= 9 for lookahead assumptions
 	  bd[0] = 6;         // must be <= 9 for lookahead assumptions
+
 	  t = table;
-	  t = InfTree.inflate_trees_dynamic(257 + (t & 0x1f), 1 + ((t >> 5) & 0x1f),
+	  t = inftree.inflate_trees_dynamic(257 + (t & 0x1f), 
+					    1 + ((t >> 5) & 0x1f),
 					    blens, bl, bd, tl, td, hufts, z);
+
 	  if (t != Z_OK){
 	    if (t == Z_DATA_ERROR){
 	      blens=null;
@@ -457,10 +473,8 @@ final class InfBlocks{
 	    write=q;
 	    return inflate_flush(z,r);
 	  }
-
-	  codes = new InfCodes(bl[0], bd[0], hufts, tl[0], hufts, td[0], z);
+	  codes.init(bl[0], bd[0], hufts, tl[0], hufts, td[0], z);
 	}
-        blens=null;
 	mode = CODES;
       case CODES:
 	bitb=b; bitk=k;

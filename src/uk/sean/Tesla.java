@@ -34,6 +34,9 @@ public class Tesla extends Activity implements OnClickListener {
 		        	.setMessage(e.getMessage())
 		        	.show();
 			}
+			finally {
+				connection.disconnect();
+			}
 			break;
 		}
 	}
