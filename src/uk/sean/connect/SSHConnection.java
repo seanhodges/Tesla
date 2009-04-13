@@ -78,35 +78,42 @@ public class SSHConnection implements IConnection {
 			} catch (InterruptedException e) {
 				// Do nothing
 			}
+			
 			InputStream responseStream = session.getStdout();
 			InputStream errorStream = session.getStderr();
 			
-			// Read the STDOUT output to return as a response
-			BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream));
-			StringBuilder sb = new StringBuilder();
-	        String line = null;
-	        try {
+			try {
+				// Any STDERR output is treated as a failure for now
 				if (errorStream.available() > 0) {
-					// Any STDERR output is treated as a failure for now
-					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, command);
+					String stderr = getResponseFromSessionStream(errorStream);
+					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, command + " :- " + stderr);
 				}
-	            while ((line = reader.readLine()) != null) {
-	                sb.append(line + "\n");
-	            }
+				// Read the STDOUT output to return as a response
+				response = getResponseFromSessionStream(responseStream);
 			} catch (IOException e) {
 				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, command);
 			} finally {
 	            try {
 	                responseStream.close();
+	                errorStream.close();
 	            } catch (IOException e) {
-	            	throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Could not close response stream");
+	            	throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Could not close response streams");
 	            }
 			}
-	        response = sb.toString();
 		}
 		else {
 			throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Not connected to a server");
 		}
 		return response;
+	}
+	
+	private String getResponseFromSessionStream(InputStream is) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line + "\n");
+        }
+        return sb.toString();
 	}
 }

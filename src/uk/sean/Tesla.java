@@ -3,6 +3,7 @@ package uk.sean;
 import uk.sean.connect.ConnectionException;
 import uk.sean.connect.IConnection;
 import uk.sean.connect.SSHConnection;
+import uk.sean.dbus.InitScriptProvider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -25,16 +26,24 @@ public class Tesla extends Activity implements OnClickListener {
 		case R.id.play_pause:
 			IConnection connection = new SSHConnection();
 			try {
+				String response = null;
 				connection.connect();
-				String response = connection.sendCommand("DISPLAY=:0 xeyes");
+				// Initialise the DBUS connection
+				response = connection.sendCommand(InitScriptProvider.getInitScript());
+				if (!response.equals("success\n")) {
+					throw new Exception("Init script failed with output: " + response);
+				}
+				
+				// Send a qdbus command as a test
+				response = connection.sendCommand("qdbus");
 				new AlertDialog.Builder(Tesla.this)
 		        	.setTitle("Response")
 		        	.setMessage(response)
 		        	.show();
-			} catch (ConnectionException e) {
+			} catch (Exception e) {
 				// Show errors in a dialog
 				new AlertDialog.Builder(Tesla.this)
-		        	.setTitle("SSH error")
+		        	.setTitle("Error")
 		        	.setMessage(e.getMessage())
 		        	.show();
 			}
