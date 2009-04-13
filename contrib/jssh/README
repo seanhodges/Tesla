@@ -1,0 +1,64 @@
+The Java SSH Client Library
+===========================
+
+The latest distribution of the JSSH library can always be found at:
+
+    http://www.pitman.co.za/projects/jssh/
+
+The JSSH library was designed as a reusable software component that can
+be embedded in larger Java applications to provide Secure Shell client
+functionality.
+
+It is compatible with version 1.5 of the SSH protocol. The library is 
+intended for use in Java applications, not applets (it needs to access
+the local filesystem to check whether the server's host key is in the
+known_hosts file). The library was written in pure Java.
+
+The JSSH library is derived from Cedric Gourio's "java-ssh":
+
+    http://www.cl.cam.ac.uk/~fapp2/software/java-ssh/
+
+I have changed the object model so that (IMHO) it is more object-oriented,
+and I have added port-forwarding, data-compression and RSA user
+authentication (the original version supported username-password 
+authentication only).
+
+JSSH also uses some GPL-licensed cryptographic code from "The Java Telnet 
+Applet", which can be found at:
+
+    http://javassh.org
+
+
+The JSSH library is licensed in accordance with the GNU General Public 
+License.
+
+This distribution of the JSSH library contains the following directories:
+
+/src	    Contains the Java source files as well as the Makefile for
+	    building the class files, the JAR file and the documentation.
+	    You must use GNU Make to process the Makefile.
+
+/classes    Contains all the class files (after running "make").
+
+/lib	    Contains the JAR file jssh.jar (after running "make").
+
+/doc	    Contains the API documentation (after running "make docs").
+
+The class "jssh.ClientProtocolHandler" is the class which provides an API to
+user applications. To get an idea of how to use the library, view the HTML
+documentation of this class (in the /doc directory) with a web browser.
+The class "jssh.SSHClient" is a complete example of how to use the library
+in an interactive SSH session, using the stdin and stdout streams.
+
+If you download this software and find it useful, I would appreciate a 
+postcard saying so. My snail-mail address is:
+
+    Pitman Computer Consulting
+    8 Pickwood Road
+    Irene 0062
+    South Africa
+
+If you find bugs or have suggestions for improvements, please send an email
+to:
+
+    rob@pitman.co.za

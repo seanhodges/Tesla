@@ -1,0 +1,15 @@
+These instructions assume that you are running Linux.
+
+1.  You will have already run "tar xvfz jssh-x.y.z.tar.gz" to extract 
+    the contents of the tarball, thus creating a directory "jssh".
+
+2.  Set the environment variable JAVA_HOME to the name of your Java
+    SDK installation directory. For example,
+
+	export JAVA_HOME=/usr/local/jdk1.3.1_01
+
+3.  Change directory to "jssh" and run "make". This will compile
+    the Java source files and build the JAR file in "jssh/lib/jssh.jar".
+    It will also run "javadoc" and create API documentation for the 
+    JSSH library, in HTML format. The documentation is created in 
+    the "jssh/doc" directory.
