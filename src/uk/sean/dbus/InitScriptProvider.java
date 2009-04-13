@@ -6,14 +6,14 @@ public class InitScriptProvider {
 		return script;
 	}
 	
-	//private static String script = "echo success";
-	
 	private static String script = "" +
 			"compatiblePrograms=( nautilus kdeinit pulseaudio trackerd ); " +
+			
 			"for index in ${compatiblePrograms[@]}; do " +
 			"	PID=$(pidof -s ${index}); " +
 			"	if [[ \"${PID}\" != \"\" ]]; then break; fi; " +
 			"done; " +
+			
 			"if [[ \"${PID}\" == \"\" ]]; then echo Could not detect active login session; fi; " +
 			
 			"QUERY_ENVIRON=\"$(tr '\\0' '\\n' < /proc/${PID}/environ | grep 'DBUS_SESSION_BUS_ADDRESS' | cut -d '=' -f 2-)\"; " +

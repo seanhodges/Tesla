@@ -4,12 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.http.ConnectionClosedException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.Session;
@@ -23,6 +19,9 @@ public class SSHConnection implements IConnection {
 	
 	private Connection connection;
 	private Session session;
+	private OutputStream stdin;
+	InputStream responseStream;
+	InputStream errorStream;
 	
 	public void connect() throws ConnectionException {
 		
@@ -56,6 +55,10 @@ public class SSHConnection implements IConnection {
 		// Initialise session
 		try {
 			session = connection.openSession();
+			session.startShell();
+			stdin = session.getStdin();
+			responseStream = session.getStdout();
+			errorStream = session.getStderr();
 		} catch (IOException e) {
 			throw new ConnectionException(ConnectionException.FAILED_AT_INIT, HOST, "SSH session initialisation failed with error: " + e.getMessage());
 		}
@@ -63,6 +66,13 @@ public class SSHConnection implements IConnection {
 	}
 	
 	public void disconnect() {
+		try {
+            stdin.close();
+            responseStream.close();
+            errorStream.close();
+        } catch (IOException e) {
+        	// These will be forcefully closed by the session
+        }
 		if (session != null) session.close();
 		connection.close();
 	}
@@ -71,16 +81,12 @@ public class SSHConnection implements IConnection {
 		String response = null;
 		if (session != null) {
 			try {
-				session.execCommand(command);
+				stdin.write((command + "\n").getBytes());
+				stdin.flush();
 				Thread.sleep(1000);
-			} catch (IOException e) {
-				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Failed to send command to client");
-			} catch (InterruptedException e) {
-				// Do nothing
+			} catch (Exception e) {
+				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Failed to send command to client, error returned was: " + e.getMessage());
 			}
-			
-			InputStream responseStream = session.getStdout();
-			InputStream errorStream = session.getStderr();
 			
 			try {
 				// Any STDERR output is treated as a failure for now
@@ -92,13 +98,6 @@ public class SSHConnection implements IConnection {
 				response = getResponseFromSessionStream(responseStream);
 			} catch (IOException e) {
 				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, command);
-			} finally {
-	            try {
-	                responseStream.close();
-	                errorStream.close();
-	            } catch (IOException e) {
-	            	throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Could not close response streams");
-	            }
 			}
 		}
 		else {
@@ -108,12 +107,11 @@ public class SSHConnection implements IConnection {
 	}
 	
 	private String getResponseFromSessionStream(InputStream is) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line + "\n");
-        }
-        return sb.toString();
+		if (is.available() > 0) {
+			byte[] buffer = new byte[is.available()];
+			is.read(buffer, 0 ,is.available());
+			return new String(buffer);
+		}
+		return "";
 	}
 }
