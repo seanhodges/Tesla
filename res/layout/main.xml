@@ -1,107 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-id="@+id/root_layout"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-android:background="#ffffffff"
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
->
-<LinearLayout
-id="@+id/playback_panel"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:padding="5px"
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_gravity="center_horizontal"
->
-<Button
-id="@+id/last_song"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="&lt;&lt;"
->
-</Button>
-<Button
-id="@+id/play_pause"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Play / Pause"
->
-</Button>
-<Button
-id="@+id/next_song"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="&gt;&gt;"
->
-</Button>
-</LinearLayout>
-<LinearLayout
-id="@+id/info_panel"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_gravity="center_horizontal"
->
-<ImageView
-id="@+id/album_cover"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:padding="10px"
-android:layout_gravity="center_vertical"
->
-</ImageView>
-<LinearLayout
-id="@+id/song_info"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
->
-<TextView
-id="@+id/song_title"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Title"
->
-</TextView>
-<TextView
-id="@+id/song_album"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Album"
->
-</TextView>
-<TextView
-id="@+id/song_artist"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Artist"
->
-</TextView>
-</LinearLayout>
-</LinearLayout>
-<LinearLayout
-id="@+id/action_panel"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_gravity="center_horizontal"
->
-<Button
-id="@+id/playlist"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Playlist"
->
-</Button>
-<Button
-id="@+id/volume"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Volume"
->
-</Button>
-</LinearLayout>
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#ffffffff"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical">
+	
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="5px"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_gravity="center_horizontal">
+		
+		<Button
+		id="@+id/last_song"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="&lt;&lt;" />
+		
+		<Button
+		id="@+id/play_pause"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Play / Pause" />
+		
+		<Button
+		id="@+id/next_song"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="&gt;&gt;" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_gravity="center_horizontal">
+		
+		<ImageView
+		id="@+id/album_cover"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="10px"
+		android:layout_gravity="center_vertical" />
+		
+		<LinearLayout
+			id="@+id/song_info"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical">
+		
+			<TextView
+			id="@+id/song_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Title" />
+			
+			<TextView
+			id="@+id/song_album"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Album" />
+	
+			<TextView
+			id="@+id/song_artist"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Artist" />
+		</LinearLayout>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_gravity="center_horizontal">
+		
+		<Button
+		id="@+id/playlist"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Playlist" />
+		
+		<Button
+		id="@+id/volume"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Volume" />	
+	</LinearLayout>
+	
 </LinearLayout>
