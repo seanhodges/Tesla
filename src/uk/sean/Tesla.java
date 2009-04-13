@@ -26,7 +26,11 @@ public class Tesla extends Activity implements OnClickListener {
 			IConnection connection = new SSHConnection();
 			try {
 				connection.connect();
-				connection.sendCommand("touch /home/sean/Desktop/tesla_success");
+				String response = connection.sendCommand("DISPLAY=:0 xeyes");
+				new AlertDialog.Builder(Tesla.this)
+		        	.setTitle("Response")
+		        	.setMessage(response)
+		        	.show();
 			} catch (ConnectionException e) {
 				// Show errors in a dialog
 				new AlertDialog.Builder(Tesla.this)

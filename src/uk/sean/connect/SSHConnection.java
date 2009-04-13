@@ -1,7 +1,9 @@
 package uk.sean.connect;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -70,15 +72,37 @@ public class SSHConnection implements IConnection {
 		if (session != null) {
 			try {
 				session.execCommand(command);
-				InputStream responseStream = session.getStdout();
-				byte[] responsePart = new byte[4096];
-				while (responseStream.read(responsePart) > 0) {
-					String append = new String(responsePart);
-					response.concat(append);
+				Thread.sleep(1000);
+			} catch (IOException e) {
+				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Failed to send command to client");
+			} catch (InterruptedException e) {
+				// Do nothing
+			}
+			InputStream responseStream = session.getStdout();
+			InputStream errorStream = session.getStderr();
+			
+			// Read the STDOUT output to return as a response
+			BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream));
+			StringBuilder sb = new StringBuilder();
+	        String line = null;
+	        try {
+				if (errorStream.available() > 0) {
+					// Any STDERR output is treated as a failure for now
+					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, command);
 				}
+	            while ((line = reader.readLine()) != null) {
+	                sb.append(line + "\n");
+	            }
 			} catch (IOException e) {
 				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, command);
+			} finally {
+	            try {
+	                responseStream.close();
+	            } catch (IOException e) {
+	            	throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Could not close response stream");
+	            }
 			}
+	        response = sb.toString();
 		}
 		else {
 			throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, HOST, "Not connected to a server");
