@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#ffffffff"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical">
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:padding="5px"
+		android:layout_gravity="center_horizontal">
+		
+		<EditText
+		android:id="@+id/host"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:singleLine="true" />
+		
+		<EditText
+		android:id="@+id/port" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:singleLine="true" />
+		
+		<EditText
+		android:id="@+id/user" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:singleLine="true" />
+		
+		<EditText
+		android:id="@+id/pass"
+		android:singleLine="true"
+		android:password="true"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:hint="Password" />
+		
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_gravity="center_horizontal">
+		
+		<Button
+		android:id="@+id/cancel"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Cancel" />
+		
+		<Button
+		android:id="@+id/connect"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Connect" />	
+	</LinearLayout>
+	
+</LinearLayout>
