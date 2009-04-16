@@ -76,6 +76,10 @@ public class SSHConnection implements IConnection {
 		connection.close();
 	}
 	
+	public boolean isConnected() {
+		return (session != null);
+	}
+	
 	public String sendCommand(String command) throws ConnectionException {
 		String response = null;
 		if (session != null) {

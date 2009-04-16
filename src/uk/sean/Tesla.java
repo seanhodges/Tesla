@@ -6,6 +6,8 @@ import uk.sean.connect.SSHConnection;
 import uk.sean.dbus.InitScriptProvider;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,11 +40,16 @@ public class Tesla extends Activity implements OnClickListener {
 			}
 		} catch (Exception e) {
 			// Show errors in a dialog
-			new AlertDialog.Builder(Tesla.this)
+			AlertDialog error = new AlertDialog.Builder(Tesla.this)
 	        	.setTitle("Failed to connect to remote machine")
 	        	.setMessage(e.getMessage())
+	        	.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+	        		public void onClick(DialogInterface dialog, int whichButton) {
+	        			// Return the user to the connection screen
+	        			finish();
+	        		}
+	        	})
 	        	.show();
-			connection.disconnect();
 		}
     }
     
@@ -50,7 +57,7 @@ public class Tesla extends Activity implements OnClickListener {
 		super.onDestroy();
 		
 		// Disconnect from temp connection
-		connection.disconnect();
+		if (connection.isConnected()) connection.disconnect();
 	}
 	
 	public void onClick(View v) {
