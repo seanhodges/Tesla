@@ -1,6 +1,5 @@
 package uk.sean;
 
-import uk.sean.connect.ConnectionException;
 import uk.sean.connect.ConnectionOptions;
 import uk.sean.connect.IConnection;
 import uk.sean.connect.SSHConnection;
@@ -28,10 +27,10 @@ public class Tesla extends Activity implements OnClickListener {
         View nextSongButton = this.findViewById(R.id.next_song);
         nextSongButton.setOnClickListener(this);
         
-        // Temporarily initialise connection in activity
+        // Assume an SSH connection for now
         connection = new SSHConnection();
         try {
-			connection.connect(new ConnectionOptions());
+			connection.connect(new ConnectionOptions(this));
 			// Initialise the DBUS connection
 			String response = connection.sendCommand(InitScriptProvider.getInitScript());
 			if (!response.equals("success\n")) {
