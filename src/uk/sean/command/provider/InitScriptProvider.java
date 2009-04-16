@@ -1,4 +1,5 @@
-package uk.sean.dbus;
+package uk.sean.command.provider;
+
 
 public class InitScriptProvider {
 	

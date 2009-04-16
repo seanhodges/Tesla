@@ -1,14 +1,13 @@
 package uk.sean;
 
+import uk.sean.command.Command;
+import uk.sean.command.CommandFactory;
 import uk.sean.connect.ConnectionOptions;
 import uk.sean.connect.FakeConnection;
 import uk.sean.connect.IConnection;
-import uk.sean.connect.SSHConnection;
-import uk.sean.dbus.InitScriptProvider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,13 +35,13 @@ public class Tesla extends Activity implements OnClickListener {
         try {
 			connection.connect(new ConnectionOptions(this));
 			// Initialise the DBUS connection
-			String response = connection.sendCommand(InitScriptProvider.getInitScript());
+			String response = connection.sendCommand(CommandFactory.instance().getInitScript());
 			if (!response.equals("success\n")) {
 				throw new Exception("Init script failed with output: " + response);
 			}
 		} catch (Exception e) {
 			// Show errors in a dialog
-			AlertDialog error = new AlertDialog.Builder(Tesla.this)
+			new AlertDialog.Builder(Tesla.this)
 	        	.setTitle("Failed to connect to remote machine")
 	        	.setMessage(e.getMessage())
 	        	.setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -63,28 +62,28 @@ public class Tesla extends Activity implements OnClickListener {
 	}
 	
 	public void onClick(View v) {
-		String command = "";
+		Command command = null;
 		
 		switch (v.getId()) {
 		case R.id.play_pause: 
-			command = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player playPause false";
+			command = CommandFactory.instance().getCommand(Command.PLAY);
 			break;
-		case R.id.last_song: 
-			command = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player previous";
+		case R.id.last_song:
+			command = CommandFactory.instance().getCommand(Command.PREV);
 			break;
-		case R.id.next_song: 
-			command = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player next";
+		case R.id.next_song:
+			command = CommandFactory.instance().getCommand(Command.NEXT);
 			break;
 		}
 		
-		if (command.length() > 0) {
+		if (command != null) {
 			try {
 				connection.sendCommand(command);
 				if (connection instanceof FakeConnection) {
 					// Display the command for debugging
 					new AlertDialog.Builder(Tesla.this)
 						.setTitle("FakeConnection: command recieved")
-						.setMessage(command)
+						.setMessage(command.getCommandString())
 						.show();
 				}
 			} catch (Exception e) {

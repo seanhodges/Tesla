@@ -1,11 +1,10 @@
 package uk.sean.connect;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+
+import uk.sean.command.Command;
 
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.Session;
@@ -80,11 +79,11 @@ public class SSHConnection implements IConnection {
 		return (session != null);
 	}
 	
-	public String sendCommand(String command) throws ConnectionException {
+	public String sendCommand(Command command) throws ConnectionException {
 		String response = null;
 		if (session != null) {
 			try {
-				stdin.write((command + "\n").getBytes());
+				stdin.write((command.getCommandString() + "\n").getBytes());
 				stdin.flush();
 				Thread.sleep(1000);
 			} catch (Exception e) {
@@ -100,7 +99,7 @@ public class SSHConnection implements IConnection {
 				// Read the STDOUT output to return as a response
 				response = getResponseFromSessionStream(responseStream);
 			} catch (IOException e) {
-				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command);
+				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getKey());
 			}
 		}
 		else {

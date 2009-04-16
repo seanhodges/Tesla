@@ -1,6 +1,7 @@
 package uk.sean.connect;
 
 public class ConnectionException extends Exception {
+	private static final long serialVersionUID = 1L;
 	
 	public static final int FAILED_AT_CONNECT = 10;
 	public static final int FAILED_AT_AUTH = 20;
