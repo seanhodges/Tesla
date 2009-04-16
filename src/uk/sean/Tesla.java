@@ -1,6 +1,7 @@
 package uk.sean;
 
 import uk.sean.connect.ConnectionOptions;
+import uk.sean.connect.FakeConnection;
 import uk.sean.connect.IConnection;
 import uk.sean.connect.SSHConnection;
 import uk.sean.dbus.InitScriptProvider;
@@ -30,7 +31,8 @@ public class Tesla extends Activity implements OnClickListener {
         nextSongButton.setOnClickListener(this);
         
         // Assume an SSH connection for now
-        connection = new SSHConnection();
+        //connection = new SSHConnection();
+        connection = new FakeConnection();
         try {
 			connection.connect(new ConnectionOptions(this));
 			// Initialise the DBUS connection
@@ -78,6 +80,13 @@ public class Tesla extends Activity implements OnClickListener {
 		if (command.length() > 0) {
 			try {
 				connection.sendCommand(command);
+				if (connection instanceof FakeConnection) {
+					// Display the command for debugging
+					new AlertDialog.Builder(Tesla.this)
+						.setTitle("FakeConnection: command recieved")
+						.setMessage(command)
+						.show();
+				}
 			} catch (Exception e) {
 				// Show errors in a dialog
 				new AlertDialog.Builder(Tesla.this)
