@@ -21,6 +21,12 @@ public class AppCommandProvider {
 		else if (key.equals(Command.NEXT)) {
 			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player next";
 		}
+		else if (key.equals(Command.VOL_CHANGE)) {
+			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume %f";
+		}
+		else if (key.equals(Command.VOL_MUTE)) {
+			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume 0";
+		}
 		else {
 			throw new Exception("Command not implemented");
 		}

@@ -2,6 +2,7 @@ package uk.sean;
 
 import uk.sean.command.Command;
 import uk.sean.command.CommandFactory;
+import uk.sean.connect.ConnectionException;
 import uk.sean.connect.ConnectionOptions;
 import uk.sean.connect.FakeConnection;
 import uk.sean.connect.IConnection;
@@ -9,20 +10,23 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.SeekBar;
 
-public class VolumeControl extends Activity {
+public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 	
 	private IConnection connection;
+	private SeekBar volumeSlider;
 	
     /* This is the volume control. */
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.volume_control);
         
-        // Attach the listeners for the volume control
-        View volumeSlider = this.findViewById(R.id.volume);
+        volumeSlider = (SeekBar)this.findViewById(R.id.volume);
+        volumeSlider.setOnSeekBarChangeListener(this);
         
         // Assume an SSH connection for now
         //connection = new SSHConnection();
@@ -54,5 +58,25 @@ public class VolumeControl extends Activity {
 		
 		// Disconnect from temp connection
 		if (connection.isConnected()) connection.disconnect();
+	}
+
+	public void onProgressChanged(SeekBar seekBar, int progress,
+		boolean fromTouch) {
+		int level = ((SeekBar) volumeSlider).getProgress();
+		Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
+		command.addArg(new Float((float)level / 100));
+		try {
+			connection.sendCommand(command);
+		} catch (ConnectionException e) {
+			// Ignore errors for now
+		}
+	}
+
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// Do nothing
+	}
+
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		// Do nothing
 	}
 }
