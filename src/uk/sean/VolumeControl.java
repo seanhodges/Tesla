@@ -21,7 +21,7 @@ public class VolumeControl extends Activity {
         super.onCreate(icicle);
         setContentView(R.layout.volume_control);
         
-        // Attach the button listeners for playback controls
+        // Attach the listeners for the volume control
         View volumeSlider = this.findViewById(R.id.volume);
         
         // Assume an SSH connection for now

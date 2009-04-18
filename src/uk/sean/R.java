@@ -15,6 +15,7 @@ public final class R {
     }
     public static final class id {
         public static final int album_cover=0x7f050004;
+        public static final int back=0x7f050011;
         public static final int cancel=0x7f05000f;
         public static final int connect=0x7f050010;
         public static final int host=0x7f05000b;
@@ -35,6 +36,7 @@ public final class R {
     public static final class layout {
         public static final int main=0x7f030000;
         public static final int new_connection=0x7f030001;
+        public static final int volume_control=0x7f030002;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
