@@ -1,4 +1,4 @@
-package uk.sean.connect;
+package tesla.app.connect;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

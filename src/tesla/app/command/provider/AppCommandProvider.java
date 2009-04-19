@@ -1,6 +1,6 @@
-package uk.sean.command.provider;
+package tesla.app.command.provider;
 
-import uk.sean.command.Command;
+import tesla.app.command.Command;
 
 public class AppCommandProvider {
 

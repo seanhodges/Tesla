@@ -1,6 +1,6 @@
-package uk.sean.connect;
+package tesla.app.connect;
 
-import uk.sean.command.Command;
+import tesla.app.command.Command;
 
 public interface IConnection {
 	public abstract void connect(ConnectionOptions config) throws ConnectionException;

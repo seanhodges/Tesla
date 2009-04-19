@@ -1,6 +1,6 @@
-package uk.sean;
+package tesla.app;
 
-import uk.sean.connect.ConnectionOptions;
+import tesla.app.connect.ConnectionOptions;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

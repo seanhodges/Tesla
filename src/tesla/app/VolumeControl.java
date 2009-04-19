@@ -1,12 +1,12 @@
-package uk.sean;
+package tesla.app;
 
-import uk.sean.command.Command;
-import uk.sean.command.CommandFactory;
-import uk.sean.connect.ConnectionException;
-import uk.sean.connect.ConnectionOptions;
-import uk.sean.connect.FakeConnection;
-import uk.sean.connect.IConnection;
-import uk.sean.connect.SSHConnection;
+import tesla.app.command.Command;
+import tesla.app.command.CommandFactory;
+import tesla.app.connect.ConnectionException;
+import tesla.app.connect.ConnectionOptions;
+import tesla.app.connect.FakeConnection;
+import tesla.app.connect.IConnection;
+import tesla.app.connect.SSHConnection;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

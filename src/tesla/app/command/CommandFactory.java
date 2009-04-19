@@ -1,7 +1,7 @@
-package uk.sean.command;
+package tesla.app.command;
 
-import uk.sean.command.provider.AppCommandProvider;
-import uk.sean.command.provider.InitScriptProvider;
+import tesla.app.command.provider.AppCommandProvider;
+import tesla.app.command.provider.InitScriptProvider;
 
 public class CommandFactory {
 

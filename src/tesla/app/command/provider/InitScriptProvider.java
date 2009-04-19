@@ -1,4 +1,4 @@
-package uk.sean.command.provider;
+package tesla.app.command.provider;
 
 
 public class InitScriptProvider {

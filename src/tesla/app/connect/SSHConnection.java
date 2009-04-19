@@ -1,10 +1,10 @@
-package uk.sean.connect;
+package tesla.app.connect;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import uk.sean.command.Command;
+import tesla.app.command.Command;
 
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.Session;
