@@ -6,11 +6,11 @@ import uk.sean.connect.ConnectionException;
 import uk.sean.connect.ConnectionOptions;
 import uk.sean.connect.FakeConnection;
 import uk.sean.connect.IConnection;
+import uk.sean.connect.SSHConnection;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.SeekBar;
@@ -29,8 +29,8 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
         volumeSlider.setOnSeekBarChangeListener(this);
         
         // Assume an SSH connection for now
-        //connection = new SSHConnection();
-        connection = new FakeConnection();
+        connection = new SSHConnection();
+        //connection = new FakeConnection();
         try {
 			connection.connect(new ConnectionOptions(this));
 			// Initialise the DBUS connection

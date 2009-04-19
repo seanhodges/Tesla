@@ -5,9 +5,11 @@ import uk.sean.command.CommandFactory;
 import uk.sean.connect.ConnectionOptions;
 import uk.sean.connect.FakeConnection;
 import uk.sean.connect.IConnection;
+import uk.sean.connect.SSHConnection;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,10 +30,12 @@ public class Tesla extends Activity implements OnClickListener {
         prevSongButton.setOnClickListener(this);
         View nextSongButton = this.findViewById(R.id.next_song);
         nextSongButton.setOnClickListener(this);
+        View volumeButton = this.findViewById(R.id.volume);
+        volumeButton.setOnClickListener(this);
         
         // Assume an SSH connection for now
-        //connection = new SSHConnection();
-        connection = new FakeConnection();
+        connection = new SSHConnection();
+        //connection = new FakeConnection();
         try {
 			connection.connect(new ConnectionOptions(this));
 			// Initialise the DBUS connection
@@ -74,6 +78,10 @@ public class Tesla extends Activity implements OnClickListener {
 		case R.id.next_song:
 			command = CommandFactory.instance().getCommand(Command.NEXT);
 			break;
+		case R.id.volume:
+			// Start the volume control activity
+			Intent intent = new Intent(Tesla.this, VolumeControl.class);
+			startActivity(intent);
 		}
 		
 		if (command != null) {
