@@ -16,7 +16,6 @@ import android.view.View.OnClickListener;
 
 public class Tesla extends Activity implements OnClickListener {
 	
-	private IConnection connection;
 	
     /* This is the main screen, providing the playback controls. */
     public void onCreate(Bundle icicle) {
@@ -33,37 +32,8 @@ public class Tesla extends Activity implements OnClickListener {
         View volumeButton = this.findViewById(R.id.volume);
         volumeButton.setOnClickListener(this);
         
-        // Assume an SSH connection for now
-        connection = new SSHConnection();
-        //connection = new FakeConnection();
-        try {
-			connection.connect(new ConnectionOptions(this));
-			// Initialise the DBUS connection
-			String response = connection.sendCommand(CommandFactory.instance().getInitScript());
-			if (!response.equals("success\n")) {
-				throw new Exception("Init script failed with output: " + response);
-			}
-		} catch (Exception e) {
-			// Show errors in a dialog
-			new AlertDialog.Builder(Tesla.this)
-	        	.setTitle("Failed to connect to remote machine")
-	        	.setMessage(e.getMessage())
-	        	.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-	        		public void onClick(DialogInterface dialog, int whichButton) {
-	        			// Return the user to the connection screen
-	        			finish();
-	        		}
-	        	})
-	        	.show();
-		}
+        // TODO: Bind to service
     }
-    
-	protected void onDestroy() {
-		super.onDestroy();
-		
-		// Disconnect from temp connection
-		if (connection.isConnected()) connection.disconnect();
-	}
 	
 	public void onClick(View v) {
 		Command command = null;
@@ -85,22 +55,7 @@ public class Tesla extends Activity implements OnClickListener {
 		}
 		
 		if (command != null) {
-			try {
-				connection.sendCommand(command);
-				if (connection instanceof FakeConnection) {
-					// Display the command for debugging
-					new AlertDialog.Builder(Tesla.this)
-						.setTitle("FakeConnection: command recieved")
-						.setMessage(command.getCommandString())
-						.show();
-				}
-			} catch (Exception e) {
-				// Show errors in a dialog
-				new AlertDialog.Builder(Tesla.this)
-		        	.setTitle("Failed to send command to remote machine")
-		        	.setMessage(e.getMessage())
-		        	.show();
-			}
+			// TODO: Send command to service
 		}
 	}
 }
