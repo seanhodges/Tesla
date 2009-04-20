@@ -1,0 +1,14 @@
+Short term objectives:
+
+The UI, new widgets and styling
+Multiple DBUS configurations
+Decide how application is selected (during new connection? selection switch using the menu button?)
+Run SSH commands in background (probably as a service)
+Package and sign for market
+
+Long term objectives:
+
+Loading DBUS configurations from filesystem
+Dependency injection (dynamic resolution of connection/dbus/commandfactory objects
+"Command queue" to provide more control over the stream of commands being sent by the UI
+Connection profile manager (save/load connection config)
