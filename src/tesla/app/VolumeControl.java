@@ -2,22 +2,13 @@ package tesla.app;
 
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
-import tesla.app.connect.ConnectionException;
-import tesla.app.connect.ConnectionOptions;
-import tesla.app.connect.FakeConnection;
-import tesla.app.connect.IConnection;
-import tesla.app.connect.SSHConnection;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.SeekBar;
 
 public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 	
-	private IConnection connection;
 	private SeekBar volumeSlider;
 	
     /* This is the volume control. */

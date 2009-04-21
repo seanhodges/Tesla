@@ -1,20 +1,20 @@
 package tesla.app.connect;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public class ConnectionOptions {
 	
 	private static final String PREFS_NAME = "ConnectionSettings";
 	
-	private Activity owner;
+	private Context owner;
 	
 	public String hostname = null;
 	public int port = 0;
 	public String username = null;
 	public String password = null;
 	
-	public ConnectionOptions(Activity owner) {
+	public ConnectionOptions(Context owner) {
 		this.owner = owner;
 		reloadSettings();
 	}

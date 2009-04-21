@@ -2,7 +2,10 @@ package tesla.app.command;
 
 import java.util.ArrayList;
 
-public class Command {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public final class Command implements Parcelable {
 
 	// Command key tokens
 	public static final String INIT = "init";
@@ -17,10 +20,24 @@ public class Command {
 	private String commandString;
 	private ArrayList<Object> args;
 
+	public static final Parcelable.Creator<Command> CREATOR = new Parcelable.Creator<Command>() {
+		public Command createFromParcel(Parcel in) {
+			return new Command(in);
+		}
+		
+		public Command[] newArray(int size) {
+			return new Command[size];
+		}
+	};
+
 	public Command() {
 		args = new ArrayList<Object>();
 	}
-
+	
+	public Command(Parcel in) {
+		readFromParcel(in);
+	}
+	
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -84,4 +101,20 @@ public class Command {
 		return out;
 	}
 
+	public int describeContents() {
+		return key.hashCode();
+	}
+	
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(key);
+		dest.writeList(args);
+		dest.writeString(commandString);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void readFromParcel(Parcel src) {
+		key = src.readString(); 
+		args = src.readArrayList(this.getClass().getClassLoader());
+		commandString = src.readString();
+	}
 }

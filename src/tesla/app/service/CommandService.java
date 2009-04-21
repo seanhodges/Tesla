@@ -1,6 +1,5 @@
 package tesla.app.service;
 
-import tesla.app.Tesla;
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
 import tesla.app.connect.ConnectionOptions;
@@ -27,7 +26,7 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		if (System.getProperty("connection").equals("FakeConnection")) {
+		if (System.getProperty("connection").equals("fake")) {
 			connection = new FakeConnection();
 		}
 		else {
@@ -49,7 +48,7 @@ public class CommandService extends Service {
 	        	.setPositiveButton("Close", new DialogInterface.OnClickListener() {
 	        		public void onClick(DialogInterface dialog, int whichButton) {
 	        			// Return the user to the connection screen
-	        			finish();
+	        			stopSelf();
 	        		}
 	        	})
 	        	.show();
@@ -61,7 +60,7 @@ public class CommandService extends Service {
 		if (connection.isConnected()) connection.disconnect();
 	}
 
-	private void sendCommand(Command command) {
+	public void sendCommand(Command command) {
 		if (command != null) {
 			try {
 				connection.sendCommand(command);

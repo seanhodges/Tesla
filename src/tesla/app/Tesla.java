@@ -2,20 +2,31 @@ package tesla.app;
 
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
-import tesla.app.connect.ConnectionOptions;
-import tesla.app.connect.FakeConnection;
-import tesla.app.connect.IConnection;
-import tesla.app.connect.SSHConnection;
+import tesla.app.service.CommandService;
+import tesla.app.service.business.ICommandService;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class Tesla extends Activity implements OnClickListener {
 	
+	private ICommandService commandService;
+	
+	private ServiceConnection connection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			commandService = ICommandService.Stub.asInterface(service);
+		}
+		
+		public void onServiceDisconnected(ComponentName name) {
+			commandService = null;
+		}
+	};
 	
     /* This is the main screen, providing the playback controls. */
     public void onCreate(Bundle icicle) {
@@ -31,8 +42,6 @@ public class Tesla extends Activity implements OnClickListener {
         nextSongButton.setOnClickListener(this);
         View volumeButton = this.findViewById(R.id.volume);
         volumeButton.setOnClickListener(this);
-        
-        // TODO: Bind to service
     }
 	
 	public void onClick(View v) {
@@ -55,7 +64,12 @@ public class Tesla extends Activity implements OnClickListener {
 		}
 		
 		if (command != null) {
-			// TODO: Send command to service
+			try {
+				commandService.sendCommand(command);
+			} catch (RemoteException e) {
+				// Failed to send command
+				e.printStackTrace();
+			}
 		}
 	}
 }
