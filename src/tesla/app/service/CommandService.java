@@ -26,12 +26,12 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		if (System.getProperty("connection").equals("fake")) {
+		/*if (System.getProperty("connection").equals("fake")) {
 			connection = new FakeConnection();
 		}
-		else {
+		else {*/
 			connection = new SSHConnection();
-		}
+		//}
 		
         try {
 			connection.connect(new ConnectionOptions(this));

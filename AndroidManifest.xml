@@ -11,6 +11,8 @@
         
         <activity android:name=".Tesla" />
         <activity android:name=".VolumeControl" />
+        
+		<service android:name=".service.CommandService"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

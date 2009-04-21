@@ -6,6 +6,7 @@ import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandService;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -71,5 +72,15 @@ public class Tesla extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	protected void onPause() {
+		super.onPause();
+		if (connection != null) unbindService(connection);
+	}
+
+	protected void onResume() {
+		super.onResume();
+		bindService(new Intent(this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 }

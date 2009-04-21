@@ -1,6 +1,7 @@
 package tesla.app;
 
 import tesla.app.connect.ConnectionOptions;
+import tesla.app.service.CommandService;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ public class NewConnection extends Activity implements OnClickListener {
     
 	protected void onDestroy() {
 		super.onDestroy();
+		stopService(new Intent(this, CommandService.class));
 	}
 	
 	public void onClick(View v) {
@@ -59,7 +61,8 @@ public class NewConnection extends Activity implements OnClickListener {
 			// Save the settings for next time
 			config.saveSettings();
 			
-			// TODO: Start the CommandService
+			// Start the CommandService
+			startService(new Intent(this, CommandService.class));
 			
 			// Start the playback activity
 			Intent intent = new Intent(NewConnection.this, Tesla.class);
