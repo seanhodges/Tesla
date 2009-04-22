@@ -19,7 +19,7 @@ import android.os.RemoteException;
 
 public class CommandService extends Service {
 
-	private static final int EXEC_POLL_PERIOD = 10;
+	private static final int EXEC_POLL_PERIOD = 50;
 	
 	private IConnection connection;
 	private Timer commandExecutioner;
@@ -85,7 +85,7 @@ public class CommandService extends Service {
 		// this moves them out of the event loop, and drops commands when new ones are requested
 		
 		commandExecutioner = new Timer();
-		commandExecutioner.scheduleAtFixedRate(new TimerTask() {
+		commandExecutioner.schedule(new TimerTask() {
 
 			public void run() {
 				if (nextCommand != null && nextCommand != lastCommand) {

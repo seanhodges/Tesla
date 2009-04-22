@@ -5,7 +5,7 @@ import tesla.app.command.provider.InitScriptProvider;
 
 public class CommandFactory {
 	
-	private static final long COMMAND_DELAY = 50;
+	private static final long COMMAND_DELAY = 10;
 	private static final long INIT_SCRIPT_DELAY = 1000;
 	
 	private AppCommandProvider config;

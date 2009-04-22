@@ -38,6 +38,7 @@ public final class R {
         public static final int volume_control=0x7f030002;
     }
     public static final class string {
+        public static final int app_desc=0x7f040001;
         public static final int app_name=0x7f040000;
     }
 }
