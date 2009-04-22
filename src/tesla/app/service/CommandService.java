@@ -1,5 +1,8 @@
 package tesla.app.service;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
 import tesla.app.connect.ConnectionOptions;
@@ -17,6 +20,8 @@ import android.os.RemoteException;
 public class CommandService extends Service {
 
 	private IConnection connection;
+	private Timer commandExecutioner;
+	private Command nextCommand = null;
 	
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -50,6 +55,10 @@ public class CommandService extends Service {
 			if (!response.equals("success\n")) {
 				throw new Exception("Init script failed with output: " + response);
 			}
+			
+			// Start the command thread
+			handleCommands();
+			
 		} catch (Exception e) {
 			// Show errors in a dialog
 			new AlertDialog.Builder(CommandService.this)
@@ -62,30 +71,51 @@ public class CommandService extends Service {
 	        		}
 	        	})
 	        	.show();
-		}	
+		}
 	}
 
 	public void onDestroy() {
 		super.onDestroy();
+		if (commandExecutioner != null) commandExecutioner.cancel();
 		if (connection.isConnected()) connection.disconnect();
+	}
+	
+	public void handleCommands() {
+		
+		// Commands are executed in a Timer thread
+		// this moves them out of the event loop, and drops commands when new ones are requested
+		
+		commandExecutioner = new Timer();
+		commandExecutioner.scheduleAtFixedRate(new TimerTask() {
+
+			public void run() {
+				if (nextCommand != null) {
+					try {
+						connection.sendCommand(nextCommand);
+						if (connection instanceof FakeConnection) {
+							// Display the command for debugging
+							System.out.println("FakeConnection: command recieved" + nextCommand.getCommandString());
+						}
+					}
+					catch (Exception e) {
+						// Show errors in a dialog
+						new AlertDialog.Builder(CommandService.this)
+				        	.setTitle("Failed to send command to remote machine")
+				        	.setMessage(e.getMessage())
+				        	.show();
+					} 
+					finally {
+						nextCommand = null;
+					}
+				}
+			}
+			
+		}, 0, 1000);
 	}
 
 	public void sendCommandAction(Command command) {
 		if (command != null) {
-			try {
-				connection.sendCommand(command);
-				if (connection instanceof FakeConnection) {
-					// Display the command for debugging
-					System.out.println("FakeConnection: command recieved" + command.getCommandString());
-				}
-			} catch (Exception e) {
-				// Show errors in a dialog
-				new AlertDialog.Builder(CommandService.this)
-		        	.setTitle("Failed to send command to remote machine")
-		        	.setMessage(e.getMessage())
-		        	.show();
-			}
+			nextCommand = command;
 		}
 	}
-	
 }
