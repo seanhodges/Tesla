@@ -19,7 +19,7 @@ import android.os.RemoteException;
 
 public class CommandService extends Service {
 
-	private static final int EXEC_POLL_PERIOD = 20;
+	private static final int EXEC_POLL_PERIOD = 10;
 	
 	private IConnection connection;
 	private Timer commandExecutioner;
