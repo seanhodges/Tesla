@@ -81,6 +81,6 @@ public class Tesla extends Activity implements OnClickListener {
 
 	protected void onResume() {
 		super.onResume();
-		bindService(new Intent(this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+		bindService(new Intent(Tesla.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 }

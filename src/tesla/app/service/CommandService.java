@@ -6,11 +6,13 @@ import tesla.app.connect.ConnectionOptions;
 import tesla.app.connect.FakeConnection;
 import tesla.app.connect.IConnection;
 import tesla.app.connect.SSHConnection;
+import tesla.app.service.business.ICommandService;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 public class CommandService extends Service {
 
@@ -21,7 +23,15 @@ public class CommandService extends Service {
 	}
 
 	public IBinder onBind(Intent arg0) {
-		return null;
+		return new ICommandService.Stub() {
+
+			// Command delegates
+			
+			public void sendCommand(Command command) throws RemoteException {
+				sendCommandAction(command);
+			}
+			
+		};
 	}
 
 	public void onCreate() {
@@ -60,7 +70,7 @@ public class CommandService extends Service {
 		if (connection.isConnected()) connection.disconnect();
 	}
 
-	public void sendCommand(Command command) {
+	public void sendCommandAction(Command command) {
 		if (command != null) {
 			try {
 				connection.sendCommand(command);

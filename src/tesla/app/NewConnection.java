@@ -44,7 +44,7 @@ public class NewConnection extends Activity implements OnClickListener {
     
 	protected void onDestroy() {
 		super.onDestroy();
-		stopService(new Intent(this, CommandService.class));
+		stopService(new Intent(NewConnection.this, CommandService.class));
 	}
 	
 	public void onClick(View v) {
@@ -62,11 +62,10 @@ public class NewConnection extends Activity implements OnClickListener {
 			config.saveSettings();
 			
 			// Start the CommandService
-			startService(new Intent(this, CommandService.class));
+			startService(new Intent(NewConnection.this, CommandService.class));
 			
 			// Start the playback activity
-			Intent intent = new Intent(NewConnection.this, Tesla.class);
-			startActivity(intent);
+			startActivity(new Intent(NewConnection.this, Tesla.class));
 			
 			break;
 		case R.id.cancel: 
