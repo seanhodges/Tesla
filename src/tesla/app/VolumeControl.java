@@ -12,13 +12,19 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 	
 	private SeekBar volumeSlider;
 	private ICommandService commandService;
+	private int lastVolumeLevel = -1;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -38,7 +44,32 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
         volumeSlider = (SeekBar)this.findViewById(R.id.volume);
         volumeSlider.setOnSeekBarChangeListener(this);
         
-        // TODO: Bind to service
+        // Set the volume slider levels
+        volumeSlider.setMax(10);
+        volumeSlider.setProgress(0);
+    }
+    
+    private void updateVolume(SeekBar seekBar, int level) {
+    	
+    	if (lastVolumeLevel != level) {
+    		
+        	// Debugging
+        	System.out.println(level);
+    		
+			// Don't pound the service with duplicate volume level requests
+			lastVolumeLevel = level;
+			
+	    	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
+	    	float levelPercent = (float)level / volumeSlider.getMax();
+			command.addArg(new Float(levelPercent));
+			
+			try {
+				commandService.sendCommand(command);
+			} catch (RemoteException e) {
+				// Failed to send command
+				e.printStackTrace();
+			}
+		}
     }
     
 	protected void onPause() {
@@ -54,15 +85,7 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 	public void onProgressChanged(SeekBar seekBar, int progress,
 		boolean fromTouch) {
 		int level = ((SeekBar) volumeSlider).getProgress();
-		Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
-		command.addArg(new Float((float)level / 100));
-		
-		try {
-			commandService.sendCommand(command);
-		} catch (RemoteException e) {
-			// Failed to send command
-			e.printStackTrace();
-		}
+		updateVolume(seekBar, level);
 	}
 
 	public void onStartTrackingTouch(SeekBar seekBar) {

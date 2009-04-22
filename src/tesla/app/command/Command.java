@@ -19,6 +19,7 @@ public final class Command implements Parcelable {
 	private String key;
 	private String commandString;
 	private ArrayList<Object> args;
+	long executionDelay = 0;
 
 	public static final Parcelable.Creator<Command> CREATOR = new Parcelable.Creator<Command>() {
 		public Command createFromParcel(Parcel in) {
@@ -49,6 +50,10 @@ public final class Command implements Parcelable {
 	public void addArg(Object arg) {
 		args.add(arg);
 	}
+	
+	public void setDelay(long executionDelay) {
+		this.executionDelay = executionDelay;
+	}
 
 	public String getKey() {
 		return key;
@@ -63,6 +68,10 @@ public final class Command implements Parcelable {
 			// function will return empty string
 		}
 		return out;
+	}
+
+	public long getDelay() {
+		return executionDelay;
 	}
 
 	private String parseArguments(String out)

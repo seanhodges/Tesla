@@ -19,9 +19,12 @@ import android.os.RemoteException;
 
 public class CommandService extends Service {
 
+	private static final int EXEC_POLL_PERIOD = 20;
+	
 	private IConnection connection;
 	private Timer commandExecutioner;
 	private Command nextCommand = null;
+	private Command lastCommand = null;
 	
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -41,12 +44,8 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		/*if (System.getProperty("connection").equals("fake")) {
-			connection = new FakeConnection();
-		}
-		else {*/
-			connection = new SSHConnection();
-		//}
+		//connection = new FakeConnection();
+		connection = new SSHConnection();
 		
         try {
 			connection.connect(new ConnectionOptions(this));
@@ -89,7 +88,8 @@ public class CommandService extends Service {
 		commandExecutioner.scheduleAtFixedRate(new TimerTask() {
 
 			public void run() {
-				if (nextCommand != null) {
+				if (nextCommand != null && nextCommand != lastCommand) {
+					lastCommand = nextCommand;
 					try {
 						connection.sendCommand(nextCommand);
 						if (connection instanceof FakeConnection) {
@@ -103,14 +103,11 @@ public class CommandService extends Service {
 				        	.setTitle("Failed to send command to remote machine")
 				        	.setMessage(e.getMessage())
 				        	.show();
-					} 
-					finally {
-						nextCommand = null;
 					}
 				}
 			}
 			
-		}, 0, 1000);
+		}, 0, EXEC_POLL_PERIOD);
 	}
 
 	public void sendCommandAction(Command command) {

@@ -86,7 +86,7 @@ public class SSHConnection implements IConnection {
 				stdin.write((command.getCommandString() + "\n").getBytes());
 				stdin.flush();
 				// This is a bit of a fudge, wait for command to finish before collecting streams
-				Thread.sleep(100);
+				Thread.sleep(command.getDelay());
 			} catch (Exception e) {
 				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, "Failed to send command to client, error returned was: " + e.getMessage());
 			}
