@@ -4,6 +4,7 @@ import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandService;
+import tesla.app.widget.VolumeSlider;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,17 +13,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.View.OnTouchListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 	
-	private SeekBar volumeSlider;
+	private VolumeSlider volumeSlider;
 	private ICommandService commandService;
 	private int lastVolumeLevel = -1;
 	
@@ -41,12 +37,12 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
         super.onCreate(icicle);
         setContentView(R.layout.volume_control);
         
-        volumeSlider = (SeekBar)this.findViewById(R.id.volume);
+        volumeSlider = (VolumeSlider)this.findViewById(R.id.volume);
         volumeSlider.setOnSeekBarChangeListener(this);
         
         // Set the volume slider levels
         volumeSlider.setMax(10);
-        volumeSlider.setProgress(0);
+        volumeSlider.setLevel(0);
     }
     
     private void updateVolume(SeekBar seekBar, int level) {
@@ -84,7 +80,7 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 
 	public void onProgressChanged(SeekBar seekBar, int progress,
 		boolean fromTouch) {
-		int level = ((SeekBar) volumeSlider).getProgress();
+		int level = ((VolumeSlider) volumeSlider).getLevel();
 		updateVolume(seekBar, level);
 	}
 

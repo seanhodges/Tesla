@@ -19,7 +19,7 @@
 		android:padding="5px"
 		android:layout_gravity="center_horizontal">
 		
-		<SeekBar
+		<tesla.app.widget.VolumeSlider
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/volume"
