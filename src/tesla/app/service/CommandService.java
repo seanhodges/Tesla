@@ -44,8 +44,8 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		connection = new FakeConnection();
-		//connection = new SSHConnection();
+		//connection = new FakeConnection();
+		connection = new SSHConnection();
 		
         try {
 			connection.connect(new ConnectionOptions(this));

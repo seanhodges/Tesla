@@ -5,13 +5,6 @@
 	android:background="#ffffffff"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical">
-	
-	<Button
-		android:id="@+id/pc_power"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Pwr"
-		android:layout_gravity="right" />
 		
 	<LinearLayout
 		android:layout_width="wrap_content"
@@ -22,8 +15,7 @@
 		<tesla.app.widget.VolumeSlider
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/volume"
-			android:minWidth="200px"/>
+			android:id="@+id/volume" />
 			
 	</LinearLayout>
 	

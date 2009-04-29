@@ -13,14 +13,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.SeekBar;
 
-public class VolumeControl extends Activity implements OnSeekBarChangeListener {
+public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLevelChangeListener {
 	
 	private VolumeSlider volumeSlider;
 	private ICommandService commandService;
-	private int lastVolumeLevel = -1;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -38,33 +35,25 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
         setContentView(R.layout.volume_control);
         
         volumeSlider = (VolumeSlider)this.findViewById(R.id.volume);
-        volumeSlider.setOnSeekBarChangeListener(this);
+        volumeSlider.setOnVolumeLevelChangeListener(this);
         
-        // Set the volume slider levels
-        volumeSlider.setMax(10);
+        // Set the initial volume level
         volumeSlider.setLevel(0);
     }
     
-    private void updateVolume(SeekBar seekBar, int level) {
-    	
-    	if (lastVolumeLevel != level) {
-    		
-        	// Debugging
-        	System.out.println(level);
-    		
-			// Don't pound the service with duplicate volume level requests
-			lastVolumeLevel = level;
+    private void updateVolume(VolumeSlider volumeSlider, int level) {
+        // Debugging
+        System.out.println(level);
 			
-	    	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
-	    	float levelPercent = (float)level / volumeSlider.getMax();
-			command.addArg(new Float(levelPercent));
-			
-			try {
-				commandService.sendCommand(command);
-			} catch (RemoteException e) {
-				// Failed to send command
-				e.printStackTrace();
-			}
+    	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
+    	float levelPercent = (float)level / 100;
+		command.addArg(new Float(levelPercent));
+		
+		try {
+			commandService.sendCommand(command);
+		} catch (RemoteException e) {
+			// Failed to send command
+			e.printStackTrace();
 		}
     }
     
@@ -78,17 +67,7 @@ public class VolumeControl extends Activity implements OnSeekBarChangeListener {
 		bindService(new Intent(VolumeControl.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 
-	public void onProgressChanged(SeekBar seekBar, int progress,
-		boolean fromTouch) {
-		int level = ((VolumeSlider) volumeSlider).getLevel();
-		updateVolume(seekBar, level);
-	}
-
-	public void onStartTrackingTouch(SeekBar seekBar) {
-		// Do nothing
-	}
-
-	public void onStopTrackingTouch(SeekBar seekBar) {
-		// Do nothing
+	public void onLevelChanged(VolumeSlider volumeSlider, int level) {
+		updateVolume(volumeSlider, level);
 	}
 }
