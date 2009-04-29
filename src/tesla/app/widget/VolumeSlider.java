@@ -70,7 +70,12 @@ public class VolumeSlider extends View {
 			calculateLevels(null);
 			levelsCalculated = true;
 			// Set default image
-			changeImage(levelDrawable.get(0).resource);
+			for (LevelDrawable item : levelDrawable) {
+				if (item.percent >= currentLevel) {
+					changeImage(item.resource);
+					break;
+				}
+			}
 		}
 	}
 	

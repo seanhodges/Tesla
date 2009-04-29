@@ -38,7 +38,21 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
         volumeSlider.setOnVolumeLevelChangeListener(this);
         
         // Set the initial volume level
-        volumeSlider.setLevel(0);
+        Command command = CommandFactory.instance().getCommand(Command.VOL_CURRENT);
+        try {
+			command = commandService.sendQuery(command);
+		} catch (RemoteException e) {
+			// Failed to send query
+			e.printStackTrace();
+		}
+        // Parse the result as a level percentage
+        float volumeLevel = Float.parseFloat(command.getOutput());
+        if (volumeLevel > 0) {
+        	volumeSlider.setLevel((int)(volumeLevel * 100));
+        }
+        else {
+        	volumeSlider.setLevel(0);
+        }
     }
     
     private void updateVolume(VolumeSlider volumeSlider, byte level) {
