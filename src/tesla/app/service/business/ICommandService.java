@@ -65,6 +65,29 @@ reply.writeInt(0);
 }
 return true;
 }
+case TRANSACTION_sendQuery:
+{
+data.enforceInterface(DESCRIPTOR);
+tesla.app.command.Command _arg0;
+_arg0 = new tesla.app.command.Command();
+tesla.app.command.Command _result = this.sendQuery(_arg0);
+reply.writeNoException();
+if ((_result!=null)) {
+reply.writeInt(1);
+_result.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+}
+else {
+reply.writeInt(0);
+}
+if ((_arg0!=null)) {
+reply.writeInt(1);
+_arg0.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+}
+else {
+reply.writeInt(0);
+}
+return true;
+}
 }
 return super.onTransact(code, data, reply, flags);
 }
@@ -100,8 +123,35 @@ _reply.recycle();
 _data.recycle();
 }
 }
+public tesla.app.command.Command sendQuery(tesla.app.command.Command command) throws android.os.RemoteException
+{
+android.os.Parcel _data = android.os.Parcel.obtain();
+android.os.Parcel _reply = android.os.Parcel.obtain();
+tesla.app.command.Command _result;
+try {
+_data.writeInterfaceToken(DESCRIPTOR);
+mRemote.transact(Stub.TRANSACTION_sendQuery, _data, _reply, 0);
+_reply.readException();
+if ((0!=_reply.readInt())) {
+_result = tesla.app.command.Command.CREATOR.createFromParcel(_reply);
+}
+else {
+_result = null;
+}
+if ((0!=_reply.readInt())) {
+command.readFromParcel(_reply);
+}
+}
+finally {
+_reply.recycle();
+_data.recycle();
+}
+return _result;
+}
 }
 static final int TRANSACTION_sendCommand = (IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_sendQuery = (IBinder.FIRST_CALL_TRANSACTION + 1);
 }
 public void sendCommand(tesla.app.command.Command command) throws android.os.RemoteException;
+public tesla.app.command.Command sendQuery(tesla.app.command.Command command) throws android.os.RemoteException;
 }

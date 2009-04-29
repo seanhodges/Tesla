@@ -89,7 +89,8 @@ public class VolumeSlider extends View {
 					// Adjust for extra size of mute button
 					currentHeight -= EXTRA_MUTE_HEIGHT;
 					item.pos = currentHeight;
-					item.resource = R.drawable.vol0; break;
+					item.resource = R.drawable.vol0; 
+					break;
 				case 1: item.resource = R.drawable.vol1; break;
 				case 2: item.resource = R.drawable.vol2; break;
 				case 3: item.resource = R.drawable.vol3; break;
@@ -98,7 +99,8 @@ public class VolumeSlider extends View {
 				case 6:
 					// Ensure the last item is 100%
 					item.percent = 100;
-					item.resource = R.drawable.vol6; break;
+					item.resource = R.drawable.vol6; 
+					break;
 			}
 			levelDrawable.add(item);
 		}

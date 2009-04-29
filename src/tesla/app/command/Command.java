@@ -20,6 +20,7 @@ public final class Command implements Parcelable {
 	private String commandString;
 	private ArrayList<Object> args;
 	long executionDelay = 0;
+	private String output;
 
 	public static final Parcelable.Creator<Command> CREATOR = new Parcelable.Creator<Command>() {
 		public Command createFromParcel(Parcel in) {
@@ -125,5 +126,13 @@ public final class Command implements Parcelable {
 		key = src.readString(); 
 		args = src.readArrayList(this.getClass().getClassLoader());
 		commandString = src.readString();
+	}
+
+	public void setOutput(String output) {
+		this.output = output;
+	}
+
+	public String getOutput() {
+		return output;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
+import tesla.app.connect.ConnectionException;
 import tesla.app.connect.ConnectionOptions;
 import tesla.app.connect.FakeConnection;
 import tesla.app.connect.IConnection;
@@ -37,6 +38,10 @@ public class CommandService extends Service {
 			
 			public void sendCommand(Command command) throws RemoteException {
 				sendCommandAction(command);
+			}
+			
+			public Command sendQuery(Command command) throws RemoteException {
+				return sendQueryAction(command);
 			}
 			
 		};
@@ -94,7 +99,7 @@ public class CommandService extends Service {
 						connection.sendCommand(nextCommand);
 						if (connection instanceof FakeConnection) {
 							// Display the command for debugging
-							System.out.println("FakeConnection: command recieved" + nextCommand.getCommandString());
+							System.out.println("FakeConnection: command received" + nextCommand.getCommandString());
 						}
 					}
 					catch (Exception e) {
@@ -114,5 +119,27 @@ public class CommandService extends Service {
 		if (command != null) {
 			nextCommand = command;
 		}
+	}
+	
+	public Command sendQueryAction(Command command) {
+		// Queries are returned synchronously
+		if (command != null) {
+			try {
+				String stdOut = connection.sendCommand(command);
+				command.setOutput(stdOut);
+			} catch (ConnectionException e) {
+				// Show errors in a dialog
+				new AlertDialog.Builder(CommandService.this)
+		        	.setTitle("Failed to send query to remote machine")
+		        	.setMessage(e.getMessage())
+		        	.show();
+				command.setOutput("");
+			}
+			if (connection instanceof FakeConnection) {
+				// Display the command for debugging
+				System.out.println("FakeConnection: query received: " + nextCommand.getCommandString() + ", result: " + command.getOutput());
+			}
+		}
+		return command;
 	}
 }
