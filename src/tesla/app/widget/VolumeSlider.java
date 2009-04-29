@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import tesla.app.R;
+import tesla.app.service.CommandService;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -29,7 +33,7 @@ public class VolumeSlider extends View {
 	private List<LevelDrawable> levelDrawable = null;
 	
 	public interface OnVolumeLevelChangeListener {
-		public void onLevelChanged(VolumeSlider volumeSlider, int level);
+		public void onLevelChanged(VolumeSlider volumeSlider, byte level);
 	}
 	
 	private class LevelDrawable {
@@ -105,8 +109,8 @@ public class VolumeSlider extends View {
 	}
 	
 	public boolean onTouchEvent(MotionEvent event) {
+		// TODO: This event is being called twice
 		boolean handled = false;
-		if (event.getPressure() > 0.5) {
 			for (LevelDrawable item : levelDrawable) {
 				if (event.getY() > item.pos) {
 					currentLevel = item.percent;
@@ -116,7 +120,6 @@ public class VolumeSlider extends View {
 			}
 			listener.onLevelChanged(this, currentLevel);
 			handled = true;
-		}
 		return handled;
 	}
 

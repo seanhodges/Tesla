@@ -6,8 +6,10 @@ import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandService;
 import tesla.app.widget.VolumeSlider;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -41,10 +43,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
         volumeSlider.setLevel(0);
     }
     
-    private void updateVolume(VolumeSlider volumeSlider, int level) {
-        // Debugging
-        System.out.println(level);
-			
+    private void updateVolume(VolumeSlider volumeSlider, byte level) {
     	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
     	float levelPercent = (float)level / 100;
 		command.addArg(new Float(levelPercent));
@@ -67,7 +66,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		bindService(new Intent(VolumeControl.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 
-	public void onLevelChanged(VolumeSlider volumeSlider, int level) {
+	public void onLevelChanged(VolumeSlider volumeSlider, byte level) {
 		updateVolume(volumeSlider, level);
 	}
 }
