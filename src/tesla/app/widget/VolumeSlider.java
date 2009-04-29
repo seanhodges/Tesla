@@ -111,6 +111,7 @@ public class VolumeSlider extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO: This event is being called twice
 		boolean handled = false;
+		if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
 			for (LevelDrawable item : levelDrawable) {
 				if (event.getY() > item.pos) {
 					currentLevel = item.percent;
@@ -120,6 +121,7 @@ public class VolumeSlider extends View {
 			}
 			listener.onLevelChanged(this, currentLevel);
 			handled = true;
+		}
 		return handled;
 	}
 
