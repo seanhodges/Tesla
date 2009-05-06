@@ -4,7 +4,9 @@ import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
+import tesla.app.service.business.IErrorHandler;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,10 +24,18 @@ public class Tesla extends Activity implements OnClickListener {
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
+			// Set the error handling once service connected
+			setErrorHandler();
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
 			commandService = null;
+		}
+	};
+	
+	private IErrorHandler errorHandler = new IErrorHandler.Stub() {
+		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
+			onServiceErrorAction(title, message, fatal);
 		}
 	};
 	
@@ -45,6 +55,21 @@ public class Tesla extends Activity implements OnClickListener {
         volumeButton.setOnClickListener(this);
     }
 	
+	protected void setErrorHandler() {
+    	try {
+			commandService.registerErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void onServiceErrorAction(String title, String message, boolean fatal) {
+		new AlertDialog.Builder(Tesla.this)
+			.setTitle(title)
+			.setMessage(message)
+			.show();
+	}
+
 	public void onClick(View v) {
 		Command command = null;
 		

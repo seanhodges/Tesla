@@ -115,11 +115,12 @@ public class CommandService extends Service {
 						}
 					}
 					catch (Exception e) {
-						// Show errors in a dialog
-						new AlertDialog.Builder(CommandService.this)
-				        	.setTitle("Failed to send command to remote machine")
-				        	.setMessage(e.getMessage())
-				        	.show();
+						try {
+							broadcastError("Failed to send command to remote machine", e);
+						} catch (RemoteException e1) {
+							// TODO: Don't swallow the asynchronous RemoteExceptions
+							e1.printStackTrace();
+						}
 					}
 				}
 			}
@@ -140,13 +141,7 @@ public class CommandService extends Service {
 				String stdOut = connection.sendCommand(command);
 				command.setOutput(stdOut);
 			} catch (ConnectionException e) {
-				int callbackCount = callbacks.beginBroadcast();
-				for (int it = 0; it < callbackCount; it++) {
-					callbacks.getBroadcastItem(it).onServiceError(
-						"Failed to send query to remote machine", 
-						e.getMessage(), 
-						false);
-				}
+				broadcastError("Failed to send query to remote machine", e);
 				command.setOutput("");
 			}
 			if (connection instanceof FakeConnection) {
@@ -155,6 +150,16 @@ public class CommandService extends Service {
 			}
 		}
 		return command;
+	}
+
+	private void broadcastError(String description, Exception e) throws RemoteException {
+		int callbackCount = callbacks.beginBroadcast();
+		for (int it = 0; it < callbackCount; it++) {
+			callbacks.getBroadcastItem(it).onServiceError(
+				description, 
+				e.getMessage(), 
+				false);
+		}
 	}
 
 	protected void unregisterErrorHandlerAction(IErrorHandler cb) {
