@@ -1,5 +1,6 @@
 package tesla.app.service.business;
 import tesla.app.service.business.IErrorHandler;
+import tesla.app.command.Command;
 
 interface ICommandController {
 	

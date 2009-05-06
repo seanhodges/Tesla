@@ -8,7 +8,7 @@ public class InitScriptProvider {
 	}
 	
 	private static String script = "" +
-			"compatiblePrograms=( nautilus kdeinit pulseaudio trackerd ); " +
+			"compatiblePrograms=( nautilus kdeinit kded4 pulseaudio trackerd ); " +
 			
 			"for index in ${compatiblePrograms[@]}; do " +
 			"	PID=$(pidof -s ${index}); " +

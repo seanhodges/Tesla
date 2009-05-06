@@ -63,7 +63,7 @@ public class Tesla extends Activity implements OnClickListener {
 		}
 	}
 
-	protected void onServiceErrorAction(String title, String message, boolean fatal) {
+	private void onServiceErrorAction(String title, String message, boolean fatal) {
 		new AlertDialog.Builder(Tesla.this)
 			.setTitle(title)
 			.setMessage(message)

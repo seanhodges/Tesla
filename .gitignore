@@ -1,2 +1,6 @@
+src/tesla/app/R.java
 bin
 dist
+.settings
+default.properties
+gen
