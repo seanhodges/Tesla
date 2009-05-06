@@ -95,7 +95,7 @@ public class SSHConnection implements IConnection {
 				// Any STDERR output is treated as a failure for now
 				if (errorStream.available() > 0) {
 					String stderr = getResponseFromSessionStream(errorStream);
-					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command + " :- " + stderr);
+					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
 				}
 				// Read the STDOUT output to return as a response
 				response = getResponseFromSessionStream(responseStream);

@@ -3,7 +3,7 @@ package tesla.app;
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
 import tesla.app.service.CommandService;
-import tesla.app.service.business.ICommandService;
+import tesla.app.service.business.ICommandController;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,11 +17,11 @@ import android.view.View.OnClickListener;
 
 public class Tesla extends Activity implements OnClickListener {
 	
-	private ICommandService commandService;
+	private ICommandController commandService;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			commandService = ICommandService.Stub.asInterface(service);
+			commandService = ICommandController.Stub.asInterface(service);
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {

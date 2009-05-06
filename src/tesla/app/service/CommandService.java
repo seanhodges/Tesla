@@ -10,17 +10,21 @@ import tesla.app.connect.ConnectionOptions;
 import tesla.app.connect.FakeConnection;
 import tesla.app.connect.IConnection;
 import tesla.app.connect.SSHConnection;
-import tesla.app.service.business.ICommandService;
+import tesla.app.service.business.ICommandController;
+import tesla.app.service.business.IErrorHandler;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
 public class CommandService extends Service {
 
 	private static final int EXEC_POLL_PERIOD = 50;
+	
+	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
 	private IConnection connection;
 	private Timer commandExecutioner;
@@ -32,7 +36,7 @@ public class CommandService extends Service {
 	}
 
 	public IBinder onBind(Intent arg0) {
-		return new ICommandService.Stub() {
+		return new ICommandController.Stub() {
 
 			// Command delegates
 			
@@ -42,6 +46,14 @@ public class CommandService extends Service {
 			
 			public Command sendQuery(Command command) throws RemoteException {
 				return sendQueryAction(command);
+			}
+
+			public void registerErrorHandler(IErrorHandler cb) throws RemoteException {
+				registerErrorHandlerAction(cb);
+			}
+
+			public void unregisterErrorHandler(IErrorHandler cb) throws RemoteException {
+				unregisterErrorHandlerAction(cb);
 			}
 			
 		};
@@ -84,7 +96,7 @@ public class CommandService extends Service {
 		if (connection.isConnected()) connection.disconnect();
 	}
 	
-	public void handleCommands() {
+	private void handleCommands() {
 		
 		// Commands are executed in a Timer thread
 		// this moves them out of the event loop, and drops commands when new ones are requested
@@ -115,24 +127,26 @@ public class CommandService extends Service {
 		}, 0, EXEC_POLL_PERIOD);
 	}
 
-	public void sendCommandAction(Command command) {
+	protected void sendCommandAction(Command command) {
 		if (command != null) {
 			nextCommand = command;
 		}
 	}
 	
-	public Command sendQueryAction(Command command) {
+	protected Command sendQueryAction(Command command) throws RemoteException {
 		// Queries are returned synchronously
 		if (command != null) {
 			try {
 				String stdOut = connection.sendCommand(command);
 				command.setOutput(stdOut);
 			} catch (ConnectionException e) {
-				// Show errors in a dialog
-				new AlertDialog.Builder(CommandService.this)
-		        	.setTitle("Failed to send query to remote machine")
-		        	.setMessage(e.getMessage())
-		        	.show();
+				int callbackCount = callbacks.beginBroadcast();
+				for (int it = 0; it < callbackCount; it++) {
+					callbacks.getBroadcastItem(it).onServiceError(
+						"Failed to send query to remote machine", 
+						e.getMessage(), 
+						false);
+				}
 				command.setOutput("");
 			}
 			if (connection instanceof FakeConnection) {
@@ -141,5 +155,13 @@ public class CommandService extends Service {
 			}
 		}
 		return command;
+	}
+
+	protected void unregisterErrorHandlerAction(IErrorHandler cb) {
+		if (cb != null) callbacks.unregister(cb);
+	}
+
+	protected void registerErrorHandlerAction(IErrorHandler cb) {
+		if (cb != null) callbacks.register(cb);
 	}
 }

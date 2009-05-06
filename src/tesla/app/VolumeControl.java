@@ -3,9 +3,11 @@ package tesla.app;
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
 import tesla.app.service.CommandService;
-import tesla.app.service.business.ICommandService;
+import tesla.app.service.business.ICommandController;
+import tesla.app.service.business.IErrorHandler;
 import tesla.app.widget.VolumeSlider;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,15 +19,24 @@ import android.os.RemoteException;
 public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLevelChangeListener {
 	
 	private VolumeSlider volumeSlider;
-	private ICommandService commandService;
+	private ICommandController commandService;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			commandService = ICommandService.Stub.asInterface(service);
+			commandService = ICommandController.Stub.asInterface(service);
+			// Set the error handling and initial volume level once service connected
+			setErrorHandler();
+			setInitialVolume();
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
 			commandService = null;
+		}
+	};
+	
+	private IErrorHandler errorHandler = new IErrorHandler.Stub() {
+		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
+			onServiceErrorAction(title, message, fatal);
 		}
 	};
 	
@@ -36,26 +47,17 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
         
         volumeSlider = (VolumeSlider)this.findViewById(R.id.volume);
         volumeSlider.setOnVolumeLevelChangeListener(this);
-        
-        // Set the initial volume level
-        Command command = CommandFactory.instance().getCommand(Command.VOL_CURRENT);
-        try {
-			command = commandService.sendQuery(command);
-		} catch (RemoteException e) {
-			// Failed to send query
-			e.printStackTrace();
-		}
-        // Parse the result as a level percentage
-        float volumeLevel = Float.parseFloat(command.getOutput());
-        if (volumeLevel > 0) {
-        	volumeSlider.setLevel((int)(volumeLevel * 100));
-        }
-        else {
-        	volumeSlider.setLevel(0);
-        }
     }
     
-    private void updateVolume(VolumeSlider volumeSlider, byte level) {
+    protected void setErrorHandler() {
+    	try {
+			commandService.registerErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void updateVolume(VolumeSlider volumeSlider, byte level) {
     	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
     	float levelPercent = (float)level / 100;
 		command.addArg(new Float(levelPercent));
@@ -80,5 +82,32 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 
 	public void onLevelChanged(VolumeSlider volumeSlider, byte level) {
 		updateVolume(volumeSlider, level);
+	}
+	
+	private void setInitialVolume() {
+		volumeSlider.setLevel(0);
+		
+        Command command = CommandFactory.instance().getCommand(Command.VOL_CURRENT);
+        try {
+			command = commandService.sendQuery(command);
+		} catch (RemoteException e) {
+			// Failed to send query
+			e.printStackTrace();
+		}
+		
+        // Parse the result as a level percentage
+		if (command.getOutput() != null && command.getOutput() != "") {
+	        float volumeLevel = Float.parseFloat(command.getOutput());
+	        if (volumeLevel > 0) {
+	        	volumeSlider.setLevel((int)(volumeLevel * 100));
+	        }
+		}
+	}
+	
+	private void onServiceErrorAction(String title, String message, boolean fatal) {
+		new AlertDialog.Builder(VolumeControl.this)
+			.setTitle(title)
+			.setMessage(message)
+			.show();
 	}
 }
