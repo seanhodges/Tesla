@@ -62,6 +62,14 @@ public class Tesla extends Activity implements OnClickListener {
 			e.printStackTrace();
 		}
 	}
+	
+	protected void unsetErrorHandler() {
+    	try {
+			commandService.unregisterErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private void onServiceErrorAction(String title, String message, boolean fatal) {
 		new AlertDialog.Builder(Tesla.this)
@@ -101,6 +109,7 @@ public class Tesla extends Activity implements OnClickListener {
 
 	protected void onPause() {
 		super.onPause();
+		unsetErrorHandler();
 		if (connection != null) unbindService(connection);
 	}
 

@@ -57,6 +57,14 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 			e.printStackTrace();
 		}
 	}
+	
+	protected void unsetErrorHandler() {
+    	try {
+			commandService.unregisterErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private void updateVolume(VolumeSlider volumeSlider, byte level) {
     	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
@@ -76,6 +84,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
     
 	protected void onPause() {
 		super.onPause();
+		unsetErrorHandler();
 		if (connection != null) unbindService(connection);
 	}
 
