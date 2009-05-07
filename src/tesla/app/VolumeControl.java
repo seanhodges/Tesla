@@ -2,6 +2,7 @@ package tesla.app;
 
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
+import tesla.app.command.provider.AppCommandProvider;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
@@ -59,7 +60,10 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 
 	private void updateVolume(VolumeSlider volumeSlider, byte level) {
     	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
-    	float levelPercent = (float)level / 100;
+    	float levelPercent = (float)level;
+    	if (AppCommandProvider.APP_MODE.equals("rhythmbox")) {
+    		levelPercent = (float)level / 100;
+    	}
 		command.addArg(new Float(levelPercent));
 		
 		try {
@@ -99,7 +103,12 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		if (command.getOutput() != null && command.getOutput() != "") {
 	        float volumeLevel = Float.parseFloat(command.getOutput());
 	        if (volumeLevel > 0) {
-	        	volumeSlider.setLevel((int)(volumeLevel * 100));
+	        	if (AppCommandProvider.APP_MODE.equals("rhythmbox")) {
+	        		volumeSlider.setLevel((int)(volumeLevel * 100));
+	        	}
+	        	else {
+	        		volumeSlider.setLevel((int)volumeLevel);
+	        	}
 	        }
 		}
 	}
