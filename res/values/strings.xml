@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">Tesla</string>
     <string name="app_desc">Universal Remote Control</string>
+    
+	<string name="rhythmbox_item">Rhythmbox</string>
+	<string name="amarok_item">Amarok</string>
 </resources>

@@ -56,8 +56,36 @@
 				android:singleLine="true"
 				android:password="true" />
 		</TableRow>
+		
+		<TableRow>
+ 			<TextView
+				android:singleLine="true" 
+				android:text="Application" 
+				android:padding="5px" />
+				
+			<RadioGroup 
+				android:id="@+id/app"
+				android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:checkedButton="@+id/rhythmbox"
+				android:orientation="vertical">
+				
+				<RadioButton
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/rhythmbox_item" 
+					android:id="@+id/rhythmbox_item" />
+					
+				<RadioButton
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/amarok_item" 
+					android:id="@+id/amarok_item"/>
+					
+			</RadioGroup>
+		</TableRow>
 	</TableLayout>
- 
+	
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
