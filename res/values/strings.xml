@@ -2,4 +2,25 @@
 <resources>
     <string name="app_name">Tesla</string>
     <string name="app_desc">Universal Remote Control</string>
+    
+    <!-- NewConnection -->
+    <string name="host">Host</string>
+    <string name="port">Port</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="application_selection">Application</string>
+	<string name="rhythmbox_item">Rhythmbox</string>
+	<string name="amarok_item">Amarok</string>
+	<string name="cancel">Cancel</string>
+	<string name="connect">Connect</string>
+	
+	<string name="pc_power">Pwr</string>
+	<string name="last_song">&lt;&lt;</string>
+	<string name="play_pause">Play / Pause</string>
+	<string name="next_song">&gt;&gt;</string>
+	<string name="info_title">Title</string>
+	<string name="info_artist">Artist</string>
+	<string name="info_album">Album</string>
+	<string name="playlist">Playlist</string>
+	<string name="volume">Volume</string>
 </resources>

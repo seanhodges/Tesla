@@ -1,6 +1,8 @@
-src/tesla/app/R.java
 bin
 dist
 .settings
 default.properties
 gen
+src/tesla/app/R.java
+src/tesla/app/service/business/ICommandController.java
+src/tesla/app/service/business/IErrorHandler.java

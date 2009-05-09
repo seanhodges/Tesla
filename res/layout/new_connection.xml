@@ -14,7 +14,7 @@
 		<TableRow>
 			<TextView
 				android:singleLine="true" 
-				android:text="Hostname" 
+				android:text="@string/host" 
 				android:padding="5px" />
 				
 			<EditText
@@ -26,7 +26,7 @@
 		<TableRow>
 			<TextView
 				android:singleLine="true" 
-				android:text="Port" 
+				android:text="@string/port" 
 				android:padding="5px" />
 				
 			<EditText
@@ -37,7 +37,7 @@
 		<TableRow>
 			<TextView
 				android:singleLine="true" 
-				android:text="User" 
+				android:text="@string/username" 
 				android:padding="5px" />
 				
 			<EditText
@@ -48,7 +48,7 @@
 		<TableRow>
 			<TextView
 				android:singleLine="true" 
-				android:text="Password" 
+				android:text="@string/password" 
 				android:padding="5px" />
 				
 			<EditText
@@ -56,8 +56,36 @@
 				android:singleLine="true"
 				android:password="true" />
 		</TableRow>
+		
+		<TableRow>
+ 			<TextView
+				android:singleLine="true" 
+				android:text="@string/application_selection" 
+				android:padding="5px" />
+				
+			<RadioGroup 
+				android:id="@+id/app"
+				android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:checkedButton="@+id/rhythmbox"
+				android:orientation="vertical">
+				
+				<RadioButton
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/rhythmbox_item" 
+					android:id="@+id/rhythmbox_item" />
+					
+				<RadioButton
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/amarok_item" 
+					android:id="@+id/amarok_item"/>
+					
+			</RadioGroup>
+		</TableRow>
 	</TableLayout>
- 
+	
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -68,13 +96,13 @@
 		android:id="@+id/cancel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Cancel" />
+		android:text="@string/cancel" />
 		
 		<Button
 		android:id="@+id/connect"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Connect" />	
+		android:text="@string/connect" />	
 	</LinearLayout>
 	
 </LinearLayout>

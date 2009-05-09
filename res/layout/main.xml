@@ -10,7 +10,7 @@
 		android:id="@+id/pc_power"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Pwr"
+		android:text="@string/pc_power"
 		android:layout_gravity="right" />
 		
 	<LinearLayout
@@ -24,19 +24,19 @@
 		android:id="@+id/last_song"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="&lt;&lt;" />
+		android:text="@string/last_song" />
 		
 		<Button
 		android:id="@+id/play_pause"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Play / Pause" />
+		android:text="@string/play_pause" />
 		
 		<Button
 		android:id="@+id/next_song"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="&gt;&gt;" />
+		android:text="@string/next_song" />
 	</LinearLayout>
 
 	<LinearLayout
@@ -63,19 +63,19 @@
 			android:id="@+id/song_title"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Title" />
+			android:text="@string/info_title" />
 			
 			<TextView
 			android:id="@+id/song_album"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Album" />
+			android:text="@string/info_artist" />
 	
 			<TextView
 			android:id="@+id/song_artist"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Artist" />
+			android:text="@string/info_album" />
 		</LinearLayout>
 	</LinearLayout>
 
@@ -89,13 +89,13 @@
 		android:id="@+id/playlist"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Playlist" />
+		android:text="@string/playlist" />
 		
 		<Button
 		android:id="@+id/volume"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Volume" />	
+		android:text="@string/volume" />	
 	</LinearLayout>
 	
 </LinearLayout>
