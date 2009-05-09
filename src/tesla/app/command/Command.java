@@ -3,6 +3,7 @@ package tesla.app.command;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -131,6 +132,13 @@ public final class Command implements Parcelable {
 		dest.writeString(key);
 		dest.writeList(args);
 		dest.writeString(commandString);
+		Bundle settingsBundle = new Bundle();
+		for (String key : settings.keySet()) {
+			settingsBundle.putString(key, settings.get(key));	
+		}
+		dest.writeBundle(settingsBundle);
+		dest.writeLong(executionDelay);
+		dest.writeString(output);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -138,6 +146,13 @@ public final class Command implements Parcelable {
 		key = src.readString(); 
 		args = src.readArrayList(this.getClass().getClassLoader());
 		commandString = src.readString();
+		Bundle settingsBundle = src.readBundle(this.getClass().getClassLoader());
+		settings.clear();
+		for (String key : settingsBundle.keySet()) {
+			settings.put(key, settingsBundle.getString(key));
+		}
+		executionDelay = src.readLong();
+		output = src.readString();
 	}
 
 	public void setOutput(String output) {
