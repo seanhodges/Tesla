@@ -111,7 +111,7 @@ public class CommandService extends Service {
 						connection.sendCommand(nextCommand);
 						if (connection instanceof FakeConnection) {
 							// Display the command for debugging
-							System.out.println("FakeConnection: command received" + nextCommand.getCommandString());
+							System.out.println("FakeConnection: command received: " + nextCommand.getCommandString());
 						}
 					}
 					catch (Exception e) {
@@ -146,7 +146,7 @@ public class CommandService extends Service {
 			}
 			if (connection instanceof FakeConnection) {
 				// Display the command for debugging
-				System.out.println("FakeConnection: query received: " + nextCommand.getCommandString() + ", result: " + command.getOutput());
+				System.out.println("FakeConnection: query received: " + command.getCommandString() + ", result: " + command.getOutput());
 			}
 		}
 		return command;

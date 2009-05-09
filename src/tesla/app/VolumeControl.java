@@ -1,8 +1,9 @@
 package tesla.app;
 
+import java.util.Map;
+
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
-import tesla.app.command.provider.AppCommandProvider;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
@@ -41,7 +42,9 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		}
 	};
 	
+	
     /* This is the volume control. */
+	
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.volume_control);
@@ -58,13 +61,23 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		}
 	}
 
-	private void updateVolume(VolumeSlider volumeSlider, byte level) {
-    	Command command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
-    	float levelPercent = (float)level;
-    	if (AppCommandProvider.APP_MODE.equals("rhythmbox")) {
-    		levelPercent = (float)level / 100;
+	private void updateVolume(VolumeSlider volumeSlider, float level) {
+		Command command = null;
+    	if (level == 0) {
+    		command = CommandFactory.instance().getCommand(Command.VOL_MUTE); 
     	}
-		command.addArg(new Float(levelPercent));
+    	else {
+			command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
+	    	Object levelArg = null;
+	    	if (level > 1) {
+	    		// Values above a fraction should be absolute integers
+	    		levelArg = new Integer((int)level);
+	    	}
+	    	else {
+	    		levelArg = new Float(level);
+	    	}
+			command.addArg(levelArg);
+    	}
 		
 		try {
 			commandService.sendCommand(command);
@@ -84,14 +97,21 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		bindService(new Intent(VolumeControl.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 
-	public void onLevelChanged(VolumeSlider volumeSlider, byte level) {
+	public void onLevelChanged(VolumeSlider volumeSlider, float level) {
 		updateVolume(volumeSlider, level);
 	}
 	
 	private void setInitialVolume() {
-		volumeSlider.setLevel(0);
+		
+
 		
         Command command = CommandFactory.instance().getCommand(Command.VOL_CURRENT);
+        
+        Map<String, String> settings = command.getSettings();
+        volumeSlider.setMinVolume(Float.parseFloat(settings.get("MIN")));
+        volumeSlider.setMaxVolume(Float.parseFloat(settings.get("MAX")));
+		volumeSlider.setLevel(0);
+		
         try {
 			command = commandService.sendQuery(command);
 		} catch (RemoteException e) {
@@ -103,12 +123,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		if (command.getOutput() != null && command.getOutput() != "") {
 	        float volumeLevel = Float.parseFloat(command.getOutput());
 	        if (volumeLevel > 0) {
-	        	if (AppCommandProvider.APP_MODE.equals("rhythmbox")) {
-	        		volumeSlider.setLevel((int)(volumeLevel * 100));
-	        	}
-	        	else {
-	        		volumeSlider.setLevel((int)volumeLevel);
-	        	}
+	        	volumeSlider.setLevel((int)volumeLevel);
 	        }
 		}
 	}

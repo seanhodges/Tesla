@@ -1,6 +1,7 @@
 package tesla.app.command;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -19,6 +20,8 @@ public final class Command implements Parcelable {
 
 	private String key;
 	private String commandString;
+	private Map<String, String> settings;
+	
 	private ArrayList<Object> args;
 	long executionDelay = 0;
 	private String output;
@@ -70,6 +73,14 @@ public final class Command implements Parcelable {
 			// function will return empty string
 		}
 		return out;
+	}
+
+	public void setSettings(Map<String, String> settings) {
+		this.settings = settings;
+	}
+
+	public Map<String, String> getSettings() {
+		return settings;
 	}
 
 	public long getDelay() {

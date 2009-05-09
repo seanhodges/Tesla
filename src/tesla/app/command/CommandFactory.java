@@ -1,6 +1,8 @@
 package tesla.app.command;
 
-import tesla.app.command.provider.AppCommandProvider;
+import java.util.Map;
+
+import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.command.provider.InitScriptProvider;
 
 public class CommandFactory {
@@ -8,10 +10,10 @@ public class CommandFactory {
 	private static final long COMMAND_DELAY = 10;
 	private static final long INIT_SCRIPT_DELAY = 1000;
 	
-	private AppCommandProvider config;
+	private AppConfigProvider config = null;
 
 	private CommandFactory() {
-		config = new AppCommandProvider();
+		config = new AppConfigProvider("rhythmbox");
 	}
 
 	public Command getInitScript() {
@@ -27,14 +29,17 @@ public class CommandFactory {
 		out.setKey(key);
 		out.setDelay(COMMAND_DELAY);
 		String command;
+		Map<String, String> settings = null;
 		try {
-			command = config.queryCommand(key);
+			command = config.getCommand(key);
+			settings = config.getSettings(key);
 		}
 		catch (Exception e) {
 			// Return a no-op command
 			command = null;
 		}
 		out.setCommandString(command);
+		out.setSettings(settings);
 		return out;
 	}
 

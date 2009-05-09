@@ -15,19 +15,22 @@ public class VolumeSlider extends View {
 	public static final int MAX_LEVEL = 7;
 	private static final int EXTRA_MUTE_HEIGHT = 50; // This is a fudge because the mute button is slightly taller than the levels
 
-	private byte currentLevel = 0;
+	private float currentLevel = 0;
+	private float minVolume;
+	private float maxVolume;
+	
 	private OnVolumeLevelChangeListener listener;
 
 	private boolean levelsCalculated = false;
 	private List<LevelDrawable> levelDrawable = null;
 	
 	public interface OnVolumeLevelChangeListener {
-		public void onLevelChanged(VolumeSlider volumeSlider, byte level);
+		public void onLevelChanged(VolumeSlider volumeSlider, float level);
 	}
 	
 	private class LevelDrawable {
-		public float pos;
-		public byte percent;
+		public float geometryPosition;
+		public float level;
 		public int resource;
 	}
 
@@ -60,7 +63,7 @@ public class VolumeSlider extends View {
 			levelsCalculated = true;
 			// Set default image
 			for (LevelDrawable item : levelDrawable) {
-				if (item.percent >= currentLevel) {
+				if (item.level >= currentLevel) {
 					changeImage(item.resource);
 					break;
 				}
@@ -70,19 +73,19 @@ public class VolumeSlider extends View {
 	
 	private void calculateLevels(Context context) {
 		if (context == null) context = getContext();
-		byte itemPerc = 100 / (MAX_LEVEL - 1);
+		float itemLevel = ((maxVolume - minVolume) / (MAX_LEVEL - 1)) + minVolume;
 		float itemHeight = (getHeight() - EXTRA_MUTE_HEIGHT) / MAX_LEVEL;
 		float currentHeight = getHeight();
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			LevelDrawable item = new LevelDrawable();
 			currentHeight -= itemHeight;
-			item.percent = (byte)(itemPerc * i);
-			item.pos = currentHeight;
+			item.level = itemLevel * i;
+			item.geometryPosition = currentHeight;
 			switch (i) {
 				case 0:
 					// Adjust for extra size of mute button
 					currentHeight -= EXTRA_MUTE_HEIGHT;
-					item.pos = currentHeight;
+					item.geometryPosition = currentHeight;
 					item.resource = R.drawable.vol0; 
 					break;
 				case 1: item.resource = R.drawable.vol1; break;
@@ -92,7 +95,7 @@ public class VolumeSlider extends View {
 				case 5: item.resource = R.drawable.vol5; break;
 				case 6:
 					// Ensure the last item is 100%
-					item.percent = 100;
+					item.level = maxVolume;
 					item.resource = R.drawable.vol6; 
 					break;
 			}
@@ -109,8 +112,8 @@ public class VolumeSlider extends View {
 		boolean handled = false;
 		if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
 			for (LevelDrawable item : levelDrawable) {
-				if (event.getY() > item.pos) {
-					currentLevel = item.percent;
+				if (event.getY() > item.geometryPosition) {
+					currentLevel = item.level;
 					changeImage(item.resource);
 					break;
 				}
@@ -120,8 +123,12 @@ public class VolumeSlider extends View {
 		}
 		return handled;
 	}
+	
+	public void setOnVolumeLevelChangeListener(OnVolumeLevelChangeListener listener) {
+		this.listener = listener;
+	}
 
-	public byte getLevel() {
+	public float getLevel() {
 		return currentLevel;
 	}
 
@@ -132,8 +139,20 @@ public class VolumeSlider extends View {
 	public void setLevel(int currentLevel) {
 		this.currentLevel = (byte)currentLevel;
 	}
-	
-	public void setOnVolumeLevelChangeListener(OnVolumeLevelChangeListener listener) {
-		this.listener = listener;
+
+	public void setMinVolume(float minVolume) {
+		this.minVolume = minVolume;
+	}
+
+	public float getMinVolume() {
+		return minVolume;
+	}
+
+	public void setMaxVolume(float maxVolume) {
+		this.maxVolume = maxVolume;
+	}
+
+	public float getMaxVolume() {
+		return maxVolume;
 	}
 }

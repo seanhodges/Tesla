@@ -1,24 +1,60 @@
 package tesla.app.command.provider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import tesla.app.command.Command;
 
-public class AppCommandProvider {
+public class AppConfigProvider {
 
-	public static final String APP_MODE = "amarok";
+	public String appName = "amarok";
 	
-	public String queryCommand(String key) throws Exception {
+	public AppConfigProvider(String appName) {
+		this.appName = appName;
+	}
+	
+	public String getCommand(String key) throws Exception {
 		
 		// These commands will be extracted from
 		// a database of application configurations
 		
-		if (APP_MODE.equals("rhythmbox")) {
+		if (appName.equals("rhythmbox")) {
 			return rhythmBoxCommand(key);
 		}
 		else {
 			return amarokCommand(key);
 		}
 	}
-		
+	
+	public Map<String, String> getSettings(String key) {
+		Map<String, String> settings = null;
+		if (appName.equals("rhythmbox")) {
+			settings = rhythmboxSettings(key);
+		}
+		else {
+			settings = amarokSettings(key);
+		}
+		return settings;
+	}
+	
+	public Map<String, String> rhythmboxSettings(String key) {
+		Map<String, String> settings = new HashMap<String, String>();
+		if (key.equals(Command.VOL_CURRENT)) {
+			settings.put("MIN", "0.0");
+			settings.put("MAX", "1.0");
+		}
+		return settings;
+	}
+	
+	public Map<String, String> amarokSettings(String key) {
+		Map<String, String> settings = new HashMap<String, String>();
+		if (key.equals(Command.VOL_CURRENT)) {
+			settings.put("MIN", "0.0");
+			settings.put("MAX", "100.0");
+		}
+		return settings;
+	}
+	
 	private String rhythmBoxCommand(String key) throws Exception {
 		String out = "";
 		if (key.equals(Command.PLAY)) {
@@ -37,7 +73,7 @@ public class AppCommandProvider {
 			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume %f";
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume 0";
+			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume 0.0";
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
 			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getVolume";
@@ -63,7 +99,7 @@ public class AppCommandProvider {
 			out = "qdbus org.kde.amarok /Player Next";
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "qdbus org.kde.amarok /Player VolumeSet %f";
+			out = "qdbus org.kde.amarok /Player VolumeSet %i";
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
 			out = "qdbus org.kde.amarok /Player VolumeSet 0";
