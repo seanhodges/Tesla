@@ -12,9 +12,7 @@ import tesla.app.connect.IConnection;
 import tesla.app.connect.SSHConnection;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
-import android.app.AlertDialog;
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
@@ -39,6 +37,10 @@ public class CommandService extends Service {
 		return new ICommandController.Stub() {
 
 			// Command delegates
+
+			public boolean connect() throws RemoteException {
+				return connectAction();
+			}
 			
 			public void sendCommand(Command command) throws RemoteException {
 				sendCommandAction(command);
@@ -63,7 +65,10 @@ public class CommandService extends Service {
 		super.onCreate();
 		//connection = new FakeConnection();
 		connection = new SSHConnection();
-		
+	}
+	
+	public boolean connectAction() throws RemoteException {
+		boolean success = false;
         try {
 			connection.connect(new ConnectionOptions(this));
 			// Initialise the DBUS connection
@@ -74,20 +79,13 @@ public class CommandService extends Service {
 			
 			// Start the command thread
 			handleCommands();
+			success = true;
 			
 		} catch (Exception e) {
-			// Show errors in a dialog
-			new AlertDialog.Builder(CommandService.this)
-	        	.setTitle("Failed to connect to remote machine")
-	        	.setMessage(e.getMessage())
-	        	.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-	        		public void onClick(DialogInterface dialog, int whichButton) {
-	        			// Return the user to the connection screen
-	        			stopSelf();
-	        		}
-	        	})
-	        	.show();
+			broadcastError("Failed to connect to remote machine", e, true);
+			stopSelf();
 		}
+		return success;
 	}
 
 	public void onDestroy() {
@@ -116,7 +114,7 @@ public class CommandService extends Service {
 					}
 					catch (Exception e) {
 						try {
-							broadcastError("Failed to send command to remote machine", e);
+							broadcastError("Failed to send command to remote machine", e, false);
 						} catch (RemoteException e1) {
 							// TODO: Don't swallow the asynchronous RemoteExceptions
 							e1.printStackTrace();
@@ -141,7 +139,7 @@ public class CommandService extends Service {
 				String stdOut = connection.sendCommand(command);
 				command.setOutput(stdOut);
 			} catch (ConnectionException e) {
-				broadcastError("Failed to send query to remote machine", e);
+				broadcastError("Failed to send query to remote machine", e, false);
 				command.setOutput("");
 			}
 			if (connection instanceof FakeConnection) {
@@ -152,13 +150,13 @@ public class CommandService extends Service {
 		return command;
 	}
 
-	private void broadcastError(String description, Exception e) throws RemoteException {
+	private void broadcastError(String description, Exception e, boolean fatal) throws RemoteException {
 		int callbackCount = callbacks.beginBroadcast();
 		for (int it = 0; it < callbackCount; it++) {
 			callbacks.getBroadcastItem(it).onServiceError(
 				description, 
 				e.getMessage(), 
-				false);
+				fatal);
 		}
 	}
 

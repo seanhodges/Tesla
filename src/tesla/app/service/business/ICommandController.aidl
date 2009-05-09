@@ -7,6 +7,8 @@ interface ICommandController {
 	void registerErrorHandler(IErrorHandler cb);
 	void unregisterErrorHandler(IErrorHandler cb);
 	
+	boolean connect();
+	
 	void sendCommand(out Command command);
 	Command sendQuery(out Command command);
 }
