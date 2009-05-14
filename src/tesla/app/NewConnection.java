@@ -41,7 +41,7 @@ public class NewConnection extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 			// Start the playback activity
-			if (success) startActivity(new Intent(NewConnection.this, Playback.class));
+			if (success) startActivity(new Intent(NewConnection.this, Tesla.class));
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
