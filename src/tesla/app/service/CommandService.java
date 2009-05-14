@@ -68,8 +68,8 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		connection = new FakeConnection();
-		//connection = new SSHConnection();
+		//connection = new FakeConnection();
+		connection = new SSHConnection();
 	}
 	
 	public boolean connectAction() throws RemoteException {
