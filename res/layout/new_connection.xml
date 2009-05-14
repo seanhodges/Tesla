@@ -2,46 +2,54 @@
 <LinearLayout
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:background="#ffffffff"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical">
 	
 	<TableLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_height="wrap_content"
-		android:layout_width="fill_parent">
+		android:layout_width="fill_parent"
+		android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:paddingTop="15dip">
 		
 		<TableRow>
+			
 			<TextView
 				android:singleLine="true" 
-				android:text="@string/host" 
-				android:padding="5px" />
+				android:text="@string/host"
+				android:layout_width="wrap_content"
+				android:paddingRight="10dip" />
 				
 			<EditText
 				android:id="@+id/host"
-				android:singleLine="true" 
-				android:width="240px" />
+				android:singleLine="true"
+				android:layout_weight="1"
+				android:layout_width="fill_parent"/>
 		</TableRow>
 		
 		<TableRow>
 			<TextView
 				android:singleLine="true" 
 				android:text="@string/port" 
-				android:padding="5px" />
+				android:paddingRight="10dip" />
 				
 			<EditText
 				android:id="@+id/port"
-				android:singleLine="true" />
+				android:layout_width="wrap_content"
+				android:width="14.5sp"
+				android:singleLine="true"/>
 		</TableRow>
 		
 		<TableRow>
 			<TextView
 				android:singleLine="true" 
 				android:text="@string/username" 
-				android:padding="5px" />
+				android:paddingRight="10dip" />
 				
 			<EditText
 				android:id="@+id/user"
+				android:layout_weight="1"
 				android:singleLine="true" />
 		</TableRow>
 		
@@ -49,11 +57,12 @@
 			<TextView
 				android:singleLine="true" 
 				android:text="@string/password" 
-				android:padding="5px" />
+				android:paddingRight="10dip" />
 				
 			<EditText
 				android:id="@+id/pass"
 				android:singleLine="true"
+				android:layout_weight="1"
 				android:password="true" />
 		</TableRow>
 		
@@ -61,23 +70,24 @@
  			<TextView
 				android:singleLine="true" 
 				android:text="@string/application_selection" 
-				android:padding="5px" />
+				android:paddingRight="10dip" 
+				android:paddingTop="15dip"/>
 				
 			<RadioGroup 
-				android:id="@+id/app"
+				android:id="@+id/initial_app"
 				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
+				android:layout_width="wrap_content"
 				android:checkedButton="@+id/rhythmbox"
 				android:orientation="vertical">
 				
 				<RadioButton
-					android:layout_width="fill_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/rhythmbox_item" 
-					android:id="@+id/rhythmbox_item" />
+					android:id="@+id/rhythmbox_item"/>
 					
 				<RadioButton
-					android:layout_width="fill_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/amarok_item" 
 					android:id="@+id/amarok_item"/>
@@ -87,6 +97,7 @@
 	</TableLayout>
 	
 	<LinearLayout
+		android:paddingTop="5dip"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		xmlns:android="http://schemas.android.com/apk/res/android"
