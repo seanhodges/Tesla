@@ -13,7 +13,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".Tesla" />
+        <activity android:name=".Playback" />
         <activity android:name=".VolumeControl" />
         
 		<service android:name=".service.CommandService"/>
