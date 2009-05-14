@@ -7,6 +7,9 @@ import tesla.app.command.Command;
 
 public class AppConfigProvider {
 
+	public static final String APP_RHYTHMBOX = "rhythmbox";
+	public static final String APP_AMAROK = "amarok";
+	
 	public String appName = "amarok";
 	
 	public AppConfigProvider(String appName) {
@@ -18,7 +21,7 @@ public class AppConfigProvider {
 		// These commands will be extracted from
 		// a database of application configurations
 		
-		if (appName.equals("rhythmbox")) {
+		if (appName.equals(APP_RHYTHMBOX)) {
 			return rhythmBoxCommand(key);
 		}
 		else {
@@ -28,7 +31,7 @@ public class AppConfigProvider {
 	
 	public Map<String, String> getSettings(String key) {
 		Map<String, String> settings = null;
-		if (appName.equals("rhythmbox")) {
+		if (appName.equals(APP_RHYTHMBOX)) {
 			settings = rhythmboxSettings(key);
 		}
 		else {

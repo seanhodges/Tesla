@@ -25,6 +25,7 @@ public class CommandService extends Service {
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
 	private IConnection connection;
+	private CommandFactory factory;
 	private Timer commandExecutioner;
 	private Command nextCommand = null;
 	private Command lastCommand = null;
@@ -40,6 +41,10 @@ public class CommandService extends Service {
 
 			public boolean connect() throws RemoteException {
 				return connectAction();
+			}
+			
+			public Command queryForCommand(String key) throws RemoteException {
+				return queryForCommandAction(key);
 			}
 			
 			public void sendCommand(Command command) throws RemoteException {
@@ -63,16 +68,20 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		//connection = new FakeConnection();
-		connection = new SSHConnection();
+		connection = new FakeConnection();
+		//connection = new SSHConnection();
 	}
 	
 	public boolean connectAction() throws RemoteException {
 		boolean success = false;
+		
+		ConnectionOptions options = new ConnectionOptions(this);
+		factory = new CommandFactory(options.appSelection);
+		
         try {
-			connection.connect(new ConnectionOptions(this));
+			connection.connect(options);
 			// Initialise the DBUS connection
-			String response = connection.sendCommand(CommandFactory.instance().getInitScript());
+			String response = connection.sendCommand(factory.getInitScript());
 			if (!response.equals("success\n")) {
 				throw new Exception("Init script failed with output: " + response);
 			}
@@ -124,6 +133,10 @@ public class CommandService extends Service {
 			}
 			
 		}, 0, EXEC_POLL_PERIOD);
+	}
+	
+	protected Command queryForCommandAction(String key) {
+		return factory.getCommand(key);
 	}
 
 	protected void sendCommandAction(Command command) {

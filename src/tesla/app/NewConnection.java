@@ -1,5 +1,6 @@
 package tesla.app;
 
+import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.connect.ConnectionOptions;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
@@ -16,6 +17,8 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 public class NewConnection extends Activity implements OnClickListener {
 	
@@ -27,6 +30,7 @@ public class NewConnection extends Activity implements OnClickListener {
 	EditText portText;
 	EditText userText;
 	EditText passText;
+	RadioGroup appSelection;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -41,7 +45,10 @@ public class NewConnection extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 			// Start the playback activity
-			if (success) startActivity(new Intent(NewConnection.this, Playback.class));
+			if (success) {
+				unbindService(connection);
+				startActivity(new Intent(NewConnection.this, Playback.class));
+			}
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
@@ -71,13 +78,28 @@ public class NewConnection extends Activity implements OnClickListener {
 		portText = (EditText)this.findViewById(R.id.port);
 		userText = (EditText)this.findViewById(R.id.user);
 		passText = (EditText)this.findViewById(R.id.pass);
+		appSelection = (RadioGroup)this.findViewById(R.id.initial_app);
 		hostText.setText(config.hostname);
 		portText.setText(String.valueOf(config.port));
 		userText.setText(config.username);
 		passText.setText(config.password);
+		if (!config.appSelection.equals("")) appSelection.check(findAppMatchingName(config.appSelection));
 		
+		// Stop any existing command service
+		stopService(new Intent(NewConnection.this, CommandService.class));
     }
     
+	private int findAppMatchingName(String appSelectionText) {
+		for (int i = 0; i < appSelection.getChildCount(); i++) {
+			RadioButton item = (RadioButton)appSelection.getChildAt(i);
+			String itemText = item.getText().toString();
+			if (itemText.equalsIgnoreCase(appSelectionText)) {
+				return item.getId();
+			}
+		}
+		return -1;
+	}
+
 	protected void onDestroy() {
 		super.onDestroy();
 		stopService(new Intent(NewConnection.this, CommandService.class));
@@ -94,6 +116,14 @@ public class NewConnection extends Activity implements OnClickListener {
 			config.port = Integer.parseInt(portText.getText().toString());
 			config.username = userText.getText().toString();
 			config.password = passText.getText().toString();
+			RadioButton currentSelection = (RadioButton)findViewById(appSelection.getCheckedRadioButtonId());
+			String selectionText = currentSelection.getText().toString();
+			if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_RHYTHMBOX)) {
+				config.appSelection = AppConfigProvider.APP_RHYTHMBOX;
+			}
+			else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_AMAROK)) {
+				config.appSelection = AppConfigProvider.APP_AMAROK;
+			}
 			
 			// Check the input
 			if (config.port == 0) config.port = 22;
@@ -104,7 +134,6 @@ public class NewConnection extends Activity implements OnClickListener {
 			// Start the CommandService, and attempt to connect it
 			startService(new Intent(NewConnection.this, CommandService.class));
 			bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
-			
 			
 			break;
 		case R.id.cancel: 
@@ -130,6 +159,7 @@ public class NewConnection extends Activity implements OnClickListener {
 	}
 
 	private void onServiceErrorAction(String title, String message, boolean fatal) {
+		stopService(new Intent(NewConnection.this, CommandService.class));
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)
 			.setMessage(message)

@@ -81,29 +81,29 @@ public class Playback extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		Command command = null;
 		
-		switch (v.getId()) {
-		case R.id.play_pause: 
-			command = CommandFactory.instance().getCommand(Command.PLAY);
-			break;
-		case R.id.last_song:
-			command = CommandFactory.instance().getCommand(Command.PREV);
-			break;
-		case R.id.next_song:
-			command = CommandFactory.instance().getCommand(Command.NEXT);
-			break;
-		case R.id.volume:
-			// Start the volume control activity
-			Intent intent = new Intent(Playback.this, VolumeControl.class);
-			startActivity(intent);
-		}
-		
-		if (command != null) {
-			try {
-				commandService.sendCommand(command);
-			} catch (RemoteException e) {
-				// Failed to send command
-				e.printStackTrace();
+		try {
+			switch (v.getId()) {
+			case R.id.play_pause: 
+				command = commandService.queryForCommand(Command.PLAY);
+				break;
+			case R.id.last_song:
+				command = commandService.queryForCommand(Command.PREV);
+				break;
+			case R.id.next_song:
+				command = commandService.queryForCommand(Command.NEXT);
+				break;
+			case R.id.volume:
+				// Start the volume control activity
+				Intent intent = new Intent(Playback.this, VolumeControl.class);
+				startActivity(intent);
 			}
+			
+			if (command != null) {
+				commandService.sendCommand(command);
+			}
+		} catch (RemoteException e) {
+			// Failed to send command
+			e.printStackTrace();
 		}
 	}
 

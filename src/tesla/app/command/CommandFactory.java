@@ -12,8 +12,8 @@ public class CommandFactory {
 	
 	private AppConfigProvider config = null;
 
-	private CommandFactory() {
-		config = new AppConfigProvider("rhythmbox");
+	public CommandFactory(String initialApp) {
+		config = new AppConfigProvider(initialApp);
 	}
 
 	public Command getInitScript() {
@@ -41,9 +41,5 @@ public class CommandFactory {
 		out.setCommandString(command);
 		out.setSettings(settings);
 		return out;
-	}
-
-	public static CommandFactory instance() {
-		return new CommandFactory();
 	}
 }

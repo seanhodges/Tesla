@@ -71,23 +71,24 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 
 	private void updateVolume(VolumeSlider volumeSlider, float level) {
 		Command command = null;
-    	if (level == 0) {
-    		command = CommandFactory.instance().getCommand(Command.VOL_MUTE); 
-    	}
-    	else {
-			command = CommandFactory.instance().getCommand(Command.VOL_CHANGE);
-	    	Object levelArg = null;
-	    	if (level > 1) {
-	    		// Values above a fraction should be absolute integers
-	    		levelArg = new Integer((int)level);
-	    	}
-	    	else {
-	    		levelArg = new Float(level);
-	    	}
-			command.addArg(levelArg);
-    	}
 		
 		try {
+	    	if (level == 0) {
+	    		command = commandService.queryForCommand(Command.VOL_MUTE); 
+	    	}
+	    	else {
+				command = commandService.queryForCommand(Command.VOL_CHANGE);
+		    	Object levelArg = null;
+		    	if (level > 1) {
+		    		// Values above a fraction should be absolute integers
+		    		levelArg = new Integer((int)level);
+		    	}
+		    	else {
+		    		levelArg = new Float(level);
+		    	}
+				command.addArg(levelArg);
+	    	}
+	    	
 			commandService.sendCommand(command);
 		} catch (RemoteException e) {
 			// Failed to send command
@@ -112,16 +113,15 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	
 	private void setInitialVolume() {
 		
-
-		
-        Command command = CommandFactory.instance().getCommand(Command.VOL_CURRENT);
+		Command command = null;
+		try {
+	        command = commandService.queryForCommand(Command.VOL_CURRENT);
+	        
+	        Map<String, String> settings = command.getSettings();
+	        volumeSlider.setMinVolume(Float.parseFloat(settings.get("MIN")));
+	        volumeSlider.setMaxVolume(Float.parseFloat(settings.get("MAX")));
+			volumeSlider.setLevel(0);
         
-        Map<String, String> settings = command.getSettings();
-        volumeSlider.setMinVolume(Float.parseFloat(settings.get("MIN")));
-        volumeSlider.setMaxVolume(Float.parseFloat(settings.get("MAX")));
-		volumeSlider.setLevel(0);
-		
-        try {
 			command = commandService.sendQuery(command);
 		} catch (RemoteException e) {
 			// Failed to send query
@@ -129,7 +129,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		}
 		
         // Parse the result as a level percentage
-		if (command.getOutput() != null && command.getOutput() != "") {
+		if (command != null && command.getOutput() != null && command.getOutput() != "") {
 	        float volumeLevel = Float.parseFloat(command.getOutput());
 	        if (volumeLevel > 0) {
 	        	volumeSlider.setLevel((int)volumeLevel);

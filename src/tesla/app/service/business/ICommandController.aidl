@@ -9,6 +9,7 @@ interface ICommandController {
 	
 	boolean connect();
 	
-	void sendCommand(out Command command);
-	Command sendQuery(out Command command);
+	Command queryForCommand(in String key);
+	void sendCommand(in Command command);
+	Command sendQuery(in Command command);
 }

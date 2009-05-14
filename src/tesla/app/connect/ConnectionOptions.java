@@ -13,6 +13,7 @@ public class ConnectionOptions {
 	public int port = 0;
 	public String username = null;
 	public String password = null;
+	public String appSelection = "";
 	
 	public ConnectionOptions(Context owner) {
 		this.owner = owner;
@@ -27,6 +28,7 @@ public class ConnectionOptions {
 		port = settings.getInt("port", 22);
 		username= settings.getString("username", "User");
 		password = settings.getString("password", "");
+		appSelection = settings.getString("appSelection", "");
 	}
 	
 	public void saveSettings() {
@@ -36,6 +38,7 @@ public class ConnectionOptions {
 		editor.putInt("port", port);
 		editor.putString("username", username);
 		editor.putString("password", password);
+		editor.putString("appSelection", appSelection);
 		editor.commit();
 	}
 }
