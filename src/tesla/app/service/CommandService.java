@@ -159,6 +159,8 @@ public class CommandService extends Service {
 				// Display the command for debugging
 				System.out.println("FakeConnection: query received: " + command.getCommandString() + ", result: " + command.getOutput());
 			}
+			// DEBUG!
+			System.out.println("query received: " + command.getCommandString() + ", result: " + command.getOutput());
 		}
 		return command;
 	}

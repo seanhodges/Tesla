@@ -83,6 +83,16 @@ public class SSHConnection implements IConnection {
 		String response = null;
 		if (session != null) {
 			try {
+				if (responseStream.available() > 0) {
+					responseStream.reset();
+				}
+				if (errorStream.available() > 0) {
+					errorStream.reset();
+				}
+			} catch (Exception e1) {
+				// Flushing the streams failed, continue anyway
+			}
+			try {
 				stdin.write((command.getCommandString() + "\n").getBytes());
 				stdin.flush();
 				// This is a bit of a fudge, wait for command to finish before collecting streams
