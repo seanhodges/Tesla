@@ -90,13 +90,13 @@ public class AppConfigProvider {
 	private String amarokCommand(String key) throws Exception {
 		String out = "";
 		if (key.equals(Command.PLAY)) {
-			out = "qdbus org.kde.amarok /Player Play";
+			out = "qdbus org.kde.amarok /Player Pause";
 		}
 		else if (key.equals(Command.PAUSE)) {
 			out = "qdbus org.kde.amarok /Player Pause";
 		}
 		else if (key.equals(Command.PREV)) {
-			out = "qqdbus org.kde.amarok /Player Prev";
+			out = "qdbus org.kde.amarok /Player Prev";
 		}
 		else if (key.equals(Command.NEXT)) {
 			out = "qdbus org.kde.amarok /Player Next";
