@@ -5,17 +5,19 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical">
 	
+	<!-- Power button disabled 
 	<Button
 		android:id="@+id/pc_power"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/pc_power"
 		android:layout_gravity="right" />
-		
+	 -->
+	 
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:padding="5px"
+		android:paddingTop="50px"
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_gravity="center_horizontal">
 		
@@ -39,43 +41,82 @@
 	</LinearLayout>
 
 	<LinearLayout
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_gravity="center_horizontal">
+		android:paddingLeft="20px"
+		android:paddingRight="20px"
+		android:paddingTop="50px"
+		android:orientation="vertical"
+		android:layout_gravity="center_vertical">
 		
 		<ImageView
 		android:id="@+id/album_cover"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:padding="10px"
-		android:layout_gravity="center_vertical" />
+		android:paddingBottom="15px"
+		android:src="@drawable/album_cover" />
 		
-		<LinearLayout
+		<TableLayout
 			android:id="@+id/song_info"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_gravity="left|center_vertical"
 			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:orientation="vertical">
 		
-			<TextView
-			android:id="@+id/song_title"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/info_title" />
+			<TableRow>
+				<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingBottom="2px"
+				android:paddingRight="5px"
+				android:text="@string/info_title" />
+				
+				<TextView
+				android:id="@+id/song_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingBottom="2px"
+				android:paddingLeft="5px"
+				android:text="@string/info_title_unknown" />
+			</TableRow>
 			
-			<TextView
-			android:id="@+id/song_album"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/info_artist" />
-	
-			<TextView
-			android:id="@+id/song_artist"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/info_album" />
-		</LinearLayout>
+			<TableRow>
+				<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingBottom="2px"
+				android:paddingRight="5px"
+				android:text="@string/info_artist" />
+				
+				<TextView
+				android:id="@+id/song_album"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingBottom="2px"
+				android:paddingLeft="5px"
+				android:text="@string/info_album_unknown" />
+			</TableRow>
+			
+			<TableRow>
+				<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingBottom="2px"
+				android:paddingRight="5px"
+				android:text="@string/info_album" />
+				
+				<TextView
+				android:id="@+id/song_artist"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingBottom="2px"
+				android:paddingLeft="5px"
+				android:text="@string/info_artist_unknown" />
+			</TableRow>
+			
+		</TableLayout>
 	</LinearLayout>
 
 	<LinearLayout
