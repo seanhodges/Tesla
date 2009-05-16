@@ -103,7 +103,6 @@ public class NewConnection extends Activity implements OnClickListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		stopService(new Intent(NewConnection.this, CommandService.class));
-		unsetErrorHandler();
 	}
 	
 	public void onClick(View v) {

@@ -132,12 +132,8 @@ public class VolumeSlider extends View {
 		return currentLevel;
 	}
 
-	public void setLevel(byte currentLevel) {
+	public void setLevel(float currentLevel) {
 		this.currentLevel = currentLevel;
-	}
-	
-	public void setLevel(int currentLevel) {
-		this.currentLevel = (byte)currentLevel;
 	}
 
 	public void setMinVolume(float minVolume) {

@@ -120,7 +120,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	        Map<String, String> settings = command.getSettings();
 	        volumeSlider.setMinVolume(Float.parseFloat(settings.get("MIN")));
 	        volumeSlider.setMaxVolume(Float.parseFloat(settings.get("MAX")));
-			volumeSlider.setLevel(0);
+			volumeSlider.setLevel(0.0f);
         
 			command = commandService.sendQuery(command);
 		} catch (RemoteException e) {
@@ -130,10 +130,15 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		
         // Parse the result as a level percentage
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
-	        float volumeLevel = Float.parseFloat(command.getOutput());
-	        if (volumeLevel > 0) {
-	        	volumeSlider.setLevel((int)volumeLevel);
-	        }
+			float volumeLevel;
+			try {
+				volumeLevel = Float.parseFloat(command.getOutput());
+			}
+			catch (NumberFormatException e) {
+				// If the volume was not parsed correctly, just default to mute
+				volumeLevel = 0.0f;
+			}
+			volumeSlider.setLevel(volumeLevel);
 		}
 	}
 	

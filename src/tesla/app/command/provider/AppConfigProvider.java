@@ -101,7 +101,7 @@ public class AppConfigProvider {
 			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume 0.0";
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getVolume";
+			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getVolume | cut -c1-5";
 		}
 		else {
 			throw new Exception("Command not implemented");
@@ -130,7 +130,7 @@ public class AppConfigProvider {
 			out = "qdbus org.kde.amarok /Player VolumeSet 0";
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "qdbus org.kde.amarok /Player VolumeGet";
+			out = "qdbus org.kde.amarok /Player VolumeGet | cut -c1-3";
 		}
 		else {
 			throw new Exception("Command not implemented");
