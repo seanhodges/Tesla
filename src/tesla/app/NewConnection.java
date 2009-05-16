@@ -113,6 +113,8 @@ public class NewConnection extends Activity implements OnClickListener {
 			config.port = Integer.parseInt(portText.getText().toString());
 			config.username = userText.getText().toString();
 			config.password = passText.getText().toString();
+			
+			// Determine which application was selected
 			RadioButton currentSelection = (RadioButton)findViewById(appSelection.getCheckedRadioButtonId());
 			String selectionText = currentSelection.getText().toString();
 			if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_RHYTHMBOX)) {
@@ -120,6 +122,9 @@ public class NewConnection extends Activity implements OnClickListener {
 			}
 			else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_AMAROK)) {
 				config.appSelection = AppConfigProvider.APP_AMAROK;
+			}
+			else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_VLC)) {
+				config.appSelection = AppConfigProvider.APP_VLC;
 			}
 			
 			// Check the input

@@ -11,6 +11,7 @@
     <string name="application_selection">Application</string>
 	<string name="rhythmbox_item">Rhythmbox</string>
 	<string name="amarok_item">Amarok</string>
+	<string name="vlc_item">VLC</string>
 	<string name="cancel">Cancel</string>
 	<string name="connect">Connect</string>
 	

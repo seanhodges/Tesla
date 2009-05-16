@@ -92,6 +92,11 @@
 					android:text="@string/amarok_item" 
 					android:id="@+id/amarok_item"/>
 					
+				<RadioButton
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/vlc_item" 
+					android:id="@+id/vlc_item"/>
 			</RadioGroup>
 		</TableRow>
 	</TableLayout>

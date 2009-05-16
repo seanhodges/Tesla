@@ -21,6 +21,7 @@ import android.os.RemoteException;
 public class CommandService extends Service {
 
 	private static final int EXEC_POLL_PERIOD = 50;
+	private static final boolean DEBUG_MODE = false;
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
@@ -68,8 +69,12 @@ public class CommandService extends Service {
 
 	public void onCreate() {
 		super.onCreate();
-		//connection = new FakeConnection();
-		connection = new SSHConnection();
+		if (DEBUG_MODE) {
+			connection = new FakeConnection();
+		}
+		else {
+			connection = new SSHConnection();
+		}
 	}
 	
 	public boolean connectAction() throws RemoteException {
