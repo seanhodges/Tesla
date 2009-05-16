@@ -13,7 +13,9 @@ import tesla.app.connect.SSHConnection;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
@@ -73,6 +75,18 @@ public class CommandService extends Service {
 			connection = new FakeConnection();
 		}
 		else {
+			// Start the wifi service if it is not running already
+			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			wifi.setWifiEnabled(true);
+			while (wifi.getConnectionInfo().getIpAddress() <= 0) {
+				// Poll for WIFI connection
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
 			connection = new SSHConnection();
 		}
 	}
