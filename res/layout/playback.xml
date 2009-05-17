@@ -3,24 +3,45 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:layout_gravity="center_horizontal">
 	
-	<!-- Power button disabled 
+
+<!--
 	<Button
 		android:id="@+id/pc_power"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/pc_power"
 		android:layout_gravity="right" />
-	 -->
-	 
+-->
+	
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="50px"
+		android:paddingTop="30px"
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_gravity="center_horizontal">
 		
+		<ImageView
+		android:id="@+id/last_song"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/prev_song" />
+		
+		<ImageView
+		android:id="@+id/play_pause"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/play_pause" />
+		
+		<ImageView
+		android:id="@+id/next_song"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/next_song" />
+				
+		<!-- 
 		<Button
 		android:id="@+id/last_song"
 		android:layout_width="wrap_content"
@@ -38,17 +59,17 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/next_song" />
+		-->
+		
 	</LinearLayout>
-
+	
 	<LinearLayout
-		android:layout_width="fill_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:paddingLeft="20px"
-		android:paddingRight="20px"
-		android:paddingTop="50px"
+		android:paddingTop="30px"
 		android:orientation="vertical"
-		android:layout_gravity="center_vertical">
+		android:layout_gravity="center_horizontal">
 		
 		<ImageView
 		android:id="@+id/album_cover"
