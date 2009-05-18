@@ -6,13 +6,18 @@ import java.io.OutputStream;
 
 import tesla.app.command.Command;
 
+import android.net.wifi.WifiManager;
+
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.Session;
 
-public class SSHConnection implements IConnection {
+public class SSHConnection implements IConnection  {
+
+	private static final int WIFI_WAIT_TIMEOUT = 10; // Seconds
 	
 	private ConnectionOptions config;
 	
+	WifiManager wifi;
 	private Connection connection;
 	private Session session;
 	
@@ -20,8 +25,28 @@ public class SSHConnection implements IConnection {
 	InputStream responseStream;
 	InputStream errorStream;
 	
+	public void setWifiManager(WifiManager wifi) {
+		this.wifi = wifi;
+	}
+	
 	public void connect(ConnectionOptions config) throws ConnectionException {
 		this.config = config;
+		
+		// Start the wifi service if it is not running already
+		wifi.setWifiEnabled(true);
+		int timeLeft = WIFI_WAIT_TIMEOUT + 1;
+		while (wifi.getConnectionInfo().getIpAddress() <= 0 && (timeLeft--) > 0) {
+			// Poll for WIFI connection
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Do nothing
+			}
+		}
+		
+		if (timeLeft <= 0) {
+			throw new ConnectionException(ConnectionException.FAILED_AT_CONNECT, config.hostname, "Could not connect to network, no connectivity.");
+		}
 		
 		// Connect to socket
 		connection = new Connection(config.hostname, config.port);

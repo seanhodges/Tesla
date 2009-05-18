@@ -3,7 +3,6 @@ package tesla.app;
 import java.util.Map;
 
 import tesla.app.command.Command;
-import tesla.app.command.CommandFactory;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;

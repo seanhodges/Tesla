@@ -44,9 +44,11 @@ public class NewConnection extends Activity implements OnClickListener {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
+			
+			unbindService(connection);
+			
 			// Start the playback activity
 			if (success) {
-				unbindService(connection);
 				startActivity(new Intent(NewConnection.this, Playback.class));
 			}
 		}
