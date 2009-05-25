@@ -125,13 +125,9 @@ public class AppConfigProvider {
 		final String dest = "org.kde.amarok";
 		List<String> args = new ArrayList<String>();
 		String out = "";
-		if (key.equals(Command.PLAY)) {
+		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.Pause");
-		}
-		else if (key.equals(Command.PAUSE)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-			"org.freedesktop.MediaPlayer.Pause");
 		}
 		else if (key.equals(Command.PREV)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
@@ -142,12 +138,12 @@ public class AppConfigProvider {
 				"org.freedesktop.MediaPlayer.Next");
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add("%i");
+			args.add(new DBusHelper().evaluateArg("%i"));
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeSet", args);
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			args.add("0");
+			args.add(new DBusHelper().evaluateArg("0"));
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeSet", args);
 		}
@@ -162,29 +158,34 @@ public class AppConfigProvider {
 	}
 
 	private String vlcCommand(String key) throws Exception {
+		final String dest = "org.mpris.vlc";
+		List<String> args = new ArrayList<String>();
 		String out = "";
-		if (key.equals(Command.PLAY)) {
-			out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.Pause";
-		}
-		else if (key.equals(Command.PAUSE)) {
-			out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.Pause";
+		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Pause");
 		}
 		else if (key.equals(Command.PREV)) {
-			out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.Prev";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev");
 		}
 		else if (key.equals(Command.NEXT)) {
-			out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.Next";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next");
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.VolumeSet int32:%i";
+			args.add(new DBusHelper().evaluateArg("%i"));
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.VolumeSet int32:0";
+			args.add(new DBusHelper().evaluateArg("0"));
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "qdbus org.mpris.vlc /Player VolumeGet";
-			// TODO: dbus-send will need a method of parsing the return data 
-			//out = "dbus-send --session --dest=org.mpris.vlc --type=\"method_call\" /Player org.freedesktop.MediaPlayer.VolumeGet";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
 		else {
 			throw new Exception("Command not implemented");

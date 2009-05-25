@@ -27,7 +27,7 @@ public class FakeConnection implements IConnection {
 			return "success\n";
 		}
 		else if (command.getKey().equals(Command.VOL_CURRENT)) {
-			return "int32:50";
+			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
 		}
 		else {
 			return "";

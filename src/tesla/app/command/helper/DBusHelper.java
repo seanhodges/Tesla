@@ -6,7 +6,7 @@ public class DBusHelper {
 
 	public String compileMethodCall(String dest, String path, String command,
 			List<String> args) {
-		String out = "dbus-send --session --dest=" + dest 
+		String out = "dbus-send --session --print-reply --dest=" + dest 
 			+ " --type=\"method_call\" " + path + " " + command;
 		if (args != null) {
 			for (String arg : args) {
@@ -34,6 +34,7 @@ public class DBusHelper {
 		else if (rawArg.contains(".")) {
 			// Attempt to parse as a float
 			try {
+				@SuppressWarnings("unused")
 				float test = Float.valueOf(rawArg);
 				dataType = "double:";
 			}
@@ -44,6 +45,7 @@ public class DBusHelper {
 		else {
 			// Attempt to parse as an integer
 			try {
+				@SuppressWarnings("unused")
 				int test = Integer.valueOf(rawArg);
 				dataType = "int32:";
 			}
@@ -56,8 +58,24 @@ public class DBusHelper {
 	
 	public String evaluateOutput(String rawOut) {
 		String out = rawOut;
-		if (rawOut.contains(":")) {
-			out = rawOut.split(":")[1]; 
+		if (rawOut.contains("\n   ")) {
+			out = rawOut.split("\n   ")[1];
+			if (out.startsWith("int32")) {
+				out = out.substring(6);
+			}
+			else if (out.startsWith("double")) {
+				out = out.substring(7);
+			}
+			else if (out.startsWith("string")) {
+				out = out.substring(7);
+			}
+			else if (out.startsWith("boolean")) {
+				out = out.substring(8);
+			}
+			else {
+				// Data type not recognised, return empty string
+				out = "";
+			}
 		}
 		return out;
 	}
