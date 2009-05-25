@@ -4,6 +4,7 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
+import tesla.app.command.helper.DBusHelper;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
@@ -132,7 +133,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
 			float volumeLevel;
 			try {
-				volumeLevel = Float.parseFloat(command.getOutput());
+				volumeLevel = Float.parseFloat(new DBusHelper().evaluateArg(command.getOutput()));
 			}
 			catch (NumberFormatException e) {
 				// If the volume was not parsed correctly, just default to mute

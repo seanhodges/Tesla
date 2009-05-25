@@ -1,9 +1,12 @@
 package tesla.app.command.provider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import tesla.app.command.Command;
+import tesla.app.command.helper.DBusHelper;
 
 public class AppConfigProvider {
 
@@ -81,56 +84,76 @@ public class AppConfigProvider {
 	}
 	
 	private String rhythmBoxCommand(String key) throws Exception {
+		final String dest = "org.gnome.Rhythmbox";
+		List<String> args = new ArrayList<String>();
 		String out = "";
-		if (key.equals(Command.PLAY)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player playPause false";
-		}
-		else if (key.equals(Command.PAUSE)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player playPause false";
+		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
+			args.add(new DBusHelper().evaluateArg("false"));
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.playPause", args);
 		}
 		else if (key.equals(Command.PREV)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player previous";
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.previous");
 		}
 		else if (key.equals(Command.NEXT)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player next";
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.next");
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume %f";
+			args.add(new DBusHelper().evaluateArg("%f"));
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.setVolume", args);
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player setVolume 0.0";
+			args.add(new DBusHelper().evaluateArg("0.0"));
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.setVolume", args);
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getVolume | cut -c1-5";
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.getVolume");
 		}
 		else {
 			throw new Exception("Command not implemented");
 		}
+		
 		return out;
 	}
 
 	private String amarokCommand(String key) throws Exception {
+		final String dest = "org.kde.amarok";
+		List<String> args = new ArrayList<String>();
 		String out = "";
 		if (key.equals(Command.PLAY)) {
-			out = "qdbus org.kde.amarok /Player Pause";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Pause");
 		}
 		else if (key.equals(Command.PAUSE)) {
-			out = "qdbus org.kde.amarok /Player Pause";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+			"org.freedesktop.MediaPlayer.Pause");
 		}
 		else if (key.equals(Command.PREV)) {
-			out = "qdbus org.kde.amarok /Player Prev";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev");
 		}
 		else if (key.equals(Command.NEXT)) {
-			out = "qdbus org.kde.amarok /Player Next";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next");
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "qdbus org.kde.amarok /Player VolumeSet %i";
+			args.add("%i");
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			out = "qdbus org.kde.amarok /Player VolumeSet 0";
+			args.add("0");
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "qdbus org.kde.amarok /Player VolumeGet | cut -c1-3";
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
 		else {
 			throw new Exception("Command not implemented");

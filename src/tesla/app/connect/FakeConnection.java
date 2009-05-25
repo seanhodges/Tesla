@@ -26,6 +26,9 @@ public class FakeConnection implements IConnection {
 			}
 			return "success\n";
 		}
+		else if (command.getKey().equals(Command.VOL_CURRENT)) {
+			return "int32:50";
+		}
 		else {
 			return "";
 		}
