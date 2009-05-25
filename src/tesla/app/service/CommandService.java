@@ -23,7 +23,7 @@ import android.os.RemoteException;
 public class CommandService extends Service {
 
 	private static final int EXEC_POLL_PERIOD = 50;
-	private static final boolean DEBUG_MODE = true;
+	private static final boolean DEBUG_MODE = false;
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
@@ -76,16 +76,21 @@ public class CommandService extends Service {
 		}
 		else {
 			// Start the wifi service if it is not running already
-//			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-//			wifi.setWifiEnabled(true);
-//			while (wifi.getConnectionInfo().getIpAddress() <= 0) {
-//				// Poll for WIFI connection
-//				try {
-//					Thread.sleep(10);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
+			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			wifi.setWifiEnabled(true);
+			if (wifi.isWifiEnabled()) {
+				while (wifi.getConnectionInfo().getIpAddress() <= 0) {
+					// Poll for WIFI connection
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			else {
+				// Wifi management is not possible on this device, try to connect anyway
+			}
 			
 			connection = new SSHConnection();
 		}
