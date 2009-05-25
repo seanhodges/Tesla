@@ -76,6 +76,7 @@ public class DBusHelper {
 				// Data type not recognised, return empty string
 				out = "";
 			}
+			out = out.trim();
 		}
 		return out;
 	}
