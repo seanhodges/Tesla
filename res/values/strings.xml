@@ -23,12 +23,9 @@
 	<string name="play_pause">Play / Pause</string>
 	<string name="next_song">&gt;&gt;</string>
 	
-	<string name="info_title">Title</string>
-	<string name="info_artist">Artist</string>
-	<string name="info_album">Album</string>
-	<string name="info_title_unknown">&lt;unknown&gt;</string>
-	<string name="info_artist_unknown">&lt;unknown&gt;</string>
-	<string name="info_album_unknown">&lt;unknown&gt;</string>
+	<string name="info_title">Tesla Demo</string>
+	<string name="info_artist">by Sean Hodges</string>
+	<string name="info_album">v 0.1</string>
 	
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>
