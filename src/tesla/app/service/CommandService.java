@@ -93,8 +93,6 @@ public class CommandService extends Service {
 			}
 			
 			connection = new SSHConnection();
-			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-			((SSHConnection)connection).setWifiManager(wifi);
 		}
 	}
 	
