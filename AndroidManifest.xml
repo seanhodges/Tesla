@@ -13,8 +13,8 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".Playback" />
-        <activity android:name=".VolumeControl" />
+        <activity android:name=".Playback" android:screenOrientation="portrait" />
+        <activity android:name=".VolumeControl" android:screenOrientation="portrait" />
         
 		<service android:name=".service.CommandService"/>
     </application>
