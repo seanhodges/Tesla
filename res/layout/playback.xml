@@ -3,52 +3,54 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:layout_gravity="center_horizontal">
 	
-	<!-- Power button disabled 
+
+<!--
 	<Button
 		android:id="@+id/pc_power"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/pc_power"
 		android:layout_gravity="right" />
-	 -->
-	 
+-->
+	
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="50px"
-		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:paddingTop="30px"
 		android:layout_gravity="center_horizontal">
 		
-		<Button
+		<ImageButton
 		android:id="@+id/last_song"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/last_song" />
+		android:background="@null"
+		android:src="@drawable/prev_song" />
 		
-		<Button
+		<ImageButton
 		android:id="@+id/play_pause"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/play_pause" />
+		android:background="@null"
+		android:src="@drawable/play_pause" />
 		
-		<Button
+		<ImageButton
 		android:id="@+id/next_song"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/next_song" />
+		android:background="@null"
+		android:src="@drawable/next_song" />
+		
 	</LinearLayout>
-
+	
 	<LinearLayout
-		android:layout_width="fill_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:paddingLeft="20px"
-		android:paddingRight="20px"
-		android:paddingTop="50px"
+		android:paddingTop="30px"
 		android:orientation="vertical"
-		android:layout_gravity="center_vertical">
+		android:layout_gravity="center_horizontal">
 		
 		<ImageView
 		android:id="@+id/album_cover"
@@ -59,61 +61,31 @@
 		
 		<TableLayout
 			android:id="@+id/song_info"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="left|center_vertical"
-			xmlns:android="http://schemas.android.com/apk/res/android"
-			android:orientation="vertical">
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
 		
 			<TableRow>
 				<TextView
-				android:layout_width="wrap_content"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:paddingBottom="2px"
-				android:paddingRight="5px"
 				android:text="@string/info_title" />
-				
-				<TextView
-				android:id="@+id/song_title"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:paddingBottom="2px"
-				android:paddingLeft="5px"
-				android:text="@string/info_title_unknown" />
 			</TableRow>
 			
 			<TableRow>
 				<TextView
-				android:layout_width="wrap_content"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:paddingBottom="2px"
-				android:paddingRight="5px"
 				android:text="@string/info_artist" />
-				
-				<TextView
-				android:id="@+id/song_album"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:paddingBottom="2px"
-				android:paddingLeft="5px"
-				android:text="@string/info_album_unknown" />
 			</TableRow>
 			
 			<TableRow>
 				<TextView
-				android:layout_width="wrap_content"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:paddingBottom="2px"
-				android:paddingRight="5px"
 				android:text="@string/info_album" />
-				
-				<TextView
-				android:id="@+id/song_artist"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:paddingBottom="2px"
-				android:paddingLeft="5px"
-				android:text="@string/info_artist_unknown" />
 			</TableRow>
 			
 		</TableLayout>
@@ -123,8 +95,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:layout_weight="1"
-		xmlns:android="http://schemas.android.com/apk/res/android">
+		android:layout_weight="1">
 		
 		<Button
 		android:id="@+id/playlist"

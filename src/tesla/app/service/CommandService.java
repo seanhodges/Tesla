@@ -22,7 +22,7 @@ import android.os.RemoteException;
 
 public class CommandService extends Service {
 
-	private static final int EXEC_POLL_PERIOD = 50;
+	private static final int EXEC_POLL_PERIOD = 50; // Cycles
 	private static final boolean DEBUG_MODE = false;
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
@@ -93,6 +93,8 @@ public class CommandService extends Service {
 			}
 			
 			connection = new SSHConnection();
+			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			((SSHConnection)connection).setWifiManager(wifi);
 		}
 	}
 	
