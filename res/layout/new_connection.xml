@@ -1,124 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical">
 	
-	<TableLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:paddingLeft="5dip"
-        android:paddingRight="5dip"
-        android:paddingTop="15dip">
-		
-		<TableRow>
-			
-			<TextView
-				android:singleLine="true" 
-				android:text="@string/host"
-				android:layout_width="wrap_content"
-				android:paddingRight="10dip" />
-				
-			<EditText
-				android:id="@+id/host"
-				android:singleLine="true"
-				android:layout_weight="1"
-				android:layout_width="fill_parent"/>
-		</TableRow>
-		
-		<TableRow>
-			<TextView
-				android:singleLine="true" 
-				android:text="@string/port" 
-				android:paddingRight="10dip" />
-				
-			<EditText
-				android:id="@+id/port"
-				android:layout_width="wrap_content"
-				android:width="14.5sp"
-				android:singleLine="true"/>
-		</TableRow>
-		
-		<TableRow>
-			<TextView
-				android:singleLine="true" 
-				android:text="@string/username" 
-				android:paddingRight="10dip" />
-				
-			<EditText
-				android:id="@+id/user"
-				android:layout_weight="1"
-				android:singleLine="true" />
-		</TableRow>
-		
-		<TableRow>
-			<TextView
-				android:singleLine="true" 
-				android:text="@string/password" 
-				android:paddingRight="10dip" />
-				
-			<EditText
-				android:id="@+id/pass"
-				android:singleLine="true"
-				android:layout_weight="1"
-				android:password="true" />
-		</TableRow>
-		
-		<TableRow>
- 			<TextView
-				android:singleLine="true" 
-				android:text="@string/application_selection" 
-				android:paddingRight="10dip" 
-				android:paddingTop="15dip"/>
-				
-			<RadioGroup 
-				android:id="@+id/initial_app"
-				android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:checkedButton="@+id/rhythmbox"
-				android:orientation="vertical">
-				
-				<RadioButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/rhythmbox_item" 
-					android:id="@+id/rhythmbox_item"/>
-					
-				<RadioButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/amarok_item" 
-					android:id="@+id/amarok_item"/>
-					
-				<RadioButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/vlc_item" 
-					android:id="@+id/vlc_item"/>
-			</RadioGroup>
-		</TableRow>
-	</TableLayout>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_weight="1">
 	
 	<LinearLayout
-		android:paddingTop="5dip"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_gravity="center_horizontal">
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
 		
-		<Button
-		android:id="@+id/cancel"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/cancel" />
+		<TableLayout
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:paddingLeft="5dip"
+	        android:paddingRight="5dip"
+	        android:paddingTop="15dip">
+			
+			<TableRow>
+				
+				<TextView
+					android:singleLine="true" 
+					android:text="@string/host"
+					android:layout_width="wrap_content"
+					android:paddingRight="10dip" />
+					
+				<EditText
+					android:id="@+id/host"
+					android:singleLine="true"
+					android:layout_weight="1"
+					android:layout_width="fill_parent"/>
+			</TableRow>
+			
+			<TableRow>
+				<TextView
+					android:singleLine="true" 
+					android:text="@string/port" 
+					android:paddingRight="10dip" />
+					
+				<EditText
+					android:id="@+id/port"
+					android:layout_width="wrap_content"
+					android:width="14.5sp"
+					android:singleLine="true"/>
+			</TableRow>
+			
+			<TableRow>
+				<TextView
+					android:singleLine="true" 
+					android:text="@string/username" 
+					android:paddingRight="10dip" />
+					
+				<EditText
+					android:id="@+id/user"
+					android:layout_weight="1"
+					android:singleLine="true" />
+			</TableRow>
+			
+			<TableRow>
+				<TextView
+					android:singleLine="true" 
+					android:text="@string/password" 
+					android:paddingRight="10dip" />
+					
+				<EditText
+					android:id="@+id/pass"
+					android:singleLine="true"
+					android:layout_weight="1"
+					android:password="true" />
+			</TableRow>
+			
+			<TableRow>
+	 			<TextView
+					android:singleLine="true" 
+					android:text="@string/application_selection" 
+					android:paddingRight="10dip" 
+					android:paddingTop="15dip"/>
+					
+				<RadioGroup 
+					android:id="@+id/initial_app"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:checkedButton="@+id/rhythmbox"
+					android:orientation="vertical">
+					
+					<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/rhythmbox_item" 
+						android:id="@+id/rhythmbox_item"/>
+						
+					<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/amarok_item" 
+						android:id="@+id/amarok_item"/>
+						
+					<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/vlc_item" 
+						android:id="@+id/vlc_item"/>
+				</RadioGroup>
+			</TableRow>
+		</TableLayout>
 		
-		<Button
-		android:id="@+id/connect"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/connect" />	
+		<LinearLayout
+			android:paddingTop="5dip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal">
+			
+			<Button
+			android:id="@+id/cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/cancel" />
+			
+			<Button
+			android:id="@+id/connect"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/connect" />	
+		</LinearLayout>
+		
 	</LinearLayout>
-	
-</LinearLayout>
+</ScrollView>
