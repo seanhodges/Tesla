@@ -44,14 +44,17 @@ public class Playback extends Activity implements OnClickListener {
         setContentView(R.layout.playback);
         
         // Attach the button listeners for playback controls
-        View playPauseButton = this.findViewById(R.id.play_pause);
-        playPauseButton.setOnClickListener(this);
-        View prevSongButton = this.findViewById(R.id.last_song);
-        prevSongButton.setOnClickListener(this);
-        View nextSongButton = this.findViewById(R.id.next_song);
-        nextSongButton.setOnClickListener(this);
-        View volumeButton = this.findViewById(R.id.volume);
-        volumeButton.setOnClickListener(this);
+        View targetButton;
+        targetButton = this.findViewById(R.id.play_pause);
+        targetButton.setOnClickListener(this);
+        targetButton = this.findViewById(R.id.last_song);
+        targetButton.setOnClickListener(this);
+        targetButton = this.findViewById(R.id.next_song);
+        targetButton.setOnClickListener(this);
+        targetButton = this.findViewById(R.id.playlist);
+        targetButton.setOnClickListener(this);
+        targetButton = this.findViewById(R.id.volume);
+        targetButton.setOnClickListener(this);
     }
 	
 	protected void setErrorHandler() {
@@ -90,6 +93,12 @@ public class Playback extends Activity implements OnClickListener {
 				break;
 			case R.id.next_song:
 				command = commandService.queryForCommand(Command.NEXT);
+				break;
+			case R.id.playlist:
+				new AlertDialog.Builder(Playback.this)
+					.setTitle("Not implemented")
+					.setMessage("Playlist support is not yet available.")
+					.show();
 				break;
 			case R.id.volume:
 				// Start the volume control activity
