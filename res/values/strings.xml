@@ -18,15 +18,13 @@
 	<string name="connect">Connect</string>
 	
 	<!-- Playback -->
-	<string name="pc_power">X</string>
-	<string name="last_song">&lt;&lt;</string>
-	<string name="play_pause">Play / Pause</string>
-	<string name="next_song">&gt;&gt;</string>
-	
 	<string name="info_title">Tesla Demo</string>
 	<string name="info_artist">by Sean Hodges</string>
 	<string name="info_album">v 0.1</string>
 	
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>
+	
+	<!-- Volume control -->
+	<string name="volume_title">Volume</string>
 </resources>

@@ -14,7 +14,10 @@
         </activity>
         
         <activity android:name=".Playback" android:screenOrientation="portrait" />
-        <activity android:name=".VolumeControl" android:screenOrientation="portrait" />
+        <activity android:name=".VolumeControl" 
+        	android:screenOrientation="portrait" 
+        	android:label="@string/volume_title"
+        	android:theme="@android:style/Theme.Dialog" />
         
 		<service android:name=".service.CommandService"/>
     </application>
