@@ -29,7 +29,7 @@ import android.view.View;
 public class VolumeSlider extends View {
 	
 	public static final int MAX_LEVEL = 7;
-	private static final int EXTRA_MUTE_HEIGHT = 50; // This is a fudge because the mute button is slightly taller than the levels
+	private static final int EXTRA_MUTE_HEIGHT = 20; // This is a fudge because the mute button is slightly taller than the levels
 
 	private float currentLevel = 0;
 	private float minVolume;
@@ -78,6 +78,7 @@ public class VolumeSlider extends View {
 			calculateLevels(null);
 			levelsCalculated = true;
 			// Set default image
+			changeImage(R.drawable.vol0);
 			for (LevelDrawable item : levelDrawable) {
 				if (item.level >= currentLevel) {
 					changeImage(item.resource);
