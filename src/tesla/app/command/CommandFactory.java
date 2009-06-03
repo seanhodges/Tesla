@@ -16,20 +16,32 @@
 
 package tesla.app.command;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import tesla.app.command.provider.AppConfigProvider;
+import tesla.app.command.provider.GlobalConfigProvider;
+import tesla.app.command.provider.IConfigProvider;
 import tesla.app.command.provider.InitScriptProvider;
 
 public class CommandFactory {
 	
 	private static final long COMMAND_DELAY = 300;
 	private static final long INIT_SCRIPT_DELAY = 1000;
-	
-	private AppConfigProvider config = null;
 
+	private GlobalConfigProvider globalProvider = null;
+	private IConfigProvider appProvider = null;
+
+	ArrayList<IConfigProvider> providerScanner = new ArrayList<IConfigProvider>();
+	
 	public CommandFactory(String initialApp) {
-		config = new AppConfigProvider(initialApp);
+		globalProvider = new GlobalConfigProvider();
+		appProvider = new AppConfigProvider(initialApp);
+		
+		// Scan the global config, followed by the current app config
+		providerScanner.add(globalProvider);
+		providerScanner.add(appProvider);
 	}
 
 	public Command getInitScript() {
@@ -44,15 +56,20 @@ public class CommandFactory {
 		Command out = new Command();
 		out.setKey(key);
 		out.setDelay(COMMAND_DELAY);
-		String command;
 		Map<String, String> settings = null;
-		try {
-			command = config.getCommand(key);
-			settings = config.getSettings(key);
-		}
-		catch (Exception e) {
-			// Return a no-op command
-			command = null;
+		
+		String command = null;
+		Iterator<IConfigProvider> providerOrderIt = providerScanner.iterator();
+		while (command == null && providerOrderIt.hasNext()) {
+			IConfigProvider currentProvider = providerOrderIt.next(); 
+			try {
+				command = currentProvider.getCommand(key);
+				settings = currentProvider.getSettings(key);
+			}
+			catch (Exception e) {
+				// Return a no-op command
+				command = null;
+			}
 		}
 		out.setCommandString(command);
 		out.setSettings(settings);

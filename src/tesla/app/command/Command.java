@@ -27,6 +27,7 @@ public final class Command implements Parcelable {
 
 	// Command key tokens
 	public static final String INIT = "init";
+	public static final String POWER = "power";
 	public static final String PLAY = "play";
 	public static final String PAUSE = "pause";
 	public static final String PREV = "prev";

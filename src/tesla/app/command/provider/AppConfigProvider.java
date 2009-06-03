@@ -24,7 +24,7 @@ import java.util.Map;
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 
-public class AppConfigProvider {
+public class AppConfigProvider implements IConfigProvider {
 
 	public static final String APP_RHYTHMBOX = "rhythmbox";
 	public static final String APP_AMAROK = "amarok";
@@ -72,7 +72,7 @@ public class AppConfigProvider {
 		return settings;
 	}
 	
-	private Map<String, String> rhythmboxSettings(String key) {
+	Map<String, String> rhythmboxSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
@@ -81,7 +81,7 @@ public class AppConfigProvider {
 		return settings;
 	}
 	
-	private Map<String, String> amarokSettings(String key) {
+	Map<String, String> amarokSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
@@ -90,7 +90,7 @@ public class AppConfigProvider {
 		return settings;
 	}
 	
-	private Map<String, String> vlcSettings(String key) {
+	Map<String, String> vlcSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
@@ -99,7 +99,7 @@ public class AppConfigProvider {
 		return settings;
 	}
 	
-	private String rhythmBoxCommand(String key) throws Exception {
+	String rhythmBoxCommand(String key) throws Exception {
 		final String dest = "org.gnome.Rhythmbox";
 		List<String> args = new ArrayList<String>();
 		String out = "";
@@ -137,7 +137,7 @@ public class AppConfigProvider {
 		return out;
 	}
 
-	private String amarokCommand(String key) throws Exception {
+	String amarokCommand(String key) throws Exception {
 		final String dest = "org.kde.amarok";
 		List<String> args = new ArrayList<String>();
 		String out = "";
@@ -173,7 +173,7 @@ public class AppConfigProvider {
 		return out;
 	}
 
-	private String vlcCommand(String key) throws Exception {
+	String vlcCommand(String key) throws Exception {
 		final String dest = "org.mpris.vlc";
 		List<String> args = new ArrayList<String>();
 		String out = "";
