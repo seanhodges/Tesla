@@ -61,6 +61,8 @@ public class Playback extends Activity implements OnClickListener {
         
         // Attach the button listeners for playback controls
         View targetButton;
+        targetButton = this.findViewById(R.id.pc_power);
+        targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.play_pause);
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.last_song);
@@ -101,6 +103,9 @@ public class Playback extends Activity implements OnClickListener {
 		
 		try {
 			switch (v.getId()) {
+			case R.id.pc_power:
+				command = commandService.queryForCommand(Command.POWER);
+				break;
 			case R.id.play_pause: 
 				command = commandService.queryForCommand(Command.PLAY);
 				break;
