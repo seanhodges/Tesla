@@ -17,7 +17,6 @@
 	 
 	<tesla.app.widget.VolumeSlider
 		android:layout_gravity="bottom|center_horizontal"
-		android:paddingBottom="5dip"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/volume" />
