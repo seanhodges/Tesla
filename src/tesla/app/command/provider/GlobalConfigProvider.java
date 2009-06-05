@@ -48,7 +48,8 @@ public class GlobalConfigProvider implements IConfigProvider {
 				"org.kde.KSMServerInterface.logout", args);
 		
 		// Gnome-compatible command
-		String gnomeCommand = "gnome-session-save --kill --silent"; 
+		String gnomeCommand = new DBusHelper().compileMethodCall("org.gnome.SessionManager", "/org/gnome/SessionManager", 
+				"org.gnome.SessionManager.Shutdown");
 		
 		return "pidof ksmserver && " + kdeCommand + " || " + gnomeCommand;
 	}
