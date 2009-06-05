@@ -1,3 +1,19 @@
+/* Copyright 2009 Sean Hodges <seanhodges@bluebottle.com>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package tesla.app.command.provider;
 
 import java.util.ArrayList;
@@ -20,17 +36,21 @@ public class GlobalConfigProvider implements IConfigProvider {
 	}
 
 	private String powerCommand() {
-		// TODO: make this desktop agnostic
-		
+		// KDE-compatible command
 		List<String> args = new ArrayList<String>();
-		args.add(new DBusHelper().evaluateArg("-1")); // Confirmation (-1 : user-defined, 0 : immediate, 1 : prompt user)
-		args.add(new DBusHelper().evaluateArg("2")); // Logout type (-1 : previous, 0 : logout, 1 : reboot, 2 : halt)
+		// Confirmation (-1 : user-defined, 0 : immediate, 1 : prompt user)
+		args.add(new DBusHelper().evaluateArg("-1"));
+		// Logout type (-1 : previous, 0 : logout, 1 : reboot, 2 : halt)
+		args.add(new DBusHelper().evaluateArg("2")); 
 		// Session handling (-1 : previous, 0 : wait for other sessions, 1 : cancel if other sessions active, 2 : force, 3 : prompt user)
 		args.add(new DBusHelper().evaluateArg("3"));
-		
-		return new DBusHelper().compileMethodCall("org.kde.ksmserver", "/KSMServer", 
+		String kdeCommand = new DBusHelper().compileMethodCall("org.kde.ksmserver", "/KSMServer", 
 				"org.kde.KSMServerInterface.logout", args);
-		//return "DISPLAY=:0 gnome-session-save --kill --gui";
+		
+		// Gnome-compatible command
+		String gnomeCommand = "gnome-session-save --kill --silent"; 
+		
+		return "pidof ksmserver && " + kdeCommand + " || " + gnomeCommand;
 	}
 
 	public Map<String, String> getSettings(String key) {

@@ -39,7 +39,7 @@ public class CommandFactory {
 		globalProvider = new GlobalConfigProvider();
 		appProvider = new AppConfigProvider(initialApp);
 		
-		// Scan the global config, followed by the current app config
+		// Scan the config providers in this order
 		providerScanner.add(globalProvider);
 		providerScanner.add(appProvider);
 	}
