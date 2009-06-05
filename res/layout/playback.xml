@@ -10,11 +10,14 @@
 	android:layout_gravity="center_horizontal">
 	
 	
-	<Button
+	<ImageButton
 		android:id="@+id/pc_power"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/pc_power"
+		android:paddingTop="10dip"
+		android:paddingRight="10dip"
+		android:background="@null"
+		android:src="@drawable/power_default"
 		android:layout_gravity="right" />
 	
 	<LinearLayout
@@ -50,7 +53,7 @@
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="50dip"
+		android:paddingTop="40dip"
 		android:orientation="horizontal"
 		android:layout_gravity="center_horizontal">
 		
