@@ -17,7 +17,7 @@
 		android:paddingTop="10dip"
 		android:paddingRight="10dip"
 		android:background="@null"
-		android:src="@drawable/power_default"
+		android:src="@drawable/power"
 		android:layout_gravity="right" />
 	
 	<LinearLayout
