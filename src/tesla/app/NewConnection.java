@@ -23,10 +23,14 @@ import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.DialogInterface.OnCancelListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -35,10 +39,12 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 public class NewConnection extends Activity implements OnClickListener {
 	
 	ConnectionOptions config;
+	private ProgressDialog progressDialog;
 	
 	private ICommandController commandService;
 	
@@ -60,12 +66,14 @@ public class NewConnection extends Activity implements OnClickListener {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			
-			unbindService(connection);
+			finally {
+				unbindService(connection);
+			}
 			
 			// Start the playback activity
 			if (success) {
 				startActivity(new Intent(NewConnection.this, Playback.class));
+				progressDialog.dismiss();
 			}
 		}
 		
@@ -126,36 +134,9 @@ public class NewConnection extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.connect:
-			config.hostname = hostText.getText().toString();
-			config.port = Integer.parseInt(portText.getText().toString());
-			config.username = userText.getText().toString();
-			config.password = passText.getText().toString();
-			
-			// Determine which application was selected
-			RadioButton currentSelection = (RadioButton)findViewById(appSelection.getCheckedRadioButtonId());
-			String selectionText = currentSelection.getText().toString();
-			if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_RHYTHMBOX)) {
-				config.appSelection = AppConfigProvider.APP_RHYTHMBOX;
-			}
-			else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_AMAROK)) {
-				config.appSelection = AppConfigProvider.APP_AMAROK;
-			}
-			else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_VLC)) {
-				config.appSelection = AppConfigProvider.APP_VLC;
-			}
-			
-			// Check the input
-			if (config.port == 0) config.port = 22;
-			
-			// Save the settings for next time
-			config.saveSettings();
-			
-			// Start the CommandService, and attempt to connect it
-			startService(new Intent(NewConnection.this, CommandService.class));
-			bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
-			
+			startConnection();
 			break;
-		case R.id.cancel: 
+		case R.id.cancel:
 			finish();
 			break;
 		}
@@ -178,10 +159,66 @@ public class NewConnection extends Activity implements OnClickListener {
 	}
 
 	private void onServiceErrorAction(String title, String message, boolean fatal) {
-		stopService(new Intent(NewConnection.this, CommandService.class));
+		cancelConnection();
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)
 			.setMessage(message)
 			.show();
+	}
+	
+	private void setConnectionConfig() {
+		config.hostname = hostText.getText().toString();
+		config.port = Integer.parseInt(portText.getText().toString());
+		config.username = userText.getText().toString();
+		config.password = passText.getText().toString();
+		
+		// Determine which application was selected
+		RadioButton currentSelection = (RadioButton)findViewById(appSelection.getCheckedRadioButtonId());
+		String selectionText = currentSelection.getText().toString();
+		if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_RHYTHMBOX)) {
+			config.appSelection = AppConfigProvider.APP_RHYTHMBOX;
+		}
+		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_AMAROK)) {
+			config.appSelection = AppConfigProvider.APP_AMAROK;
+		}
+		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_VLC)) {
+			config.appSelection = AppConfigProvider.APP_VLC;
+		}
+		
+		// Check the input
+		if (config.port == 0) config.port = 22;
+		
+		// Save the settings for next time
+		config.saveSettings();
+	}
+	
+	private void startConnection() {
+		OnCancelListener cancelListener = new OnCancelListener() {
+			public void onCancel(DialogInterface dialog) {
+				// Connection was cancelled by user
+				cancelConnection();
+			}
+		};
+		progressDialog = ProgressDialog.show(
+				this, 
+				getString(R.string.connection_progress_title), 
+				getString(R.string.connection_progress_body) + " " + config.hostname, 
+				true, true, cancelListener);
+		
+		// Start the CommandService, and attempt to connect it
+		new ConnectToServerTask().execute();
+	}
+	
+	private class ConnectToServerTask extends AsyncTask {
+		protected Long doInBackground(Object... dummy) {
+			setConnectionConfig();
+			startService(new Intent(NewConnection.this, CommandService.class));
+			bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+			return null;
+		}
+	}
+	
+	private void cancelConnection() {
+		stopService(new Intent(NewConnection.this, CommandService.class));
 	}
 }

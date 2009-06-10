@@ -17,6 +17,9 @@
 	<string name="cancel">Cancel</string>
 	<string name="connect">Connect</string>
 	
+	<string name="connection_progress_title">Working...</string>
+	<string name="connection_progress_body">Connecting to server: </string>
+	
 	<!-- Playback -->
 	<string name="info_title">Tesla Demo</string>
 	<string name="info_artist">by Sean Hodges</string>
