@@ -47,6 +47,7 @@ public class NewConnection extends Activity implements OnClickListener {
 	private ProgressDialog progressDialog;
 	
 	private ICommandController commandService;
+	protected ConnectToServerTask connectTask;
 	
 	EditText hostText;
 	EditText portText;
@@ -57,24 +58,8 @@ public class NewConnection extends Activity implements OnClickListener {
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
-			// Set the error handling once service connected
-			setErrorHandler();
-			// Attempt to connect
-			boolean success = false;
-			try {
-				success = commandService.connect();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			finally {
-				unbindService(connection);
-			}
-			
-			// Start the playback activity
-			if (success) {
-				startActivity(new Intent(NewConnection.this, Playback.class));
-				progressDialog.dismiss();
-			}
+			connectTask = new ConnectToServerTask();
+			connectTask.execute();
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
@@ -160,6 +145,7 @@ public class NewConnection extends Activity implements OnClickListener {
 
 	private void onServiceErrorAction(String title, String message, boolean fatal) {
 		cancelConnection();
+		progressDialog.dismiss();
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)
 			.setMessage(message)
@@ -193,6 +179,8 @@ public class NewConnection extends Activity implements OnClickListener {
 	}
 	
 	private void startConnection() {
+		setConnectionConfig();
+		
 		OnCancelListener cancelListener = new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				// Connection was cancelled by user
@@ -206,19 +194,36 @@ public class NewConnection extends Activity implements OnClickListener {
 				true, true, cancelListener);
 		
 		// Start the CommandService, and attempt to connect it
-		new ConnectToServerTask().execute();
+		startService(new Intent(NewConnection.this, CommandService.class));
+		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
 	private class ConnectToServerTask extends AsyncTask {
 		protected Long doInBackground(Object... dummy) {
-			setConnectionConfig();
-			startService(new Intent(NewConnection.this, CommandService.class));
-			bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+			// Set the error handling once service connected
+			setErrorHandler();
+			// Attempt to connect
+			boolean success = false;
+			try {
+				success = commandService.connect();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			finally {
+				unbindService(connection);
+			}
+			
+			// Start the playback activity
+			if (success && !isCancelled()) {
+				startActivity(new Intent(NewConnection.this, Playback.class));
+				progressDialog.dismiss();
+			}
 			return null;
 		}
 	}
 	
 	private void cancelConnection() {
+		connectTask.cancel(true);
 		stopService(new Intent(NewConnection.this, CommandService.class));
 	}
 }
