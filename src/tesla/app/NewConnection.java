@@ -39,7 +39,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
+import android.widget.SlidingDrawer;
 
 public class NewConnection extends Activity implements OnClickListener {
 	
@@ -48,6 +48,11 @@ public class NewConnection extends Activity implements OnClickListener {
 	
 	private ICommandController commandService;
 	protected ConnectToServerTask connectTask;
+	
+	// Error messages need to be passed back to main UI thread
+	private String errorTitle;
+	private String errorMessage;
+	private boolean errorIsFatal;
 	
 	EditText hostText;
 	EditText portText;
@@ -58,6 +63,14 @@ public class NewConnection extends Activity implements OnClickListener {
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
+			
+			// Set the error handling once service connected
+			errorTitle = null;
+			errorMessage = null;
+			errorIsFatal = false;
+			setErrorHandler();
+			
+			// Connect to the server in the background
 			connectTask = new ConnectToServerTask();
 			connectTask.execute();
 		}
@@ -144,12 +157,14 @@ public class NewConnection extends Activity implements OnClickListener {
 	}
 
 	private void onServiceErrorAction(String title, String message, boolean fatal) {
+		// Tear down service and progress dialog
 		cancelConnection();
 		progressDialog.dismiss();
-		new AlertDialog.Builder(NewConnection.this)
-			.setTitle(title)
-			.setMessage(message)
-			.show();
+		
+		// Pass the error data back to the main UI thread
+		errorTitle = title;
+		errorMessage = message;
+		errorIsFatal = fatal;
 	}
 	
 	private void setConnectionConfig() {
@@ -198,10 +213,8 @@ public class NewConnection extends Activity implements OnClickListener {
 		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
-	private class ConnectToServerTask extends AsyncTask {
+	private class ConnectToServerTask extends AsyncTask<Object, Object, Long> {
 		protected Long doInBackground(Object... dummy) {
-			// Set the error handling once service connected
-			setErrorHandler();
 			// Attempt to connect
 			boolean success = false;
 			try {
@@ -218,7 +231,18 @@ public class NewConnection extends Activity implements OnClickListener {
 				startActivity(new Intent(NewConnection.this, Playback.class));
 				progressDialog.dismiss();
 			}
+			
 			return null;
+		}
+		
+		protected void onPostExecute(Long result) {
+			// Pass error message back to UI thread if there is one
+			if (errorTitle != null && errorMessage != null) {
+				new AlertDialog.Builder(NewConnection.this)
+					.setTitle(errorTitle)
+					.setMessage(errorMessage)
+					.show();
+			}
 		}
 	}
 	
