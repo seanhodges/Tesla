@@ -17,10 +17,11 @@
 package tesla.app;
 
 import tesla.app.command.provider.AppConfigProvider;
+import tesla.app.connect.ConnectionListener;
 import tesla.app.connect.ConnectionOptions;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
-import tesla.app.service.business.IErrorHandler;
+import tesla.app.task.ConnectToServerTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -30,29 +31,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.DialogInterface.OnCancelListener;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SlidingDrawer;
 
-public class NewConnection extends Activity implements OnClickListener {
+public class NewConnection extends Activity implements OnClickListener, ConnectionListener {
 	
 	ConnectionOptions config;
 	private ProgressDialog progressDialog;
 	
 	private ICommandController commandService;
 	protected ConnectToServerTask connectTask;
-	
-	// Error messages need to be passed back to main UI thread
-	private String errorTitle;
-	private String errorMessage;
-	private boolean errorIsFatal;
 	
 	EditText hostText;
 	EditText portText;
@@ -64,24 +57,14 @@ public class NewConnection extends Activity implements OnClickListener {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
 			
-			// Set the error handling once service connected
-			errorTitle = null;
-			errorMessage = null;
-			errorIsFatal = false;
-			setErrorHandler();
-			
 			// Connect to the server in the background
 			connectTask = new ConnectToServerTask();
-			connectTask.execute();
+			connectTask.registerConnectionListener(NewConnection.this);
+			connectTask.execute(commandService);
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
 			commandService = null;
-		}
-	};
-	private IErrorHandler errorHandler = new IErrorHandler.Stub() {
-		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
-			onServiceErrorAction(title, message, fatal);
 		}
 	};
 	
@@ -140,33 +123,6 @@ public class NewConnection extends Activity implements OnClickListener {
 		}
 	}
 	
-	protected void setErrorHandler() {
-    	try {
-			commandService.registerErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected void unsetErrorHandler() {
-    	try {
-			commandService.unregisterErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void onServiceErrorAction(String title, String message, boolean fatal) {
-		// Tear down service and progress dialog
-		cancelConnection();
-		progressDialog.dismiss();
-		
-		// Pass the error data back to the main UI thread
-		errorTitle = title;
-		errorMessage = message;
-		errorIsFatal = fatal;
-	}
-	
 	private void setConnectionConfig() {
 		config.hostname = hostText.getText().toString();
 		config.port = Integer.parseInt(portText.getText().toString());
@@ -199,55 +155,39 @@ public class NewConnection extends Activity implements OnClickListener {
 		OnCancelListener cancelListener = new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				// Connection was cancelled by user
-				cancelConnection();
+				connectionCancelled();
 			}
 		};
 		progressDialog = ProgressDialog.show(
-				this, 
-				getString(R.string.connection_progress_title), 
-				getString(R.string.connection_progress_body) + " " + config.hostname, 
-				true, true, cancelListener);
+			this, 
+			getString(R.string.connection_progress_title), 
+			getString(R.string.connection_progress_body) + " " + config.hostname, 
+			true, true, cancelListener);
 		
 		// Start the CommandService, and attempt to connect it
 		startService(new Intent(NewConnection.this, CommandService.class));
 		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
-	private class ConnectToServerTask extends AsyncTask<Object, Object, Long> {
-		protected Long doInBackground(Object... dummy) {
-			// Attempt to connect
-			boolean success = false;
-			try {
-				success = commandService.connect();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			finally {
-				unbindService(connection);
-			}
-			
-			// Start the playback activity
-			if (success && !isCancelled()) {
-				startActivity(new Intent(NewConnection.this, Playback.class));
-				progressDialog.dismiss();
-			}
-			
-			return null;
-		}
-		
-		protected void onPostExecute(Long result) {
-			// Pass error message back to UI thread if there is one
-			if (errorTitle != null && errorMessage != null) {
-				new AlertDialog.Builder(NewConnection.this)
-					.setTitle(errorTitle)
-					.setMessage(errorMessage)
-					.show();
-			}
-		}
-	}
-	
-	private void cancelConnection() {
-		connectTask.cancel(true);
+	public void connectionComplete() {
+		unbindService(connection);
 		stopService(new Intent(NewConnection.this, CommandService.class));
+		progressDialog.dismiss();
+		startActivity(new Intent(NewConnection.this, Playback.class));
+	}
+
+	public void connectionCancelled() {
+		connectTask.cancel(true);
+		unbindService(connection);
+		stopService(new Intent(NewConnection.this, CommandService.class));
+		progressDialog.dismiss();
+	}
+
+	public void connectionFailed(String title, String message) {
+		connectionCancelled();
+		new AlertDialog.Builder(NewConnection.this)
+			.setTitle(title)
+			.setMessage(message)
+			.show();
 	}
 }
