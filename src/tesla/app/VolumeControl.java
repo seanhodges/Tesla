@@ -16,13 +16,11 @@
 
 package tesla.app;
 
-import java.util.Map;
-
 import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
+import tesla.app.task.GetVolumeLevelTask;
 import tesla.app.widget.VolumeSlider;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,7 +32,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLevelChangeListener {
+public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLevelChangeListener, GetVolumeLevelTask.OnGetVolumeLevelListener {
 	
 	private VolumeSlider volumeSlider;
 	private ICommandController commandService;
@@ -42,8 +40,6 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
-			// Set the error handling and initial volume level once service connected
-			setErrorHandler();
 			setInitialVolume();
 		}
 		
@@ -54,7 +50,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	
 	private IErrorHandler errorHandler = new IErrorHandler.Stub() {
 		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
-			onServiceErrorAction(title, message, fatal);
+			showErrorMessage(title, message);
 		}
 	};
 	
@@ -68,27 +64,13 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
         volumeSlider = (VolumeSlider)this.findViewById(R.id.volume);
         volumeSlider.setOnVolumeLevelChangeListener(this);
     }
-    
-    protected void setErrorHandler() {
-    	try {
-			commandService.registerErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected void unsetErrorHandler() {
-    	try {
-			commandService.unregisterErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
 
 	private void updateVolume(VolumeSlider volumeSlider, float level) {
 		Command command = null;
 		
 		try {
+			commandService.registerErrorHandler(errorHandler);
+			
 	    	if (level == 0) {
 	    		command = commandService.queryForCommand(Command.VOL_MUTE); 
 	    	}
@@ -104,8 +86,9 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		    	}
 				command.addArg(levelArg);
 	    	}
-	    	
 			commandService.sendCommand(command);
+			
+			commandService.unregisterErrorHandler(errorHandler);
 		} catch (RemoteException e) {
 			// Failed to send command
 			e.printStackTrace();
@@ -114,7 +97,6 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
     
 	protected void onPause() {
 		super.onPause();
-		unsetErrorHandler();
 		if (connection != null) unbindService(connection);
 	}
 
@@ -128,37 +110,26 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	}
 	
 	private void setInitialVolume() {
-		
-		Command command = null;
-		try {
-	        command = commandService.queryForCommand(Command.VOL_CURRENT);
-	        
-	        Map<String, String> settings = command.getSettings();
-	        volumeSlider.setMinVolume(Float.parseFloat(settings.get("MIN")));
-	        volumeSlider.setMaxVolume(Float.parseFloat(settings.get("MAX")));
-			volumeSlider.setLevel(0.0f);
-        
-			command = commandService.sendQuery(command);
-		} catch (RemoteException e) {
-			// Failed to send query
-			e.printStackTrace();
-		}
-		
-        // Parse the result as a level percentage
-		if (command != null && command.getOutput() != null && command.getOutput() != "") {
-			float volumeLevel;
-			try {
-				volumeLevel = Float.parseFloat(new DBusHelper().evaluateOutput(command.getOutput()));
-			}
-			catch (NumberFormatException e) {
-				// If the volume was not parsed correctly, just default to mute
-				volumeLevel = 0.0f;
-			}
-			volumeSlider.setLevel(volumeLevel);
-		}
+        volumeSlider.setLevel(0.0f);
+		GetVolumeLevelTask getVolumeTask = new GetVolumeLevelTask(commandService);
+		getVolumeTask.registerConnectionListener(VolumeControl.this);
+		getVolumeTask.execute();
 	}
-	
-	private void onServiceErrorAction(String title, String message, boolean fatal) {
+
+	public void onGetVolumeExtents(float min, float max) {
+		volumeSlider.setMinVolume(min);
+		volumeSlider.setMaxVolume(max);
+	}
+
+	public void onGetVolumeComplete(Float result) {
+		volumeSlider.setLevel(result);
+	}
+
+	public void onGetVolumeFailed(String errorTitle, String errorMessage) {
+		showErrorMessage(errorTitle, errorMessage);
+	}
+
+	protected void showErrorMessage(String title, String message) {
 		new AlertDialog.Builder(VolumeControl.this)
 			.setTitle(title)
 			.setMessage(message)
