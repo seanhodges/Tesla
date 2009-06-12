@@ -43,8 +43,9 @@ public class CommandService extends Service {
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
-	private IConnection connection;
-	private CommandFactory factory;
+	private volatile IConnection connection;
+	private volatile CommandFactory factory;
+	
 	private Timer commandExecutioner;
 	private Command nextCommand = null;
 	private Command lastCommand = null;
@@ -110,13 +111,15 @@ public class CommandService extends Service {
 			
 			connection = new SSHConnection();
 		}
-	}
-	
-	public boolean connectAction() throws RemoteException {
-		boolean success = false;
 		
 		ConnectionOptions options = new ConnectionOptions(this);
 		factory = new CommandFactory(options.appSelection);
+	}
+	
+	public synchronized boolean connectAction() throws RemoteException {
+		boolean success = false;
+		
+		ConnectionOptions options = new ConnectionOptions(this);
 		
         try {
 			connection.connect(options);
