@@ -1,6 +1,5 @@
 package tesla.app.task;
 
-import tesla.app.connect.ConnectionListener;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import android.os.AsyncTask;
@@ -8,7 +7,7 @@ import android.os.RemoteException;
 
 public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, Boolean> {
 
-	private ConnectionListener listener = null;
+	private OnConnectionListener listener = null;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -21,6 +20,12 @@ public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, 
 			errorMessage = message;
 		}
 	};
+	
+	public interface OnConnectionListener {
+		void onConnectionCancelled();
+		void onConnectionComplete();
+		void onConnectionFailed(String title, String message);
+	}
 	
 	protected Boolean doInBackground(ICommandController... args) {
 		ICommandController commandService = args[0];
@@ -38,14 +43,14 @@ public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, 
 	protected void onPostExecute(Boolean result) {
 		// Pass error message back to UI thread if there is one
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.connectionFailed(errorTitle, errorMessage);
+			if (listener != null) listener.onConnectionFailed(errorTitle, errorMessage);
 		}
 		else {
-			if (listener != null) listener.connectionComplete();
+			if (listener != null) listener.onConnectionComplete();
 		}
 	}
 
-	public void registerConnectionListener(ConnectionListener listener) {
+	public void registerConnectionListener(OnConnectionListener listener) {
 		this.listener = listener;
 	}
 }

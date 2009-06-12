@@ -17,7 +17,6 @@
 package tesla.app;
 
 import tesla.app.command.provider.AppConfigProvider;
-import tesla.app.connect.ConnectionListener;
 import tesla.app.connect.ConnectionOptions;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
@@ -39,7 +38,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-public class NewConnection extends Activity implements OnClickListener, ConnectionListener {
+public class NewConnection extends Activity implements OnClickListener, ConnectToServerTask.OnConnectionListener {
 	
 	ConnectionOptions config;
 	private ProgressDialog progressDialog;
@@ -155,7 +154,7 @@ public class NewConnection extends Activity implements OnClickListener, Connecti
 		OnCancelListener cancelListener = new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				// Connection was cancelled by user
-				connectionCancelled();
+				onConnectionCancelled();
 			}
 		};
 		progressDialog = ProgressDialog.show(
@@ -169,22 +168,22 @@ public class NewConnection extends Activity implements OnClickListener, Connecti
 		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
-	public void connectionComplete() {
+	public void onConnectionComplete() {
 		unbindService(connection);
 		stopService(new Intent(NewConnection.this, CommandService.class));
 		progressDialog.dismiss();
 		startActivity(new Intent(NewConnection.this, Playback.class));
 	}
 
-	public void connectionCancelled() {
+	public void onConnectionCancelled() {
 		connectTask.cancel(true);
 		unbindService(connection);
 		stopService(new Intent(NewConnection.this, CommandService.class));
 		progressDialog.dismiss();
 	}
 
-	public void connectionFailed(String title, String message) {
-		connectionCancelled();
+	public void onConnectionFailed(String title, String message) {
+		onConnectionCancelled();
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)
 			.setMessage(message)
