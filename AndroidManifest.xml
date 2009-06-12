@@ -22,6 +22,9 @@
         
 		<service android:name=".service.CommandService"/>
     </application>
+    
+    <!--  Prevents crashing on first launch -->
+	<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
