@@ -102,7 +102,7 @@ public class AppConfigProvider implements IConfigProvider {
 	String rhythmBoxCommand(String key) throws Exception {
 		final String dest = "org.gnome.Rhythmbox";
 		List<String> args = new ArrayList<String>();
-		String out = "";
+		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			args.add(new DBusHelper().evaluateArg("false"));
 			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
@@ -140,7 +140,7 @@ public class AppConfigProvider implements IConfigProvider {
 	String amarokCommand(String key) throws Exception {
 		final String dest = "org.kde.amarok";
 		List<String> args = new ArrayList<String>();
-		String out = "";
+		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.Pause");
@@ -167,6 +167,10 @@ public class AppConfigProvider implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
+		else if (key.equals(Command.GET_SONG_INFO)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetMetadata");
+		}
 		else {
 			throw new Exception("Command not implemented");
 		}
@@ -176,7 +180,7 @@ public class AppConfigProvider implements IConfigProvider {
 	String vlcCommand(String key) throws Exception {
 		final String dest = "org.mpris.vlc";
 		List<String> args = new ArrayList<String>();
-		String out = "";
+		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.Pause");

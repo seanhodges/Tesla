@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import tesla.app.command.provider.AppConfigProvider;
+import tesla.app.command.provider.FallbackConfigProvider;
 import tesla.app.command.provider.GlobalConfigProvider;
 import tesla.app.command.provider.IConfigProvider;
 import tesla.app.command.provider.InitScriptProvider;
@@ -30,18 +31,17 @@ public class CommandFactory {
 	private static final long COMMAND_DELAY = 300;
 	private static final long INIT_SCRIPT_DELAY = 1000;
 
-	private GlobalConfigProvider globalProvider = null;
-	private IConfigProvider appProvider = null;
-
 	ArrayList<IConfigProvider> providerScanner = new ArrayList<IConfigProvider>();
 	
 	public CommandFactory(String initialApp) {
-		globalProvider = new GlobalConfigProvider();
-		appProvider = new AppConfigProvider(initialApp);
+		IConfigProvider globalProvider = new GlobalConfigProvider();
+		IConfigProvider appProvider = new AppConfigProvider(initialApp);
+		IConfigProvider fallbackProvider = new FallbackConfigProvider();
 		
 		// Scan the config providers in this order
 		providerScanner.add(globalProvider);
 		providerScanner.add(appProvider);
+		providerScanner.add(fallbackProvider);
 	}
 
 	public Command getInitScript() {

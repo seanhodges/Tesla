@@ -26,7 +26,7 @@ import tesla.app.command.helper.DBusHelper;
 public class GlobalConfigProvider implements IConfigProvider {
 
 	public String getCommand(String key) throws Exception {
-		String out = "";
+		String out = null;
 		
 		if (key.equals(Command.POWER)) {
 			out = powerCommand();
