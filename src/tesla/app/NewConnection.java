@@ -58,7 +58,7 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 			
 			// Connect to the server in the background
 			connectTask = new ConnectToServerTask();
-			connectTask.registerConnectionListener(NewConnection.this);
+			connectTask.registerListener(NewConnection.this);
 			connectTask.execute(commandService);
 		}
 		
@@ -181,7 +181,7 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		progressDialog.dismiss();
 	}
 
-	public void onConnectionFailed(String title, String message) {
+	public void onServiceError(String title, String message) {
 		onConnectionCancelled();
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)

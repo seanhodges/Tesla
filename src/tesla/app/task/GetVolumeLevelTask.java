@@ -46,7 +46,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 	
 	public interface OnGetVolumeLevelListener {
 		void onGetVolumeExtents(float min, float max);
-		void onGetVolumeFailed(String errorTitle, String errorMessage);
+		void onServiceError(String errorTitle, String errorMessage);
 		void onGetVolumeComplete(Float result);
 	}
 
@@ -69,7 +69,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 			e.printStackTrace();
 		}
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onGetVolumeFailed(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
 		}
 		else {
 			if (listener != null) listener.onGetVolumeExtents(min, max);
@@ -90,7 +90,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 		// Parse the result as a level percentage
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
 			try {
-				volumeLevel = Float.parseFloat(new DBusHelper().evaluateOutput(command.getOutput()));
+				volumeLevel = Float.parseFloat(new DBusHelper().evaluateOutputAsString(command.getOutput()));
 			}
 			catch (NumberFormatException e) {
 				// If the volume was not parsed correctly, just default to mute
@@ -103,14 +103,14 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 	
 	protected void onPostExecute(Float result) {
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onGetVolumeFailed(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
 		}
 		else {
 			if (listener != null) listener.onGetVolumeComplete(result);
 		}
 	}
 
-	public void registerConnectionListener(OnGetVolumeLevelListener listener) {
+	public void registerListener(OnGetVolumeLevelListener listener) {
 		this.listener = listener;
 	}
 }

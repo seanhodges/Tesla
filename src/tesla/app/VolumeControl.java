@@ -112,7 +112,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	private void setInitialVolume() {
         volumeSlider.setLevel(0.0f);
 		GetVolumeLevelTask getVolumeTask = new GetVolumeLevelTask(commandService);
-		getVolumeTask.registerConnectionListener(VolumeControl.this);
+		getVolumeTask.registerListener(VolumeControl.this);
 		getVolumeTask.execute();
 	}
 
@@ -126,8 +126,8 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		volumeSlider.refresh();
 	}
 
-	public void onGetVolumeFailed(String errorTitle, String errorMessage) {
-		showErrorMessage(errorTitle, errorMessage);
+	public void onServiceError(String title, String message) {
+		showErrorMessage(title, message);
 	}
 
 	protected void showErrorMessage(String title, String message) {

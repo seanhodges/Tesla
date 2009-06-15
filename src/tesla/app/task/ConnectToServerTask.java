@@ -40,7 +40,7 @@ public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, 
 	public interface OnConnectionListener {
 		void onConnectionCancelled();
 		void onConnectionComplete();
-		void onConnectionFailed(String title, String message);
+		void onServiceError(String title, String message);
 	}
 	
 	protected Object doInBackground(ICommandController... args) {
@@ -59,14 +59,14 @@ public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, 
 	protected void onPostExecute(Object result) {
 		// Pass error message back to UI thread if there is one
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onConnectionFailed(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
 		}
 		else {
 			if (listener != null) listener.onConnectionComplete();
 		}
 	}
 
-	public void registerConnectionListener(OnConnectionListener listener) {
+	public void registerListener(OnConnectionListener listener) {
 		this.listener = listener;
 	}
 }

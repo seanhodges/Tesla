@@ -168,7 +168,6 @@ public class CommandService extends Service {
 						try {
 							broadcastError("Failed to send command to remote machine", e, false);
 						} catch (RemoteException e1) {
-							// TODO: Don't swallow the asynchronous RemoteExceptions
 							e1.printStackTrace();
 						}
 					}
@@ -202,8 +201,6 @@ public class CommandService extends Service {
 				// Display the command for debugging
 				System.out.println("FakeConnection: query received: " + command.getCommandString() + ", result: " + command.getOutput());
 			}
-			// DEBUG!
-			System.out.println("query received: " + command.getCommandString() + ", result: " + command.getOutput());
 		}
 		return command;
 	}
