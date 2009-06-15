@@ -37,18 +37,13 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
 public class CommandService extends Service {
-
-	private static final int EXEC_POLL_PERIOD = 50; // Cycles
+	
 	private static final boolean DEBUG_MODE = false;
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
-	private volatile IConnection connection;
-	private volatile CommandFactory factory;
-	
-	private Timer commandExecutioner;
-	private Command nextCommand = null;
-	private Command lastCommand = null;
+	private IConnection connection;
+	private CommandFactory factory;
 	
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -72,7 +67,7 @@ public class CommandService extends Service {
 			}
 			
 			public Command sendQuery(Command command) throws RemoteException {
-				return sendQueryAction(command);
+				return sendCommandAction(command);
 			}
 
 			public void registerErrorHandler(IErrorHandler cb) throws RemoteException {
@@ -111,15 +106,13 @@ public class CommandService extends Service {
 			
 			connection = new SSHConnection();
 		}
-		
-		ConnectionOptions options = new ConnectionOptions(this);
-		factory = new CommandFactory(options.appSelection);
 	}
 	
-	public synchronized boolean connectAction() throws RemoteException {
+	public boolean connectAction() throws RemoteException {
 		boolean success = false;
 		
 		ConnectionOptions options = new ConnectionOptions(this);
+		factory = new CommandFactory(options.appSelection);
 		
         try {
 			connection.connect(options);
@@ -128,9 +121,6 @@ public class CommandService extends Service {
 			if (!response.equals("success\n")) {
 				throw new Exception("Init script failed with output: " + response);
 			}
-			
-			// Start the command thread
-			handleCommands();
 			success = true;
 			
 		} catch (Exception e) {
@@ -142,68 +132,32 @@ public class CommandService extends Service {
 
 	public void onDestroy() {
 		super.onDestroy();
-		if (commandExecutioner != null) commandExecutioner.cancel();
 		if (connection.isConnected()) connection.disconnect();
 	}
 	
-	private void handleCommands() {
-		
-		// Commands are executed in a Timer thread
-		// this moves them out of the event loop, and drops commands when new ones are requested
-		
-		commandExecutioner = new Timer();
-		commandExecutioner.schedule(new TimerTask() {
-
-			public void run() {
-				if (nextCommand != null && nextCommand != lastCommand) {
-					lastCommand = nextCommand;
-					try {
-						connection.sendCommand(nextCommand);
-						if (connection instanceof FakeConnection) {
-							// Display the command for debugging
-							System.out.println("FakeConnection: command received: " + nextCommand.getCommandString());
-						}
-					}
-					catch (Exception e) {
-						try {
-							broadcastError("Failed to send command to remote machine", e, false);
-						} catch (RemoteException e1) {
-							// TODO: Don't swallow the asynchronous RemoteExceptions
-							e1.printStackTrace();
-						}
-					}
-				}
-			}
-			
-		}, 0, EXEC_POLL_PERIOD);
-	}
-	
 	protected Command queryForCommandAction(String key) {
-		return factory.getCommand(key);
+		return factory.getCommand(key); 
 	}
 
-	protected void sendCommandAction(Command command) {
-		if (command != null) {
-			nextCommand = command;
-		}
-	}
-	
-	protected Command sendQueryAction(Command command) throws RemoteException {
-		// Queries are returned synchronously
+	protected Command sendCommandAction(Command command) {
 		if (command != null) {
 			try {
 				String stdOut = connection.sendCommand(command);
 				command.setOutput(stdOut);
-			} catch (ConnectionException e) {
-				broadcastError("Failed to send query to remote machine", e, false);
-				command.setOutput("");
+				if (connection instanceof FakeConnection) {
+					// Display the command for debugging
+					System.out.println("FakeConnection: command received: " + command.getCommandString());
+				}
 			}
-			if (connection instanceof FakeConnection) {
-				// Display the command for debugging
-				System.out.println("FakeConnection: query received: " + command.getCommandString() + ", result: " + command.getOutput());
+			catch (Exception e) {
+				try {
+					command.setOutput("");
+					broadcastError("Failed to send command to remote machine", e, false);
+				} catch (RemoteException e1) {
+					// TODO: Don't swallow the asynchronous RemoteExceptions
+					e1.printStackTrace();
+				}
 			}
-			// DEBUG!
-			System.out.println("query received: " + command.getCommandString() + ", result: " + command.getOutput());
 		}
 		return command;
 	}
