@@ -20,6 +20,8 @@ import tesla.app.command.Command;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
+import tesla.app.task.GetSongInfoTask;
+import tesla.app.task.pod.SongInfo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -32,7 +34,7 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class Playback extends Activity implements OnClickListener {
+public class Playback extends Activity implements OnClickListener, GetSongInfoTask.OnGetSongInfoListener {
 	
 	private ICommandController commandService;
 	
@@ -41,6 +43,7 @@ public class Playback extends Activity implements OnClickListener {
 			commandService = ICommandController.Stub.asInterface(service);
 			// Set the error handling once service connected
 			setErrorHandler();
+			updateSongInfo();
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
@@ -111,9 +114,11 @@ public class Playback extends Activity implements OnClickListener {
 				break;
 			case R.id.last_song:
 				command = commandService.queryForCommand(Command.PREV);
+				updateSongInfo();
 				break;
 			case R.id.next_song:
 				command = commandService.queryForCommand(Command.NEXT);
+				updateSongInfo();
 				break;
 			case R.id.playlist:
 				new AlertDialog.Builder(Playback.this)
@@ -136,6 +141,12 @@ public class Playback extends Activity implements OnClickListener {
 		}
 	}
 
+	private void updateSongInfo() {
+		GetSongInfoTask getSongInfoTask = new GetSongInfoTask();
+		getSongInfoTask.registerListener(this);
+		getSongInfoTask.execute(commandService);
+	}
+
 	protected void onPause() {
 		super.onPause();
 		unsetErrorHandler();
@@ -145,5 +156,16 @@ public class Playback extends Activity implements OnClickListener {
 	protected void onResume() {
 		super.onResume();
 		bindService(new Intent(Playback.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+	}
+
+	public void onServiceError(String title, String message) {
+		new AlertDialog.Builder(Playback.this)
+			.setTitle(title)
+			.setMessage(message)
+			.show();
+	}
+
+	public void onSongInfoChanged(SongInfo info) {
+		// TODO: Get the info TextViews and change their text to match the POD content
 	}
 }

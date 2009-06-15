@@ -16,7 +16,9 @@
 
 package tesla.app.command.helper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBusHelper {
 
@@ -72,10 +74,14 @@ public class DBusHelper {
 		return dataType + rawArg;
 	}
 	
-	public String evaluateOutput(String rawOut) {
+	public String evaluateOutputAsString(String rawOut) {
+		return evaluateOutputAsString(rawOut, true);
+	}
+	
+	private String evaluateOutputAsString(String rawOut, boolean primitive) {
 		String out = rawOut;
-		if (rawOut.contains("\n   ")) {
-			out = rawOut.split("\n   ")[1];
+		if (rawOut.contains("\n   ") || !primitive) {
+			if (primitive) out = rawOut.split("\n   ")[1];
 			if (out.startsWith("int32")) {
 				out = out.substring(6);
 			}
@@ -93,6 +99,25 @@ public class DBusHelper {
 				out = "";
 			}
 			out = out.trim();
+		}
+		return out;
+	}
+	
+	public Map<String, String> evaluateOutputAsMap(String rawOut) {
+		Map<String, String> out = new HashMap<String, String>();
+		while (rawOut.contains("dict entry(")) {
+			int sectionStart = rawOut.indexOf("dict entry(");
+			int sectionEnd = rawOut.indexOf(")\n", sectionStart + 1);
+			String section = rawOut.substring(sectionStart, sectionEnd);
+			String[] parts = section.split("\n");
+			
+			// Get the key/value pair and store in the map
+			String key = parts[0].substring(8, parts[0].length() - 1).trim();
+			String value = evaluateOutputAsString(parts[1].substring(8).trim(), false);
+			out.put(key, value);
+			
+			// Trim off the section
+			rawOut = rawOut.substring(sectionEnd);
 		}
 		return out;
 	}
