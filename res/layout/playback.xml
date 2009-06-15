@@ -66,7 +66,6 @@
 		<TableLayout
 			android:paddingLeft="20dip"
 			android:paddingTop="40dip"
-			android:id="@+id/song_info"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content">
 		
@@ -74,27 +73,36 @@
 				android:paddingBottom="2dip">
 				
 				<TextView
+				android:id="@+id/song_title"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/info_title" />
+				android:text="@string/info_title"
+				android:width="150dip" 
+				android:singleLine="true" />
 			</TableRow>
 			
 			<TableRow 
 				android:paddingBottom="2dip">
 				
 				<TextView
+				android:id="@+id/song_artist"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/info_artist" />
+				android:text="@string/info_artist" 
+				android:width="150dip" 
+				android:singleLine="true" />
 			</TableRow>
 			
 			<TableRow 
 				android:paddingBottom="2dip">
 				
 				<TextView
+				android:id="@+id/song_album"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/info_album" />
+				android:text="@string/info_album"
+				android:width="150dip" 
+				android:singleLine="true" />
 			</TableRow>
 			
 		</TableLayout>

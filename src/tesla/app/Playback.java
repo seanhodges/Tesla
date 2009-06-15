@@ -33,6 +33,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, GetSongInfoTask.OnGetSongInfoListener {
 	
@@ -166,6 +168,14 @@ public class Playback extends Activity implements OnClickListener, GetSongInfoTa
 	}
 
 	public void onSongInfoChanged(SongInfo info) {
-		// TODO: Get the info TextViews and change their text to match the POD content
+		if (info.songTitle != null && info.artist != null && info.album != null) {
+			TextView label;
+			label = (TextView)this.findViewById(R.id.song_title);
+			label.setText(info.songTitle);
+			label = (TextView)this.findViewById(R.id.song_artist);
+			label.setText(info.artist);
+			label = (TextView)this.findViewById(R.id.song_album);
+			label.setText(info.album);
+		}
 	}
 }
