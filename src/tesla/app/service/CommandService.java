@@ -158,7 +158,10 @@ public class CommandService extends Service {
 				if (nextCommand != null && nextCommand != lastCommand) {
 					lastCommand = nextCommand;
 					try {
-						connection.sendCommand(nextCommand);
+						if (!nextCommand.getCommandString().equals("")) {
+							connection.sendCommand(nextCommand);
+						}
+						
 						if (connection instanceof FakeConnection) {
 							// Display the command for debugging
 							System.out.println("FakeConnection: command received: " + nextCommand.getCommandString());
