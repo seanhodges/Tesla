@@ -123,6 +123,7 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 
 	public void onGetVolumeComplete(Float result) {
 		volumeSlider.setLevel(result);
+		volumeSlider.refresh();
 	}
 
 	public void onGetVolumeFailed(String errorTitle, String errorMessage) {

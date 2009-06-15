@@ -79,11 +79,16 @@ public class VolumeSlider extends View {
 			levelsCalculated = true;
 			// Set default image
 			changeImage(R.drawable.vol0);
-			for (LevelDrawable item : levelDrawable) {
-				if (item.level >= currentLevel) {
-					changeImage(item.resource);
-					break;
-				}
+			refresh();
+		}
+		
+	}
+	
+	public void refresh() {
+		for (LevelDrawable item : levelDrawable) {
+			if (item.level >= currentLevel) {
+				changeImage(item.resource);
+				break;
 			}
 		}
 	}

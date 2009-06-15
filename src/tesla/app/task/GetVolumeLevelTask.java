@@ -81,11 +81,8 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 		float volumeLevel = 0.0f;
 		
 		try {
-			command = commandService.queryForCommand(Command.VOL_CURRENT);
 			command = commandService.sendQuery(command);
-			
 			commandService.unregisterErrorHandler(errorHandler);
-			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +98,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 			}
 		}
 		
-		return volumeLevel;
+		return new Float(volumeLevel);
 	}
 	
 	protected void onPostExecute(Float result) {
