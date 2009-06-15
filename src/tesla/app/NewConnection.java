@@ -32,7 +32,6 @@ import android.content.ServiceConnection;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
