@@ -25,7 +25,7 @@ import tesla.app.service.business.IErrorHandler;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 
-public class GetVolumeLevelTask extends AsyncTask<ICommandController, Boolean, Float> {
+public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 
 	private OnGetVolumeLevelListener listener = null;
 	
@@ -76,10 +76,9 @@ public class GetVolumeLevelTask extends AsyncTask<ICommandController, Boolean, F
 		}
 	}
 	
-	protected Float doInBackground(ICommandController... args) 
+	protected Float doInBackground(Object... args) 
 	{
 		float volumeLevel = 0.0f;
-		ICommandController commandService = args[0];
 		
 		try {
 			command = commandService.queryForCommand(Command.VOL_CURRENT);

@@ -21,9 +21,10 @@ import tesla.app.service.business.IErrorHandler;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 
-public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, Boolean> {
+public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, Object> {
 
 	private OnConnectionListener listener = null;
+	ICommandController commandService = null;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -43,20 +44,26 @@ public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, 
 		void onConnectionFailed(String title, String message);
 	}
 	
-	protected Boolean doInBackground(ICommandController... args) {
-		ICommandController commandService = args[0];
-		boolean success = false;
+	protected Object doInBackground(ICommandController... args) {
+		boolean success = true;
+		commandService = args[0];
 		try {
-			commandService.registerErrorHandler(errorHandler);
-			success = commandService.connect();
-			commandService.unregisterErrorHandler(errorHandler);
+			connect();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		return success;
 	}
+
+	private boolean connect() throws RemoteException {
+		boolean success = false;
+		commandService.registerErrorHandler(errorHandler);
+		success = commandService.connect();
+		commandService.unregisterErrorHandler(errorHandler);
+		return success;
+	}
 	
-	protected void onPostExecute(Boolean result) {
+	protected void onPostExecute(Object result) {
 		// Pass error message back to UI thread if there is one
 		if (errorTitle != null && errorMessage != null) {
 			if (listener != null) listener.onConnectionFailed(errorTitle, errorMessage);
