@@ -171,7 +171,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 	
 	public void onConnectionComplete() {
 		unbindService(connection);
-		stopService(new Intent(NewConnection.this, CommandService.class));
 		progressDialog.dismiss();
 		startActivity(new Intent(NewConnection.this, Playback.class));
 	}

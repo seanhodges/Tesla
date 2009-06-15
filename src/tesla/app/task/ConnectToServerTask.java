@@ -24,7 +24,6 @@ import android.os.RemoteException;
 public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, Object> {
 
 	private OnConnectionListener listener = null;
-	ICommandController commandService = null;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -46,20 +45,14 @@ public class ConnectToServerTask extends AsyncTask<ICommandController, Boolean, 
 	
 	protected Object doInBackground(ICommandController... args) {
 		boolean success = true;
-		commandService = args[0];
+		ICommandController commandService = args[0];
 		try {
-			connect();
+			commandService.registerErrorHandler(errorHandler);
+			success = commandService.connect();
+			commandService.unregisterErrorHandler(errorHandler);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return success;
-	}
-
-	private boolean connect() throws RemoteException {
-		boolean success = false;
-		commandService.registerErrorHandler(errorHandler);
-		success = commandService.connect();
-		commandService.unregisterErrorHandler(errorHandler);
 		return success;
 	}
 	
