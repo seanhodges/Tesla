@@ -106,13 +106,15 @@ public class DBusHelper {
 	public Map<String, String> evaluateOutputAsMap(String rawOut) {
 		Map<String, String> out = new HashMap<String, String>();
 		while (rawOut.contains("dict entry(")) {
-			int sectionStart = rawOut.indexOf("dict entry(");
-			int sectionEnd = rawOut.indexOf(")\n", sectionStart + 1);
-			String section = rawOut.substring(sectionStart, sectionEnd);
+			int sectionStart = rawOut.indexOf("dict entry(") + 12;
+			int sectionEnd = rawOut.indexOf(")\n", sectionStart);
+			String section = rawOut.substring(sectionStart, sectionEnd).trim();
 			String[] parts = section.split("\n");
+			parts[0] = parts[0].trim();
+			parts[1] = parts[1].trim();
 			
 			// Get the key/value pair and store in the map
-			String key = parts[0].substring(8, parts[0].length() - 1).trim();
+			String key = parts[0].substring(8, parts[0].length() - 1);
 			String value = evaluateOutputAsString(parts[1].substring(8).trim(), false);
 			out.put(key, value);
 			
