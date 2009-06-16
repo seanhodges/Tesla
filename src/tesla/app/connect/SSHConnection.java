@@ -19,6 +19,8 @@ package tesla.app.connect;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import tesla.app.command.Command;
 
@@ -39,6 +41,30 @@ public class SSHConnection implements IConnection  {
 	public void connect(ConnectionOptions config) throws ConnectionException {
 		this.config = config;
 		
+		// Resolve the IP address 
+		boolean pingSuccess = false;
+		String address = null; 
+		try {
+			InetAddress dnsQuery = InetAddress.getByName(config.hostname);
+			address = dnsQuery.getHostAddress();
+			pingSuccess = dnsQuery.isReachable(3000);
+		} catch (UnknownHostException e1) {
+			// Address resolution failed
+			throw new ConnectionException(ConnectionException.FAILED_AT_CONNECT, config.hostname, "Could not resolve hostname");
+		} catch (IOException e) {
+			// Ping failed due to network error
+			pingSuccess = false;
+		}
+		
+		if (pingSuccess) {
+			setupSSHConnection(address);
+		}
+		else {
+			throw new ConnectionException(ConnectionException.FAILED_AT_CONNECT, config.hostname, "Host is not reachable");
+		}
+	}	
+	
+	private void setupSSHConnection(String address) throws ConnectionException {
 		// Connect to socket
 		connection = new Connection(config.hostname, config.port);
 		

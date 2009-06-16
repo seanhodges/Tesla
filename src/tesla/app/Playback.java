@@ -33,7 +33,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, GetSongInfoTask.OnGetSongInfoListener {
