@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.widget;
+package tesla.app.ui.widget;
 
 import java.util.ArrayList;
 import java.util.List;

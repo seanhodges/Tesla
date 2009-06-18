@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.connect;
+package tesla.app.service.connect;
 
 public class ConnectionException extends Exception {
 	private static final long serialVersionUID = 1L;

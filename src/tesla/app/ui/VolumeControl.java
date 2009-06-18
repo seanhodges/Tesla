@@ -14,14 +14,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app;
+package tesla.app.ui;
 
+import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
-import tesla.app.task.GetVolumeLevelTask;
-import tesla.app.widget.VolumeSlider;
+import tesla.app.ui.task.GetVolumeLevelTask;
+import tesla.app.ui.widget.VolumeSlider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;

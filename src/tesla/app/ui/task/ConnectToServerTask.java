@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.task;
+package tesla.app.ui.task;
 
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;

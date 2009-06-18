@@ -21,13 +21,13 @@ import java.util.TimerTask;
 
 import tesla.app.command.Command;
 import tesla.app.command.CommandFactory;
-import tesla.app.connect.ConnectionException;
-import tesla.app.connect.ConnectionOptions;
-import tesla.app.connect.FakeConnection;
-import tesla.app.connect.IConnection;
-import tesla.app.connect.SSHConnection;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
+import tesla.app.service.connect.ConnectionException;
+import tesla.app.service.connect.ConnectionOptions;
+import tesla.app.service.connect.FakeConnection;
+import tesla.app.service.connect.IConnection;
+import tesla.app.service.connect.SSHConnection;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;

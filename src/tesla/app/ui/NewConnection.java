@@ -14,13 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app;
+package tesla.app.ui;
 
+import tesla.app.R;
 import tesla.app.command.provider.AppConfigProvider;
-import tesla.app.connect.ConnectionOptions;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
-import tesla.app.task.ConnectToServerTask;
+import tesla.app.service.connect.ConnectionOptions;
+import tesla.app.ui.task.ConnectToServerTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;

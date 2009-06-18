@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.connect;
+package tesla.app.service.connect;
 
 import java.io.IOException;
 import java.io.InputStream;

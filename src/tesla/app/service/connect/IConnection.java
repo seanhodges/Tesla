@@ -14,13 +14,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.task.pod;
+package tesla.app.service.connect;
 
-public class SongInfo {
-	
-	public String track;
-	public String songTitle;
-	public String album;
-	public String artist;
-	
+import tesla.app.command.Command;
+
+public interface IConnection {
+	public abstract void connect(ConnectionOptions config) throws ConnectionException;
+	public abstract String sendCommand(Command command) throws ConnectionException;
+	public abstract void disconnect();
+	public boolean isConnected();
 }

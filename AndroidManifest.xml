@@ -7,15 +7,15 @@
 		android:description="@string/app_desc"
 		android:debuggable="true">
 		
-        <activity android:name=".NewConnection" android:label="@string/app_name">
+        <activity android:name=".ui.NewConnection" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         
-        <activity android:name=".Playback" android:screenOrientation="portrait" />
-        <activity android:name=".VolumeControl" 
+        <activity android:name=".ui.Playback" android:screenOrientation="portrait" />
+        <activity android:name=".ui.VolumeControl" 
         	android:screenOrientation="portrait" 
         	android:label="@string/volume_title"
         	android:theme="@android:style/Theme.Dialog" />
