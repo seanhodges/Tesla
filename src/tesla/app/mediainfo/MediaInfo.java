@@ -16,11 +16,14 @@
 
 package tesla.app.mediainfo;
 
-public class SongInfo {
+public class MediaInfo {
 	
 	public String track;
-	public String songTitle;
+	public String title;
 	public String album;
 	public String artist;
+	
+	// File path to album/film cover, or some other relevant image 
+	public String artwork;
 	
 }

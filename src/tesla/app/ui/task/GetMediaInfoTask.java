@@ -20,15 +20,16 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
-import tesla.app.mediainfo.SongInfo;
+import tesla.app.mediainfo.MediaInfo;
+import tesla.app.mediainfo.MediaInfoFactory;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 
-public class GetSongInfoTask extends AsyncTask<ICommandController, Boolean, SongInfo> {
+public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, MediaInfo> {
 
-	private OnGetSongInfoListener listener = null;
+	private OnGetMediaInfoListener listener = null;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -42,47 +43,51 @@ public class GetSongInfoTask extends AsyncTask<ICommandController, Boolean, Song
 		}
 	};
 	
-	public interface OnGetSongInfoListener {
+	public interface OnGetMediaInfoListener {
 		void onServiceError(String title, String message);
-		void onSongInfoChanged(SongInfo info);
+		void onMediaInfoChanged(MediaInfo info);
 	}
 	
-	protected SongInfo doInBackground(ICommandController... args) 
+	protected MediaInfo doInBackground(ICommandController... args) 
 	{
-		SongInfo info = new SongInfo();
+		MediaInfo info = new MediaInfo();
 		Command command = null;
 		ICommandController commandService = args[0];
 		try {
 			commandService.registerErrorHandler(errorHandler);
-			command = commandService.queryForCommand(Command.GET_SONG_INFO);
+			command = commandService.queryForCommand(Command.GET_MEDIA_INFO);
 			command = commandService.sendQuery(command);
 			commandService.unregisterErrorHandler(errorHandler);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		
-		// Parse the result as a level percentage
+		// Compile a MediaInfo pod with all the available information
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
 			Map<String, String> output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
 			info.track = output.get("tracknumber");
-			info.songTitle = output.get("title");
+			info.title = output.get("title");
 			info.artist = output.get("artist");
 			info.album = output.get("album");
 		}
 		
+		// Pass the pod to the MediaInfoFactory for processing
+		MediaInfoFactory factory = new MediaInfoFactory();
+		info = factory.process(info);
+		
 		return info;
 	}
 	
-	protected void onPostExecute(SongInfo result) {
+	protected void onPostExecute(MediaInfo result) {
 		if (errorTitle != null && errorMessage != null) {
 			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
 		}
 		else {
-			if (listener != null) listener.onSongInfoChanged(result);
+			if (listener != null) listener.onMediaInfoChanged(result);
 		}
 	}
 
-	public void registerListener(OnGetSongInfoListener listener) {
+	public void registerListener(OnGetMediaInfoListener listener) {
 		this.listener = listener;
 	}
 }

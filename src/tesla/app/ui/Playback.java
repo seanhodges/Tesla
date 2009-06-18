@@ -18,11 +18,11 @@ package tesla.app.ui;
 
 import tesla.app.R;
 import tesla.app.command.Command;
-import tesla.app.mediainfo.SongInfo;
+import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
-import tesla.app.ui.task.GetSongInfoTask;
+import tesla.app.ui.task.GetMediaInfoTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -36,7 +36,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class Playback extends Activity implements OnClickListener, GetSongInfoTask.OnGetSongInfoListener {
+public class Playback extends Activity implements OnClickListener, GetMediaInfoTask.OnGetMediaInfoListener {
 	
 	private ICommandController commandService;
 	
@@ -144,7 +144,7 @@ public class Playback extends Activity implements OnClickListener, GetSongInfoTa
 	}
 
 	private void updateSongInfo() {
-		GetSongInfoTask getSongInfoTask = new GetSongInfoTask();
+		GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
 		getSongInfoTask.registerListener(this);
 		getSongInfoTask.execute(commandService);
 	}
@@ -167,11 +167,11 @@ public class Playback extends Activity implements OnClickListener, GetSongInfoTa
 			.show();
 	}
 
-	public void onSongInfoChanged(SongInfo info) {
-		if (info.songTitle != null && info.artist != null && info.album != null) {
+	public void onMediaInfoChanged(MediaInfo info) {
+		if (info.title != null && info.artist != null && info.album != null) {
 			TextView label;
 			label = (TextView)this.findViewById(R.id.song_title);
-			label.setText(info.songTitle);
+			label.setText(info.title);
 			label = (TextView)this.findViewById(R.id.song_artist);
 			label.setText(info.artist);
 			label = (TextView)this.findViewById(R.id.song_album);

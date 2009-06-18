@@ -45,6 +45,9 @@ public class FakeConnection implements IConnection {
 		else if (command.getKey().equals(Command.VOL_CURRENT)) {
 			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
 		}
+		else if (command.getKey().equals(Command.GET_MEDIA_INFO)) {
+			return "dict entry(\n    variant title string \n)\n";
+		}
 		else {
 			return "";
 		}

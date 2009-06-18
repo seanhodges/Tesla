@@ -167,7 +167,7 @@ public class AppConfigProvider implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
-		else if (key.equals(Command.GET_SONG_INFO)) {
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.GetMetadata");
 		}
