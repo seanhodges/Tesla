@@ -16,6 +16,9 @@
 
 package tesla.app.ui;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.mediainfo.MediaInfo;
@@ -29,11 +32,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, GetMediaInfoTask.OnGetMediaInfoListener {
@@ -176,6 +182,21 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 			label.setText(info.artist);
 			label = (TextView)this.findViewById(R.id.song_album);
 			label.setText(info.album);
+			
+			// Load the artwork from the cache store
+			if (info.artwork != null) {
+				ImageView artwork = (ImageView)this.findViewById(R.id.album_cover);
+				FileInputStream fis;
+				try {
+					fis = new FileInputStream(info.artwork);
+					Bitmap bitmap = BitmapFactory.decodeStream((InputStream)fis);
+					fis.close();
+					Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 80, 80, true);
+					artwork.setImageBitmap(scaled);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }
