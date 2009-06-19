@@ -23,8 +23,8 @@ public class CacheStoreHelper {
 	}
 	
 	private File buildCachePath(String artist, String album) {
-		artist.replaceAll("\\W", "_");
-		album.replaceAll("\\W", "_");
+		artist = artist.replaceAll("\\W", "_");
+		album = album.replaceAll("\\W", "_");
 		return new File(ROOT_PATH + artist + "_" + album + ".jpg");
 	}
 }

@@ -51,6 +51,8 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 	protected MediaInfo doInBackground(ICommandController... args) 
 	{
 		MediaInfo info = new MediaInfo();
+		
+		// Get the available metadata from the server
 		Command command = null;
 		ICommandController commandService = args[0];
 		try {
@@ -62,7 +64,7 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 			e.printStackTrace();
 		}
 		
-		// Compile a MediaInfo pod with all the available information
+		// Compile a MediaInfo pod with servers metadata
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
 			Map<String, String> output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
 			info.track = output.get("tracknumber");

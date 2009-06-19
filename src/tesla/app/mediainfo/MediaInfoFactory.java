@@ -15,15 +15,15 @@ public class MediaInfoFactory {
 			artwork = cache.getArtworkPath(info.artist, info.album);
 		}
 		
-		if (artwork == null) {
+		/*if (artwork == null) {
 			// Retrieve cover from a provider to the cache (first successful query) 
 			URL providerArtworkUrl = retrieveArtworkFromProvider(info);
 			// Set cover path to new cache entry
 			artwork = cache.copyArtworkFromUrl(info.artist, info.album, providerArtworkUrl);
-		}
+		}*/
 		info.artwork = artwork;
 		
-		// TODO: Process/cache the textual metadata
+		// TODO: Process/cache the textual metadata as well
 		
 		return info;
 	}

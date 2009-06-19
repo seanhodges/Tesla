@@ -46,7 +46,11 @@ public class FakeConnection implements IConnection {
 			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
 		}
 		else if (command.getKey().equals(Command.GET_MEDIA_INFO)) {
-			return "dict entry(\n    variant title string \n)\n";
+			return "" +
+				"dict entry(\n variant tracknumber:\n variant int32 1\n)\n" +
+				"dict entry(\n variant title:\n variant string \"Perfect Symmetry\"\n)\n" +
+				"dict entry(\n variant artist:\n variant string \"Keane\"\n)\n" +
+				"dict entry(\n variant album:\n variant string \"Perfect Symmetry\"\n)\n";
 		}
 		else {
 			return "";
