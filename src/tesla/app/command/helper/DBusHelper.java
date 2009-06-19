@@ -90,6 +90,10 @@ public class DBusHelper {
 			}
 			else if (out.startsWith("string")) {
 				out = out.substring(7);
+				// Remove quotes
+				if (out.startsWith("\"")) {
+					out = out.substring(1, out.length() - 1);
+				}
 			}
 			else if (out.startsWith("boolean")) {
 				out = out.substring(8);
