@@ -177,7 +177,7 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 		if (info.title != null && info.artist != null && info.album != null) {
 			TextView label;
 			label = (TextView)this.findViewById(R.id.song_title);
-			label.setText(info.title);
+			label.setText(info.track + " - " + info.title);
 			label = (TextView)this.findViewById(R.id.song_artist);
 			label.setText(info.artist);
 			label = (TextView)this.findViewById(R.id.song_album);
@@ -194,6 +194,7 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 					Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 80, 80, true);
 					artwork.setImageBitmap(scaled);
 				} catch (Exception e) {
+					// Failed to load image from cache store
 					e.printStackTrace();
 				}
 			}

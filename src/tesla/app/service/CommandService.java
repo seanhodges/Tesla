@@ -39,7 +39,7 @@ import android.os.RemoteException;
 public class CommandService extends Service {
 
 	private static final int EXEC_POLL_PERIOD = 50; // Cycles
-	private static final boolean DEBUG_MODE = true;
+	private static final boolean DEBUG_MODE = false;
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
