@@ -14,15 +14,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.mediainfo;
+package tesla.app.mediainfo.provider;
 
-public class MediaInfo {
-	
-	public String track;
-	public String title;
-	public String album;
-	public String artist;
-	
-	// File path to album/film cover, or some other relevant image 
-	public String artwork;
+import tesla.app.mediainfo.MediaInfo;
+import tesla.app.mediainfo.helper.CacheStoreHelper;
+
+public class CacheProvider implements IMediaInfoProvider {
+
+	public boolean populate(MediaInfo info) {
+		CacheStoreHelper cache = new CacheStoreHelper();
+		String artwork = cache.getArtworkPath(info.artist, info.album);
+		if (artwork != null) {
+			info.artwork = artwork;
+			return true;
+		}
+		return false;
+	}
 }

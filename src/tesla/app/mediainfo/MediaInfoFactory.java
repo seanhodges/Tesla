@@ -1,38 +1,41 @@
 package tesla.app.mediainfo;
 
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import tesla.app.mediainfo.helper.CacheStoreHelper;
+import tesla.app.mediainfo.provider.CacheProvider;
+import tesla.app.mediainfo.provider.IMediaInfoProvider;
+import tesla.app.mediainfo.provider.LastfmProvider;
 
 public class MediaInfoFactory {
 
-	public MediaInfo process(MediaInfo info) {
-		CacheStoreHelper cache = new CacheStoreHelper();
-		// Check the FS cache for matching covers
-		String artwork = null;
-		if (info.artist != null && info.album != null 
-				&& info.artist.length() > 0 && info.album.length() > 0) { 
-			artwork = cache.getArtworkPath(info.artist, info.album);
-		}
+	ArrayList<IMediaInfoProvider> providerScanner = new ArrayList<IMediaInfoProvider>();
+	
+	public MediaInfoFactory() {
+		IMediaInfoProvider cacheProvider = new CacheProvider();
+		IMediaInfoProvider lastfmProvider = new LastfmProvider();
 		
-		if (artwork == null) {
-			// Retrieve cover from a provider to the cache (first successful query) 
-			URL providerArtworkUrl = retrieveArtworkFromProvider(info);
-			// Set cover path to new cache entry
-			artwork = cache.copyArtworkFromUrl(info.artist, info.album, providerArtworkUrl);
-		}
-		info.artwork = artwork;
-		
-		// TODO: Process/cache the textual metadata as well
-		
-		return info;
+		// Scan the config providers in this order
+		providerScanner.add(cacheProvider);
+		providerScanner.add(lastfmProvider);
 	}
 	
-	public URL retrieveArtworkFromProvider(MediaInfo info) {
-		// Traverse the providers until one finds a successful match
-		// Save artwork to FS cache
-		// Return the FS cache path
-		return null;
+	public MediaInfo process(MediaInfo info) {
+		// TODO: Currently requires an artist AND album for last.fm provider to work
+		if (info.artist != null && info.album != null
+				&& !info.artist.equals("") && !info.album.equals("")) {
+			boolean success = false;
+			Iterator<IMediaInfoProvider> providerOrderIt = providerScanner.iterator();
+			while (!success && providerOrderIt.hasNext()) {
+				IMediaInfoProvider currentProvider = providerOrderIt.next(); 
+				try {
+					success = currentProvider.populate(info);
+				}
+				catch (Exception e) {
+					success = false;
+				}
+			}
+		}
+		return info;
 	}
-
 }

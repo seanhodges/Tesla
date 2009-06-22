@@ -14,15 +14,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.mediainfo;
+package tesla.app.mediainfo.provider;
 
-public class MediaInfo {
-	
-	public String track;
-	public String title;
-	public String album;
-	public String artist;
-	
-	// File path to album/film cover, or some other relevant image 
-	public String artwork;
+import tesla.app.mediainfo.MediaInfo;
+
+public interface IMediaInfoProvider {
+
+	boolean populate(MediaInfo info);
 }

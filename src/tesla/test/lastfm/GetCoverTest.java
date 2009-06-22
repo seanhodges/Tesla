@@ -16,26 +16,15 @@
 
 package tesla.test.lastfm;
 
-import java.net.URL;
 import java.util.Collection;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import junit.framework.TestCase;
-
 import net.roarsoftware.lastfm.Album;
 import net.roarsoftware.lastfm.Artist;
 import net.roarsoftware.lastfm.ImageSize;
 import net.roarsoftware.lastfm.Track;
 
 import org.junit.Test;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 public class GetCoverTest extends TestCase {
 	
@@ -55,8 +44,8 @@ public class GetCoverTest extends TestCase {
 	
 	@Test
 	public void testGettingAlbumInformation() throws Exception {
-		String artist = "Eminem";
-		String albumOrMbid = "The Eminem Show";
+		String artist = "Keane";
+		String albumOrMbid = "Perfect Symmetry";
 		Album info = Album.getInfo(artist, albumOrMbid, LAST_FM_KEY);
 		assertNotNull(info);
 		String out = info.getImageURL(ImageSize.SMALL);
