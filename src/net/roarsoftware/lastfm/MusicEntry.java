@@ -94,7 +94,7 @@ public abstract class MusicEntry extends ImageHolder {
 	 */
 	protected static void loadStandardInfo(MusicEntry entry, DomElement element) {
 		// playcount & listeners
-		DomElement statsChild = element.getChild("stats");
+		DomElement statsChild = element.getChild("album"); // XXX: was "stats" - Sean
 		String playcountString;
 		String listenersString;
 		if (statsChild != null) {
@@ -148,7 +148,7 @@ public abstract class MusicEntry extends ImageHolder {
 			entry.wikiText = wiki.getChildText("content");
 		}
 		// images
-		ImageHolder.loadImages(entry, element);
+		ImageHolder.loadImages(entry, statsChild); // XXX: Was "entry, element" - Sean
 	}
 
 	public Date getWikiLastChanged() {
