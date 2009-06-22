@@ -7,5 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="contrib/junit/junit-4.6.jar"/>
+	<classpathentry kind="lib" path="contrib/junit/junit-4.6-src.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
