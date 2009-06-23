@@ -44,6 +44,8 @@ import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, GetMediaInfoTask.OnGetMediaInfoListener {
 	
+	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
+
 	private ICommandController commandService;
 	
 	private ServiceConnection connection = new ServiceConnection() {
@@ -51,7 +53,9 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 			commandService = ICommandController.Stub.asInterface(service);
 			// Set the error handling once service connected
 			setErrorHandler();
-			updateSongInfo();
+			
+			// Update the song info now, and start the polling update 
+			updateSongInfo(false);
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
@@ -122,11 +126,11 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 				break;
 			case R.id.last_song:
 				command = commandService.queryForCommand(Command.PREV);
-				updateSongInfo();
+				updateSongInfo(true);
 				break;
 			case R.id.next_song:
 				command = commandService.queryForCommand(Command.NEXT);
-				updateSongInfo();
+				updateSongInfo(true);
 				break;
 			case R.id.playlist:
 				new AlertDialog.Builder(Playback.this)
@@ -149,10 +153,19 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 		}
 	}
 
-	private void updateSongInfo() {
+	private void updateSongInfo(boolean isOverride) {
 		GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
 		getSongInfoTask.registerListener(this);
 		getSongInfoTask.execute(commandService);
+		
+		if (!isOverride) {
+			ImageView artwork = (ImageView)findViewById(R.id.album_cover);
+			artwork.postDelayed(new Runnable() {
+				public void run() {
+					updateSongInfo(false);
+				}
+			}, SONG_INFO_UPDATE_PERIOD);
+		}
 	}
 
 	protected void onPause() {
