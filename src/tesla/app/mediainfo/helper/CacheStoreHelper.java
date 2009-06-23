@@ -48,7 +48,7 @@ public class CacheStoreHelper {
 		return filePath.getAbsolutePath();
 	}
 	
-	private File buildCachePath(String artist, String album) {
+	public File buildCachePath(String artist, String album) {
 		artist = artist.replaceAll("\\W", "_");
 		album = album.replaceAll("\\W", "_");
 		return new File(ROOT_PATH + artist + "_" + album + ".jpg");

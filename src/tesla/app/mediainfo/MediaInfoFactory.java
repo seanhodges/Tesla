@@ -3,6 +3,8 @@ package tesla.app.mediainfo;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import tesla.app.mediainfo.helper.CacheStoreHelper;
+import tesla.app.mediainfo.helper.FailedQueryBlacklist;
 import tesla.app.mediainfo.provider.CacheProvider;
 import tesla.app.mediainfo.provider.IMediaInfoProvider;
 import tesla.app.mediainfo.provider.LastfmProvider;
@@ -35,7 +37,14 @@ public class MediaInfoFactory {
 					success = false;
 				}
 			}
+			
+			if (success == false) {
+				// Add failed request to blacklist
+				FailedQueryBlacklist.getInstance().blacklist.add(
+						new CacheStoreHelper().buildCachePath(info.artist, info.album).getAbsolutePath());
+			}
 		}
+		
 		return info;
 	}
 }
