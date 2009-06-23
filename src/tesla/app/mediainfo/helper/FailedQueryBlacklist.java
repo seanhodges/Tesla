@@ -14,27 +14,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.mediainfo.provider;
+package tesla.app.mediainfo.helper;
 
-import tesla.app.mediainfo.MediaInfo;
-import tesla.app.mediainfo.helper.CacheStoreHelper;
-import tesla.app.mediainfo.helper.FailedQueryBlacklist;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CacheProvider implements IMediaInfoProvider {
-
-	public boolean populate(MediaInfo info) {
-		CacheStoreHelper cache = new CacheStoreHelper();
-		String artwork = cache.getArtworkPath(info.artist, info.album);
-		if (artwork != null) {
-			info.artwork = artwork;
-			return true;
+public class FailedQueryBlacklist {
+	
+	/*
+	 * This is a temporary in-mem list of failed queries, to avoid flooding Last.FM with failed requests
+	 * It will be redundant once the textual media info is being cached
+	 * 
+	 */
+	
+	public List<String> blacklist = null; 
+	
+	private static FailedQueryBlacklist instance = null;
+	protected FailedQueryBlacklist() {}
+	
+	public static FailedQueryBlacklist getInstance() {
+		if (instance == null) {
+			instance = new FailedQueryBlacklist();
+			instance.blacklist = new ArrayList<String>();
 		}
-		
-		// Check the blacklist, and return success if blacklisted
-		if (FailedQueryBlacklist.getInstance().blacklist.contains(artwork)) {
-			return true;
-		}
-		
-		return false;
+		return instance;
 	}
+	
 }

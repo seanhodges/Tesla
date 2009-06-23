@@ -11,11 +11,14 @@ public class CacheStoreHelper {
 
 	private static final String ROOT_PATH = "/sdcard/albumthumbs/Tesla/";
 	
-	public String getArtworkPath(String artist, String album) {
-		String filePath = null;
+	public CacheStoreHelper() {
 		// Build the directory structure if it does not already exist
 		File root = new File(ROOT_PATH);
 		if (!root.exists()) root.mkdirs();
+	}
+	
+	public String getArtworkPath(String artist, String album) {
+		String filePath = null;
 		File test = buildCachePath(artist, album);
 		if (test.exists()) filePath = test.getAbsolutePath();
 		return filePath;
