@@ -52,7 +52,7 @@ public class Caller {
 	private Proxy proxy;
 	private String userAgent = "tst";
 
-	private boolean debugMode = true;
+	private boolean debugMode = false;
 
 	private Cache cache;
 	private Result lastResult;
