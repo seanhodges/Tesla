@@ -42,6 +42,7 @@ public class VolumeSlider extends View {
 	
 	public interface OnVolumeLevelChangeListener {
 		public void onLevelChanged(VolumeSlider volumeSlider, float level);
+		public void onChangeFinished(VolumeSlider volumeSlider);
 	}
 	
 	private class LevelDrawable {
@@ -142,6 +143,9 @@ public class VolumeSlider extends View {
 			}
 			listener.onLevelChanged(this, currentLevel);
 			handled = true;
+		}
+		else if (event.getAction() == MotionEvent.ACTION_UP) {
+			listener.onChangeFinished(this);
 		}
 		return handled;
 	}

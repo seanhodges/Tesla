@@ -137,4 +137,9 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 			.setMessage(message)
 			.show();
 	}
+
+	public void onChangeFinished(VolumeSlider volumeSlider) {
+		// Close the activity when the user stops touching the slider
+		finish();
+	}
 }
