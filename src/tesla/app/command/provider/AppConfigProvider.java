@@ -29,6 +29,7 @@ public class AppConfigProvider implements IConfigProvider {
 	public static final String APP_RHYTHMBOX = "rhythmbox";
 	public static final String APP_AMAROK = "amarok";
 	public static final String APP_VLC = "vlc";
+	public static final String APP_TOTEM = "totem";
 	
 	public String appName = "amarok";
 	
@@ -52,6 +53,9 @@ public class AppConfigProvider implements IConfigProvider {
 		else if (appName.equals(APP_VLC)) {
 			out = vlcCommand(key);
 		}
+		else if (appName.equals(APP_TOTEM)) {
+			out = vlcCommand(key);
+		}
 		
 		return out;
 	}
@@ -67,6 +71,9 @@ public class AppConfigProvider implements IConfigProvider {
 		}
 		else if (appName.equals(APP_VLC)) {
 			settings = vlcSettings(key);
+		}
+		else if (appName.equals(APP_TOTEM)) {
+			settings = totemSettings(key);
 		}
 		
 		return settings;
@@ -95,6 +102,15 @@ public class AppConfigProvider implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "25.0");
+		}
+		return settings;
+	}
+	
+	Map<String, String> totemSettings(String key) {
+		Map<String, String> settings = new HashMap<String, String>();
+		if (key.equals(Command.VOL_CURRENT)) {
+			settings.put("MIN", "0.0");
+			settings.put("MAX", "0.0");
 		}
 		return settings;
 	}
@@ -206,6 +222,32 @@ public class AppConfigProvider implements IConfigProvider {
 		else if (key.equals(Command.VOL_CURRENT)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeGet");
+		}
+		else {
+			throw new Exception("Command not implemented");
+		}
+		return out;
+	}
+	
+	String totemCommand(String key) throws Exception {
+		String out = null;
+		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
+			out = "totem --play-pause";
+		}
+		else if (key.equals(Command.PREV)) {
+			out = "totem --previous";
+		}
+		else if (key.equals(Command.NEXT)) {
+			out = "totem --next";
+		}
+		else if (key.equals(Command.VOL_CHANGE)) {
+			out = "";
+		}
+		else if (key.equals(Command.VOL_MUTE)) {
+			out = "";
+		}
+		else if (key.equals(Command.VOL_CURRENT)) {
+			out = "";
 		}
 		else {
 			throw new Exception("Command not implemented");
