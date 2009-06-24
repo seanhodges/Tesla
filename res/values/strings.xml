@@ -10,8 +10,10 @@
     <string name="password">Password</string>
     
     <string name="application_selection">Application</string>
-	<string name="rhythmbox_item">Rhythmbox</string>
 	<string name="amarok_item">Amarok</string>
+	<string name="dragonplayer_item">Dragon Player</string>
+	<string name="rhythmbox_item">Rhythmbox</string>
+	<string name="totem_item">Totem</string>
 	<string name="vlc_item">VLC</string>
 	
 	<string name="cancel">Cancel</string>

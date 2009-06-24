@@ -84,18 +84,30 @@
 					android:layout_width="wrap_content"
 					android:checkedButton="@+id/rhythmbox"
 					android:orientation="vertical">
-					
-					<RadioButton
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/rhythmbox_item" 
-						android:id="@+id/rhythmbox_item"/>
 						
 					<RadioButton
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="@string/amarok_item" 
 						android:id="@+id/amarok_item"/>
+												
+					<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/dragonplayer_item" 
+						android:id="@+id/dragonplayer_item"/>
+					
+					<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/rhythmbox_item" 
+						android:id="@+id/rhythmbox_item"/>
+											
+					<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/totem_item" 
+						android:id="@+id/totem_item"/>
 						
 					<RadioButton
 						android:layout_width="wrap_content"
