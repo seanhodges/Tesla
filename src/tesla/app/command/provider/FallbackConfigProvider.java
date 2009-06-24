@@ -16,7 +16,10 @@
 
 package tesla.app.command.provider;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import tesla.app.command.Command;
 
 public class FallbackConfigProvider implements IConfigProvider {
 
@@ -25,7 +28,12 @@ public class FallbackConfigProvider implements IConfigProvider {
 	}
 
 	public Map<String, String> getSettings(String key) {
-		return null;
+		Map<String, String> settings = new HashMap<String, String>();
+		if (key.equals(Command.VOL_CURRENT)) {
+			settings.put("MIN", "0.0");
+			settings.put("MAX", "0.0");
+		}
+		return settings;
 	}
 
 }

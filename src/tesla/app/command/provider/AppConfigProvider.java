@@ -30,6 +30,7 @@ public class AppConfigProvider implements IConfigProvider {
 	public static final String APP_AMAROK = "amarok";
 	public static final String APP_VLC = "vlc";
 	public static final String APP_TOTEM = "totem";
+	public static final String APP_DRAGONPLAYER = "dragon player";
 	
 	public String appName = "amarok";
 	
@@ -56,6 +57,9 @@ public class AppConfigProvider implements IConfigProvider {
 		else if (appName.equals(APP_TOTEM)) {
 			out = vlcCommand(key);
 		}
+		else if (appName.equals(APP_DRAGONPLAYER)) {
+			out = dragonPlayerCommand(key);
+		}
 		
 		return out;
 	}
@@ -72,8 +76,8 @@ public class AppConfigProvider implements IConfigProvider {
 		else if (appName.equals(APP_VLC)) {
 			settings = vlcSettings(key);
 		}
-		else if (appName.equals(APP_TOTEM)) {
-			settings = totemSettings(key);
+		else if (appName.equals(APP_DRAGONPLAYER)) {
+			settings = dragonPlayerSettings(key);
 		}
 		
 		return settings;
@@ -105,12 +109,12 @@ public class AppConfigProvider implements IConfigProvider {
 		}
 		return settings;
 	}
-	
-	Map<String, String> totemSettings(String key) {
+
+	Map<String, String> dragonPlayerSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
-			settings.put("MAX", "0.0");
+			settings.put("MAX", "100.0");
 		}
 		return settings;
 	}
@@ -230,6 +234,39 @@ public class AppConfigProvider implements IConfigProvider {
 		}
 		else if (key.equals(Command.NEXT)) {
 			out = "totem --next";
+		}
+		return out;
+	}
+	
+	String dragonPlayerCommand(String key) {
+		final String dest = "org.mpris.dragonplayer-$(pidof dragon)";
+		List<String> args = new ArrayList<String>();
+		String out = null;
+		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.PlayPause");
+		}
+		else if (key.equals(Command.PREV)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev");
+		}
+		else if (key.equals(Command.NEXT)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next");
+		}
+		else if (key.equals(Command.VOL_CHANGE)) {
+			args.add(new DBusHelper().evaluateArg("%i"));
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
+		}
+		else if (key.equals(Command.VOL_MUTE)) {
+			args.add(new DBusHelper().evaluateArg("0"));
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
+		}
+		else if (key.equals(Command.VOL_CURRENT)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
 		return out;
 	}
