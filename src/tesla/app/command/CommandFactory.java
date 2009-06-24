@@ -62,14 +62,8 @@ public class CommandFactory {
 		Iterator<IConfigProvider> providerOrderIt = providerScanner.iterator();
 		while (command == null && providerOrderIt.hasNext()) {
 			IConfigProvider currentProvider = providerOrderIt.next(); 
-			try {
-				command = currentProvider.getCommand(key);
-				settings = currentProvider.getSettings(key);
-			}
-			catch (Exception e) {
-				// Return a no-op command
-				command = null;
-			}
+			command = currentProvider.getCommand(key);
+			settings = currentProvider.getSettings(key);
 		}
 		out.setCommandString(command);
 		out.setSettings(settings);

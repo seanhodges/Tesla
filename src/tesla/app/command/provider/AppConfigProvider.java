@@ -37,7 +37,7 @@ public class AppConfigProvider implements IConfigProvider {
 		this.appName = appName;
 	}
 	
-	public String getCommand(String key) throws Exception {
+	public String getCommand(String key) {
 		
 		// These commands will be extracted from
 		// a database of application configurations
@@ -115,7 +115,7 @@ public class AppConfigProvider implements IConfigProvider {
 		return settings;
 	}
 	
-	String rhythmBoxCommand(String key) throws Exception {
+	String rhythmBoxCommand(String key) {
 		final String dest = "org.gnome.Rhythmbox";
 		List<String> args = new ArrayList<String>();
 		String out = null;
@@ -146,14 +146,11 @@ public class AppConfigProvider implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
 				"org.gnome.Rhythmbox.Player.getVolume");
 		}
-		else {
-			throw new Exception("Command not implemented");
-		}
 		
 		return out;
 	}
 
-	String amarokCommand(String key) throws Exception {
+	String amarokCommand(String key) {
 		final String dest = "org.kde.amarok";
 		List<String> args = new ArrayList<String>();
 		String out = null;
@@ -187,13 +184,10 @@ public class AppConfigProvider implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.GetMetadata");
 		}
-		else {
-			throw new Exception("Command not implemented");
-		}
 		return out;
 	}
 
-	String vlcCommand(String key) throws Exception {
+	String vlcCommand(String key) {
 		final String dest = "org.mpris.vlc";
 		List<String> args = new ArrayList<String>();
 		String out = null;
@@ -223,13 +217,10 @@ public class AppConfigProvider implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
-		else {
-			throw new Exception("Command not implemented");
-		}
 		return out;
 	}
 	
-	String totemCommand(String key) throws Exception {
+	String totemCommand(String key) {
 		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			out = "totem --play-pause";
@@ -239,18 +230,6 @@ public class AppConfigProvider implements IConfigProvider {
 		}
 		else if (key.equals(Command.NEXT)) {
 			out = "totem --next";
-		}
-		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "";
-		}
-		else if (key.equals(Command.VOL_MUTE)) {
-			out = "";
-		}
-		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "";
-		}
-		else {
-			throw new Exception("Command not implemented");
 		}
 		return out;
 	}

@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class FallbackConfigProvider implements IConfigProvider {
 
-	public String getCommand(String key) throws Exception {
+	public String getCommand(String key) {
 		return "";
 	}
 
