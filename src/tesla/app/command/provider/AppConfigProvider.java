@@ -227,13 +227,13 @@ public class AppConfigProvider implements IConfigProvider {
 	String totemCommand(String key) {
 		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = "totem --play-pause";
+			out = "DISPLAY=:0 totem --play-pause";
 		}
 		else if (key.equals(Command.PREV)) {
-			out = "totem --previous";
+			out = "DISPLAY=:0 totem --previous";
 		}
 		else if (key.equals(Command.NEXT)) {
-			out = "totem --next";
+			out = "DISPLAY=:0 totem --next";
 		}
 		return out;
 	}
