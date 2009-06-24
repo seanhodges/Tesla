@@ -141,6 +141,12 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_VLC)) {
 			config.appSelection = AppConfigProvider.APP_VLC;
 		}
+		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_DRAGONPLAYER)) {
+			config.appSelection = AppConfigProvider.APP_DRAGONPLAYER;
+		}
+		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_TOTEM)) {
+			config.appSelection = AppConfigProvider.APP_TOTEM;
+		}
 		
 		// Check the input
 		if (config.port == 0) config.port = 22;

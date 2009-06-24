@@ -55,7 +55,7 @@ public class AppConfigProvider implements IConfigProvider {
 			out = vlcCommand(key);
 		}
 		else if (appName.equals(APP_TOTEM)) {
-			out = vlcCommand(key);
+			out = totemCommand(key);
 		}
 		else if (appName.equals(APP_DRAGONPLAYER)) {
 			out = dragonPlayerCommand(key);
@@ -245,14 +245,6 @@ public class AppConfigProvider implements IConfigProvider {
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.PlayPause");
-		}
-		else if (key.equals(Command.PREV)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Prev");
-		}
-		else if (key.equals(Command.NEXT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Next");
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
 			args.add(new DBusHelper().evaluateArg("%i"));
