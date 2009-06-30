@@ -13,6 +13,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.AppSelector"
+        	android:label="@string/app_selector_title"
+        	android:theme="@android:style/Theme.Dialog" />
         
         <activity android:name=".ui.Playback" android:screenOrientation="portrait" />
         <activity android:name=".ui.VolumeControl" 
