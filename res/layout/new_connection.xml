@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+ 
 	
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:layout_weight="1">
-	
-	<LinearLayout
+<FrameLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:orientation="vertical">
+		android:layout_height="fill_parent">
 		
 		<TableLayout
 			android:layout_height="wrap_content"
@@ -19,31 +14,16 @@
 	        android:paddingTop="15dip">
 			
 			<TableRow>
-				
 				<TextView
 					android:singleLine="true" 
 					android:text="@string/host"
-					android:layout_width="wrap_content"
 					android:paddingRight="10dip" />
-					
+
 				<EditText
 					android:id="@+id/host"
-					android:singleLine="true"
 					android:layout_weight="1"
-					android:layout_width="fill_parent"/>
-			</TableRow>
-			
-			<TableRow>
-				<TextView
-					android:singleLine="true" 
-					android:text="@string/port" 
-					android:paddingRight="10dip" />
-					
-				<EditText
-					android:id="@+id/port"
-					android:layout_width="wrap_content"
-					android:width="14.5sp"
 					android:singleLine="true"/>
+
 			</TableRow>
 			
 			<TableRow>
@@ -75,67 +55,42 @@
 	 			<TextView
 					android:singleLine="true" 
 					android:text="@string/application_selection" 
-					android:paddingRight="10dip" 
-					android:paddingTop="15dip"/>
+					android:layout_width="fill_parent"
+					android:paddingRight="10dip"/>
 					
-				<RadioGroup 
-					android:id="@+id/initial_app"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:checkedButton="@+id/rhythmbox"
-					android:orientation="vertical">
-						
-					<RadioButton
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/amarok_item" 
-						android:id="@+id/amarok_item"/>
-												
-					<RadioButton
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/dragonplayer_item" 
-						android:id="@+id/dragonplayer_item"/>
+				<TextView
+					android:id="@+id/app_current_name"
+					android:text="Rhythmbox"
+					android:drawableLeft="@drawable/app_icon_rhythmbox"
+					android:gravity="center_vertical"
+					android:drawablePadding="5dip"
+					android:layout_weight="1"/>
 					
-					<RadioButton
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/rhythmbox_item" 
-						android:id="@+id/rhythmbox_item"/>
-											
-					<RadioButton
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/totem_item" 
-						android:id="@+id/totem_item"/>
-						
-					<RadioButton
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/vlc_item" 
-						android:id="@+id/vlc_item"/>
-				</RadioGroup>
+				<Button
+					android:id="@+id/change_app" 
+					android:text="@string/change_app" 
+					android:layout_gravity="right"/>
 			</TableRow>
+			
 		</TableLayout>
 		
-		<LinearLayout
-			android:paddingTop="5dip"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal">
+		<FrameLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
 			
 			<Button
 			android:id="@+id/cancel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_gravity="left|bottom"
 			android:text="@string/cancel" />
 			
 			<Button
 			android:id="@+id/connect"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_gravity="right|bottom"
 			android:text="@string/connect" />	
-		</LinearLayout>
+		</FrameLayout>
 		
-	</LinearLayout>
-</ScrollView>
+</FrameLayout>

@@ -10,6 +10,7 @@
     <string name="password">Password</string>
     
     <string name="application_selection">Application</string>
+    <string name="change_app">Change...</string>
 	<string name="amarok_item">Amarok</string>
 	<string name="dragonplayer_item">Dragon Player</string>
 	<string name="rhythmbox_item">Rhythmbox</string>
@@ -21,6 +22,10 @@
 	
 	<string name="connection_progress_title">Working...</string>
 	<string name="connection_progress_body">Connecting to server: </string>
+	
+	<!-- App Selector -->
+	<string name="app_selector_title">Select Media Player</string>
+	<string name="no_apps">No applications available</string>
 	
 	<!-- Playback -->
 	<string name="info_title">Tesla Demo</string>

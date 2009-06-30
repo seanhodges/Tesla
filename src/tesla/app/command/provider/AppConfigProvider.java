@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 
@@ -33,6 +34,44 @@ public class AppConfigProvider implements IConfigProvider {
 	public static final String APP_DRAGONPLAYER = "dragon player";
 	
 	public String appName = "amarok";
+	
+	public static final List<Map<String, String>> getAppDirectory() {
+		
+		ArrayList<Map<String, String>> providerList = new ArrayList<Map<String,String>>();
+		Map<String, String> entry;
+		
+        entry = new HashMap<String, String>();
+        entry.put("icon", String.valueOf(R.drawable.app_icon_amarok));
+        entry.put("name", "amaroK");
+        entry.put("ref", AppConfigProvider.APP_AMAROK);
+        providerList.add(entry);
+        
+        entry = new HashMap<String, String>();
+        entry.put("icon", String.valueOf(R.drawable.app_icon_dragonplayer));
+        entry.put("name", "Dragon Player");
+        entry.put("ref", AppConfigProvider.APP_DRAGONPLAYER);
+        providerList.add(entry);
+        
+        entry = new HashMap<String, String>();
+        entry.put("icon", String.valueOf(R.drawable.app_icon_rhythmbox));
+        entry.put("name", "Rhythmbox");
+        entry.put("ref", AppConfigProvider.APP_RHYTHMBOX);
+        providerList.add(entry);
+        
+        entry = new HashMap<String, String>();
+        entry.put("icon", String.valueOf(R.drawable.app_icon_totem));
+        entry.put("name", "Totem");
+        entry.put("ref", AppConfigProvider.APP_TOTEM);
+        providerList.add(entry);
+        
+        entry = new HashMap<String, String>();
+        entry.put("icon", String.valueOf(R.drawable.app_icon_vlc));
+        entry.put("name", "VLC");
+        entry.put("ref", AppConfigProvider.APP_VLC);
+        providerList.add(entry);
+        
+        return providerList;
+	}
 	
 	public AppConfigProvider(String appName) {
 		this.appName = appName;

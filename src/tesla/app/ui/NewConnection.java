@@ -16,6 +16,10 @@
 
 package tesla.app.ui;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import tesla.app.R;
 import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.service.CommandService;
@@ -31,27 +35,32 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.DialogInterface.OnCancelListener;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class NewConnection extends Activity implements OnClickListener, ConnectToServerTask.OnConnectionListener {
 	
-	ConnectionOptions config;
+	public static final int APP_SELECTOR_RESULT = 1;
+
+	private ConnectionOptions config;
 	private ProgressDialog progressDialog;
+	private List<Map<String, String>> providerList;
 	
 	private ICommandController commandService;
 	protected ConnectToServerTask connectTask;
 	
-	EditText hostText;
-	EditText portText;
-	EditText userText;
-	EditText passText;
-	RadioGroup appSelection;
+	private EditText hostText;
+	private EditText userText;
+	private EditText passText;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -73,38 +82,58 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
         super.onCreate(icicle);
         setContentView(R.layout.new_connection);
         
+        providerList = AppConfigProvider.getAppDirectory();
+        
         // Attach the button listeners
         View cancelButton = this.findViewById(R.id.cancel);
         cancelButton.setOnClickListener(this);
         View connectButton = this.findViewById(R.id.connect);
         connectButton.setOnClickListener(this);
+        View changeAppButton = this.findViewById(R.id.change_app);
+        changeAppButton.setOnClickListener(this);
         
         // Load the last saved settings
         config = new ConnectionOptions(this);
 		hostText = (EditText)this.findViewById(R.id.host);
-		portText = (EditText)this.findViewById(R.id.port);
 		userText = (EditText)this.findViewById(R.id.user);
 		passText = (EditText)this.findViewById(R.id.pass);
-		appSelection = (RadioGroup)this.findViewById(R.id.initial_app);
 		hostText.setText(config.hostname);
-		portText.setText(String.valueOf(config.port));
 		userText.setText(config.username);
 		passText.setText(config.password);
-		if (!config.appSelection.equals("")) appSelection.check(findAppMatchingName(config.appSelection));
+		
+		if (config.appSelection.equals("")) {
+			// Default to Rhythmbox
+			config.appSelection = AppConfigProvider.APP_RHYTHMBOX;
+		}
+		setAppButtonData(config.appSelection);
 		
 		// Stop any existing command service
 		stopService(new Intent(NewConnection.this, CommandService.class));
     }
     
-	private int findAppMatchingName(String appSelectionText) {
-		for (int i = 0; i < appSelection.getChildCount(); i++) {
-			RadioButton item = (RadioButton)appSelection.getChildAt(i);
-			String itemText = item.getText().toString();
-			if (itemText.equalsIgnoreCase(appSelectionText)) {
-				return item.getId();
+	private void setAppButtonData(String appSelectionItem) {
+		Map<String, String> app = findAppMatchingName(appSelectionItem);
+		
+		TextView appName = (TextView)this.findViewById(R.id.app_current_name);
+		appName.setText(app.get("name"));
+		
+		int resId = Integer.parseInt(app.get("icon"));
+		Drawable icon = getResources().getDrawable(resId);
+		appName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
+	}
+	
+	private Map<String, String> findAppMatchingName(String appSelection) {
+		Iterator<Map<String, String>> it = providerList.iterator();
+		boolean found = false;
+		Map<String, String>  out = null;
+		while (it.hasNext() && !found) {
+			out = it.next();
+			if (out.get("ref").equalsIgnoreCase(appSelection)) {
+				found = true;
 			}
 		}
-		return -1;
+		if (found == false) out = null;
+		return out;
 	}
 
 	protected void onDestroy() {
@@ -120,33 +149,28 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		case R.id.cancel:
 			finish();
 			break;
+		case (R.id.change_app):
+			startActivityForResult(new Intent(NewConnection.this, AppSelector.class), APP_SELECTOR_RESULT);
+			break;
+		}
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK) {
+			switch (requestCode) {
+			case APP_SELECTOR_RESULT:
+				// Update the app selection
+				config.reloadSettings();
+				setAppButtonData(config.appSelection);
+				break;
+			}
 		}
 	}
 	
 	private void setConnectionConfig() {
 		config.hostname = hostText.getText().toString();
-		config.port = Integer.parseInt(portText.getText().toString());
 		config.username = userText.getText().toString();
 		config.password = passText.getText().toString();
-		
-		// Determine which application was selected
-		RadioButton currentSelection = (RadioButton)findViewById(appSelection.getCheckedRadioButtonId());
-		String selectionText = currentSelection.getText().toString();
-		if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_RHYTHMBOX)) {
-			config.appSelection = AppConfigProvider.APP_RHYTHMBOX;
-		}
-		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_AMAROK)) {
-			config.appSelection = AppConfigProvider.APP_AMAROK;
-		}
-		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_VLC)) {
-			config.appSelection = AppConfigProvider.APP_VLC;
-		}
-		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_DRAGONPLAYER)) {
-			config.appSelection = AppConfigProvider.APP_DRAGONPLAYER;
-		}
-		else if (selectionText.equalsIgnoreCase(AppConfigProvider.APP_TOTEM)) {
-			config.appSelection = AppConfigProvider.APP_TOTEM;
-		}
 		
 		// Check the input
 		if (config.port == 0) config.port = 22;
