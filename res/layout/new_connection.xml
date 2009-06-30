@@ -9,11 +9,13 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 		<TableLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:paddingLeft="5dip"
+			android:paddingLeft="10dip"
 	        android:paddingRight="5dip"
-	        android:paddingTop="15dip">
+	        android:paddingTop="10dip">
 			
-			<TableRow>
+			<TableRow
+				android:paddingBottom="5dip">
+				
 				<TextView
 					android:singleLine="true" 
 					android:text="@string/host"
@@ -26,7 +28,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
 			</TableRow>
 			
-			<TableRow>
+			<TableRow
+				android:paddingBottom="5dip">
+				
 				<TextView
 					android:singleLine="true" 
 					android:text="@string/username" 
@@ -38,7 +42,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 					android:singleLine="true" />
 			</TableRow>
 			
-			<TableRow>
+			<TableRow
+				android:paddingBottom="5dip">
+				
 				<TextView
 					android:singleLine="true" 
 					android:text="@string/password" 
@@ -51,7 +57,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 					android:password="true" />
 			</TableRow>
 			
-			<TableRow>
+			<TableRow
+				android:paddingBottom="5dip">
+				
 	 			<TextView
 					android:singleLine="true" 
 					android:text="@string/application_selection" 
@@ -63,8 +71,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 					android:text="Rhythmbox"
 					android:drawableLeft="@drawable/app_icon_rhythmbox"
 					android:gravity="center_vertical"
-					android:drawablePadding="5dip"
-					android:layout_weight="1"/>
+					android:layout_weight="1" android:drawablePadding="3dip"/>
 					
 				<Button
 					android:id="@+id/change_app" 
@@ -76,7 +83,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 		
 		<FrameLayout
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent">
+			android:layout_height="fill_parent"
+			android:paddingLeft="5dip"
+	        android:paddingRight="5dip">
 			
 			<Button
 			android:id="@+id/cancel"
