@@ -39,6 +39,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -99,6 +100,7 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 				command = commandService.queryForCommand(Command.POWER);
 				break;
 			case R.id.play_pause: 
+				togglePlayPauseButtonMode();
 				command = commandService.queryForCommand(Command.PLAY);
 				break;
 			case R.id.last_song:
@@ -129,6 +131,12 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 			// Failed to send command
 			e.printStackTrace();
 		}
+	}
+
+	private void togglePlayPauseButtonMode() {
+		ImageButton button = (ImageButton)this.findViewById(R.id.play_pause);
+		button.setSelected(!button.isSelected());
+		button.refreshDrawableState();
 	}
 
 	private void updateSongInfo(boolean isOverride) {
@@ -166,10 +174,12 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 
 	public void onServiceError(String title, String message) {
 		stopSongInfoPolling = true;
-		new AlertDialog.Builder(Playback.this)
-			.setTitle(title)
-			.setMessage(message)
-			.show();
+		if (!isFinishing()) {
+			new AlertDialog.Builder(Playback.this)
+				.setTitle(title)
+				.setMessage(message)
+				.show();
+		}
 	}
 
 	public void onMediaInfoChanged(MediaInfo info) {
