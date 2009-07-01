@@ -52,6 +52,31 @@ public class CommandService extends Service {
 	
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		if (DEBUG_MODE) {
+			connection = new FakeConnection();
+		}
+		else {
+			// Start the wifi service if it is not running already
+			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			wifi.setWifiEnabled(true);
+			if (wifi.isWifiEnabled()) {
+				while (wifi.getConnectionInfo().getIpAddress() <= 0) {
+					// Poll for WIFI connection
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			else {
+				// Wifi management is not possible on this device, try to connect anyway
+			}
+			
+			connection = new SSHConnection();
+		}
+		ConnectionOptions options = new ConnectionOptions(this);
+		factory = new CommandFactory(options.appSelection);
 	}
 
 	public IBinder onBind(Intent arg0) {
@@ -84,36 +109,6 @@ public class CommandService extends Service {
 			}
 			
 		};
-	}
-
-	public void onCreate() {
-		super.onCreate();
-		if (DEBUG_MODE) {
-			connection = new FakeConnection();
-		}
-		else {
-			// Start the wifi service if it is not running already
-			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-			wifi.setWifiEnabled(true);
-			if (wifi.isWifiEnabled()) {
-				while (wifi.getConnectionInfo().getIpAddress() <= 0) {
-					// Poll for WIFI connection
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			else {
-				// Wifi management is not possible on this device, try to connect anyway
-			}
-			
-			connection = new SSHConnection();
-		}
-		
-		ConnectionOptions options = new ConnectionOptions(this);
-		factory = new CommandFactory(options.appSelection);
 	}
 	
 	public synchronized boolean connectAction() throws RemoteException {
