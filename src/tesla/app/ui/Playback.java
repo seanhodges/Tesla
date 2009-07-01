@@ -47,12 +47,11 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
 
 	private ICommandController commandService;
+	private boolean stopSongInfoPolling = false;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
-			// Set the error handling once service connected
-			setErrorHandler();
 			
 			// Update the song info now, and start the polling update 
 			updateSongInfo(false);
@@ -65,7 +64,7 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 	
 	private IErrorHandler errorHandler = new IErrorHandler.Stub() {
 		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
-			onServiceErrorAction(title, message, fatal);
+			onServiceErrorAction(title, message);
 		}
 	};
 	
@@ -90,33 +89,11 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
         targetButton.setOnClickListener(this);
     }
 	
-	protected void setErrorHandler() {
-    	try {
-			commandService.registerErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected void unsetErrorHandler() {
-    	try {
-			commandService.unregisterErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void onServiceErrorAction(String title, String message, boolean fatal) {
-		new AlertDialog.Builder(Playback.this)
-			.setTitle(title)
-			.setMessage(message)
-			.show();
-	}
-
-	public void onClick(View v) {
+    public void onClick(View v) {
 		Command command = null;
 		
 		try {
+			commandService.registerErrorHandler(errorHandler);
 			switch (v.getId()) {
 			case R.id.pc_power:
 				command = commandService.queryForCommand(Command.POWER);
@@ -147,6 +124,7 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 			if (command != null) {
 				commandService.sendCommand(command);
 			}
+			commandService.unregisterErrorHandler(errorHandler);
 		} catch (RemoteException e) {
 			// Failed to send command
 			e.printStackTrace();
@@ -154,32 +132,40 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 	}
 
 	private void updateSongInfo(boolean isOverride) {
-		GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
-		getSongInfoTask.registerListener(this);
-		getSongInfoTask.execute(commandService);
-		
-		if (!isOverride) {
-			ImageView artwork = (ImageView)findViewById(R.id.album_cover);
-			artwork.postDelayed(new Runnable() {
-				public void run() {
-					updateSongInfo(false);
-				}
-			}, SONG_INFO_UPDATE_PERIOD);
+		if (commandService != null && stopSongInfoPolling == false) {
+			GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
+			getSongInfoTask.registerListener(this);
+			getSongInfoTask.execute(commandService);
+			
+			if (!isOverride) {
+				ImageView artwork = (ImageView)findViewById(R.id.album_cover);
+				artwork.postDelayed(new Runnable() {
+					public void run() {
+						updateSongInfo(false);
+					}
+				}, SONG_INFO_UPDATE_PERIOD);
+			}
 		}
 	}
 
 	protected void onPause() {
 		super.onPause();
-		unsetErrorHandler();
+		stopSongInfoPolling = true;
 		if (connection != null) unbindService(connection);
 	}
 
 	protected void onResume() {
 		super.onResume();
+		stopSongInfoPolling = false;
 		bindService(new Intent(Playback.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+	}
+	
+	public void onServiceErrorAction(String title, String message) {
+		onServiceError(title, message);
 	}
 
 	public void onServiceError(String title, String message) {
+		stopSongInfoPolling = true;
 		new AlertDialog.Builder(Playback.this)
 			.setTitle(title)
 			.setMessage(message)
