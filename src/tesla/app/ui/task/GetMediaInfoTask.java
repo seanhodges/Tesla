@@ -20,6 +20,7 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
+import tesla.app.command.helper.RhythmDBHelper;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.mediainfo.MediaInfoFactory;
 import tesla.app.service.business.ICommandController;
@@ -75,7 +76,8 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 		
 		// Compile a MediaInfo pod with servers metadata
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
-			Map<String, String> output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
+			//Map<String, String> output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
+			Map<String, String> output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
 			info.track = output.get("tracknumber");
 			info.title = output.get("title");
 			info.artist = output.get("artist");

@@ -189,6 +189,17 @@ public class AppConfigProvider implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
 				"org.gnome.Rhythmbox.Player.getVolume");
 		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			out = "python -c \"import libxml2; doc = libxml2.parseFile('/home/sean/.local/share/rhythmbox/rhythmdb.xml'); " +
+					"ctxt = doc.xpathNewContext(); res = ctxt.xpathEval(\\\"//entry[@type='song']/location[.='" +
+					
+					"$(qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getPlayingUri | sed -e \"s/\\'/\\\\\\'/g\")" +
+					
+					/*"$(qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getPlayingUri)" +*/
+					
+					"']/..\\\"); " +
+					"print res[0]; ctxt.xpathFreeContext(); doc.freeDoc()\"";
+		}
 		
 		return out;
 	}
