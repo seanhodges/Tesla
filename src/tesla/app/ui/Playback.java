@@ -37,6 +37,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -44,7 +45,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, GetMediaInfoTask.OnGetMediaInfoListener {
-	
+
 	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
 
 	private ICommandController commandService;
@@ -166,6 +167,16 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 		super.onResume();
 		stopSongInfoPolling = false;
 		bindService(new Intent(Playback.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_HOME:
+			// If the HOME button is pressed, the application is shutting down.
+			// Therefore, stop the service...
+			stopService(new Intent(Playback.this, CommandService.class));
+		}
+		return super.onKeyDown(keyCode, event); 
 	}
 	
 	public void onServiceErrorAction(String title, String message) {

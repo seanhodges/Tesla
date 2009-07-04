@@ -44,7 +44,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class NewConnection extends Activity implements OnClickListener, ConnectToServerTask.OnConnectionListener {
-	
+
 	public static final int APP_SELECTOR_RESULT = 1;
 
 	private ConnectionOptions config;
@@ -102,9 +102,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 			config.appSelection = AppConfigProvider.APP_RHYTHMBOX;
 		}
 		setAppButtonData(config.appSelection);
-		
-		// Stop any existing command service
-		stopService(new Intent(NewConnection.this, CommandService.class));
     }
     
 	private void setAppButtonData(String appSelectionItem) {
@@ -152,6 +149,7 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == Activity.RESULT_OK) {
 			switch (requestCode) {
 			case APP_SELECTOR_RESULT:
@@ -177,7 +175,17 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 	
 	private void startConnection() {
 		setConnectionConfig();
+		showConnectionProgress();
 		
+		// Stop any existing command service
+		stopService(new Intent(NewConnection.this, CommandService.class));
+		
+		// Start the CommandService, and attempt to connect it
+		startService(new Intent(NewConnection.this, CommandService.class));
+		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
+	}
+	
+	private void showConnectionProgress() {
 		OnCancelListener cancelListener = new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				// Connection was cancelled by user
@@ -189,10 +197,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 			getString(R.string.connection_progress_title), 
 			getString(R.string.connection_progress_body) + " " + config.hostname, 
 			true, true, cancelListener);
-		
-		// Start the CommandService, and attempt to connect it
-		startService(new Intent(NewConnection.this, CommandService.class));
-		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
 	public void onConnectionComplete() {
