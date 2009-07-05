@@ -89,10 +89,11 @@
 				
 				<TextView
 				android:id="@+id/song_title"
-				android:layout_width="fill_parent"
+				android:layout_width="150dip"
 				android:layout_height="wrap_content"
 				android:text="@string/info_title"
-				android:width="150dip" 
+				android:ellipsize="marquee"
+				android:marqueeRepeatLimit="marquee_forever"
 				android:singleLine="true" />
 			</TableRow>
 			
@@ -101,10 +102,11 @@
 				
 				<TextView
 				android:id="@+id/song_artist"
-				android:layout_width="fill_parent"
+				android:layout_width="150dip"
 				android:layout_height="wrap_content"
 				android:text="@string/info_artist" 
-				android:width="150dip" 
+				android:ellipsize="marquee"
+				android:marqueeRepeatLimit="marquee_forever"
 				android:singleLine="true" />
 			</TableRow>
 			
@@ -113,10 +115,11 @@
 				
 				<TextView
 				android:id="@+id/song_album"
-				android:layout_width="fill_parent"
+				android:layout_width="150dip"
 				android:layout_height="wrap_content"
 				android:text="@string/info_album"
-				android:width="150dip" 
+				android:ellipsize="marquee"
+				android:marqueeRepeatLimit="marquee_forever"
 				android:singleLine="true" />
 			</TableRow>
 			
