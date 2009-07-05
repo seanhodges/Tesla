@@ -16,8 +16,12 @@
 
 package tesla.app.mediainfo.provider;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import net.roarsoftware.lastfm.Album;
 import net.roarsoftware.lastfm.Caller;
@@ -29,6 +33,7 @@ import tesla.app.mediainfo.helper.CacheStoreHelper;
 
 public class LastfmProvider implements IMediaInfoProvider {
 	
+	private static final String DEFAULT_API_ROOT = "http://ws.audioscrobbler.com/2.0/";
 	private static final String LAST_FM_KEY = "ef451aaf87a01a1cc9d349dab20de89a";
 	
 	public LastfmProvider() {
@@ -37,25 +42,31 @@ public class LastfmProvider implements IMediaInfoProvider {
 	}
 	
 	public boolean populate(MediaInfo info) {
-		Album albumData = Album.getInfo(info.artist, info.album, LAST_FM_KEY);
-		String artworkUrl = albumData.getImageURL(ImageSize.MEDIUM);
-		
-		if (artworkUrl != null) {
-			CacheStoreHelper cache = new CacheStoreHelper();
-			try {
-				String artwork = cache.copyArtworkFromUrl(info.artist, info.album, new URL(artworkUrl));
-				if (artwork != null) {
-					info.artwork = artwork;
-					return true;
+		boolean reachable = false;
+		try {
+			InetAddress dnsQuery = InetAddress.getByName(DEFAULT_API_ROOT);
+			reachable = dnsQuery.isReachable(3000);
+		} catch (Exception e) {
+			reachable = false;
+		}
+		if (reachable) {
+			Album albumData = Album.getInfo(info.artist, info.album, LAST_FM_KEY);
+			String artworkUrl = albumData.getImageURL(ImageSize.MEDIUM);
+			
+			if (artworkUrl != null) {
+				CacheStoreHelper cache = new CacheStoreHelper();
+				try {
+					String artwork = cache.copyArtworkFromUrl(info.artist, info.album, new URL(artworkUrl));
+					if (artwork != null) {
+						info.artwork = artwork;
+						return true;
+					}
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
 				}
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
 			}
 		}
-		else{
-			// Retrieval failed
-		}
+		// Retrieval failed
 		return false;
 	}
-
 }

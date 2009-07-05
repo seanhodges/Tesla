@@ -16,6 +16,7 @@
 
 package tesla.app.ui;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -204,7 +205,7 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 			label.setText(info.album);
 			
 			// Load the artwork from the cache store
-			if (info.artwork != null) {
+			if (info.artwork != null && new File(info.artwork).exists()) {
 				ImageView artwork = (ImageView)this.findViewById(R.id.album_cover);
 				FileInputStream fis;
 				try {
