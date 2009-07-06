@@ -24,6 +24,7 @@ import java.util.Map;
 import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
+import tesla.app.mediainfo.MediaInfo;
 
 public class AppConfigProvider implements IConfigProvider {
 
@@ -128,6 +129,10 @@ public class AppConfigProvider implements IConfigProvider {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "1.0");
 		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
+			settings.put("FORMAT", MediaInfo.FORMAT_RHYTHMDB);
+		}
 		return settings;
 	}
 	
@@ -136,6 +141,10 @@ public class AppConfigProvider implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "100.0");
+		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
+			settings.put("FORMAT", MediaInfo.FORMAT_DBUS);
 		}
 		return settings;
 	}

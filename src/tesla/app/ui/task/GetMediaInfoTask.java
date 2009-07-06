@@ -16,6 +16,7 @@
 
 package tesla.app.ui.task;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import tesla.app.command.Command;
@@ -76,17 +77,42 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 		
 		// Compile a MediaInfo pod with servers metadata
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
-			//Map<String, String> output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
-			Map<String, String> output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
-			info.track = output.get("tracknumber");
-			info.title = output.get("title");
-			info.artist = output.get("artist");
-			info.album = output.get("album");
+			Map<String, String> settings = command.getSettings();
+			
+			boolean enabled = false;
+			if (settings.containsKey("ENABLED")) {
+				enabled = Boolean.parseBoolean(settings.get("ENABLED"));
+			}
+			
+			String format = MediaInfo.FORMAT_STRING; 
+			if (settings.containsKey("FORMAT")) {
+				format = settings.get("FORMAT");
+			}
+			
+			if (enabled) {
+				Map<String, String> output;
+				if (format.equalsIgnoreCase(MediaInfo.FORMAT_DBUS)) {
+					output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
+				}
+				else if (format.equalsIgnoreCase(MediaInfo.FORMAT_RHYTHMDB)) {
+					output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
+				}
+				else {
+					// format defaults to MediaInfo.FORMAT_STRING
+					output = new HashMap<String, String>();
+					output.put("title", command.getOutput());
+				}
+				
+				info.track = output.get("tracknumber");
+				info.title = output.get("title");
+				info.artist = output.get("artist");
+				info.album = output.get("album");
+
+				// Pass the pod to the MediaInfoFactory for processing
+				MediaInfoFactory factory = new MediaInfoFactory();
+				info = factory.process(info);
+			}
 		}
-		
-		// Pass the pod to the MediaInfoFactory for processing
-		MediaInfoFactory factory = new MediaInfoFactory();
-		info = factory.process(info);
 		
 		return info;
 	}
