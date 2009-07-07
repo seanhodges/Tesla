@@ -90,6 +90,10 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
+        
+        // TODO: Determine if something is playing, and set play/pause toggle accordingly
+        ImageButton playPauseButton = (ImageButton)this.findViewById(R.id.play_pause);
+        playPauseButton.setSelected(true);
     }
 	
     public void onClick(View v) {
