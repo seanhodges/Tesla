@@ -138,7 +138,7 @@ public class CommandService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		if (commandExecutioner != null) commandExecutioner.cancel();
-		if (connection.isConnected()) connection.disconnect();
+		if (connection != null && connection.isConnected()) connection.disconnect();
 	}
 	
 	private void handleCommands() {
