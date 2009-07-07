@@ -28,6 +28,27 @@ import org.xml.sax.XMLReader;
 
 public class RhythmDBHelper {
 	
+	public String compileQuery(String uriCommand) {
+		String out = "rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; " +
+			"if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then " +
+			"rhythmdb_path=~/.local/share/rhythmbox/rhythmdb.xml; " + 
+			"fi; " + 
+			"uri=\"$(" + uriCommand + " | sed -e \"s/'/\\\\\\'/g\")\"; " +
+			"uri=\"${uri/method*string \\\"/}\"; " +
+			"uri=\"${uri/\\\"/}\"; " +
+			"if [[ ${uri} != \"\" ]]; then " +
+			"python -c \"" +
+			"import libxml2;" + 
+			"doc = libxml2.parseFile('${rhythmdb_path}');" + 
+			"ctxt = doc.xpathNewContext();" + 
+			"res = ctxt.xpathEval('//entry[@type=\\\"song\\\"]/location[.=\\\"${uri}\\\"]/..');" + 
+			"print res[0];" + 
+			"ctxt.xpathFreeContext(); doc.freeDoc()\"; " +
+			"fi";
+		
+		return out;
+	}
+	
 	public Map<String, String> evaluateMediaInfoAsMap(String rawOut) {
 		
 		rawOut = rawOut.trim();
