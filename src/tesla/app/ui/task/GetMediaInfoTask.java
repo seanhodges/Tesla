@@ -61,22 +61,6 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 			commandService.registerErrorHandler(errorHandler);
 			command = commandService.queryForCommand(Command.GET_MEDIA_INFO);
 			
-			// Wait for the track to change before getting song info
-			try {
-				synchronized (this) {
-					wait(1000);
-				}
-			} catch (InterruptedException e1) {
-			}
-			
-			command = commandService.sendQuery(command);
-			commandService.unregisterErrorHandler(errorHandler);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
-		// Compile a MediaInfo pod with servers metadata
-		if (command != null && command.getOutput() != null && command.getOutput() != "") {
 			Map<String, String> settings = command.getSettings();
 			
 			boolean enabled = false;
@@ -90,28 +74,45 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 			}
 			
 			if (enabled) {
-				Map<String, String> output;
-				if (format.equalsIgnoreCase(MediaInfo.FORMAT_DBUS)) {
-					output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
-				}
-				else if (format.equalsIgnoreCase(MediaInfo.FORMAT_RHYTHMDB)) {
-					output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
-				}
-				else {
-					// format defaults to MediaInfo.FORMAT_STRING
-					output = new HashMap<String, String>();
-					output.put("title", command.getOutput());
+				// Wait for the track to change before getting song info
+				try {
+					synchronized (this) {
+						wait(500);
+					}
+				} catch (InterruptedException e1) {
 				}
 				
-				info.track = output.get("tracknumber");
-				info.title = output.get("title");
-				info.artist = output.get("artist");
-				info.album = output.get("album");
-
-				// Pass the pod to the MediaInfoFactory for processing
-				MediaInfoFactory factory = new MediaInfoFactory();
-				info = factory.process(info);
+				command = commandService.sendQuery(command);
+				commandService.unregisterErrorHandler(errorHandler);
+			
+				// Compile a MediaInfo pod with servers metadata
+				if (command != null && command.getOutput() != null && command.getOutput() != "") {
+					
+					Map<String, String> output;
+					if (format.equalsIgnoreCase(MediaInfo.FORMAT_DBUS)) {
+						output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
+					}
+					else if (format.equalsIgnoreCase(MediaInfo.FORMAT_RHYTHMDB)) {
+						output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
+					}
+					else {
+						// format defaults to MediaInfo.FORMAT_STRING
+						output = new HashMap<String, String>();
+						output.put("title", command.getOutput());
+					}
+					
+					info.track = output.get("tracknumber");
+					info.title = output.get("title");
+					info.artist = output.get("artist");
+					info.album = output.get("album");
+	
+					// Pass the pod to the MediaInfoFactory for processing
+					MediaInfoFactory factory = new MediaInfoFactory();
+					info = factory.process(info);
+				}
 			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 		
 		return info;
