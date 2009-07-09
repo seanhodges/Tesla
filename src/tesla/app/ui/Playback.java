@@ -27,6 +27,7 @@ import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import tesla.app.ui.task.GetMediaInfoTask;
+import tesla.app.ui.task.IsPlayingTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -45,9 +46,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Playback extends Activity implements OnClickListener, GetMediaInfoTask.OnGetMediaInfoListener {
+public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
-	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
+	protected static final long SONG_INFO_UPDATE_PERIOD = 1000;
 
 	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
@@ -90,10 +91,6 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
-        
-        // TODO: Determine if something is playing, and set play/pause toggle accordingly
-        ImageButton playPauseButton = (ImageButton)this.findViewById(R.id.play_pause);
-        playPauseButton.setSelected(true);
     }
 	
     public void onClick(View v) {
@@ -147,6 +144,10 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 
 	private void updateSongInfo(boolean isOverride) {
 		if (commandService != null && stopSongInfoPolling == false) {
+			IsPlayingTask isPlayingTask = new IsPlayingTask();
+			isPlayingTask.registerListener(this);
+			isPlayingTask.execute(commandService);
+			
 			GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
 			getSongInfoTask.registerListener(this);
 			getSongInfoTask.execute(commandService);
@@ -224,5 +225,10 @@ public class Playback extends Activity implements OnClickListener, GetMediaInfoT
 				}
 			}
 		}
+	}
+
+	public void onPlayingChanged(boolean isPlaying) {
+        ImageButton playPauseButton = (ImageButton)this.findViewById(R.id.play_pause);
+        playPauseButton.setSelected(isPlaying);
 	}
 }

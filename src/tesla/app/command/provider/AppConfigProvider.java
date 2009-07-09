@@ -134,6 +134,9 @@ public class AppConfigProvider implements IConfigProvider {
 			settings.put("ENABLED", "true");
 			settings.put("FORMAT", MediaInfo.FORMAT_RHYTHMDB);
 		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			settings.put("ENABLED", "true");
+		}
 		return settings;
 	}
 	
@@ -203,6 +206,10 @@ public class AppConfigProvider implements IConfigProvider {
 			String uriCommand = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
 				"org.gnome.Rhythmbox.Player.getPlayingUri");
 			out = new RhythmDBHelper().compileQuery(uriCommand);
+		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.getPlaying");
 		}
 		
 		return out;

@@ -107,6 +107,11 @@ public class DBusHelper {
 		return out;
 	}
 	
+	public boolean evaluateOutputAsBoolean(String rawOut) {
+		String data = evaluateOutputAsString(rawOut, true);
+		return Boolean.parseBoolean(data);
+	}
+	
 	public Map<String, String> evaluateOutputAsMap(String rawOut) {
 		Map<String, String> out = new HashMap<String, String>();
 		while (rawOut.contains("dict entry(")) {
