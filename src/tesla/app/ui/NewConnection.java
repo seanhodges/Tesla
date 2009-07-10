@@ -195,7 +195,7 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		progressDialog = ProgressDialog.show(
 			this, 
 			getString(R.string.connection_progress_title), 
-			getString(R.string.connection_progress_body) + " " + config.hostname, 
+			getString(R.string.connection_progress_body), 
 			true, true, cancelListener);
 	}
 	

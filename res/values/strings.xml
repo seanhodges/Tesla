@@ -21,7 +21,7 @@
 	<string name="connect">Connect</string>
 	
 	<string name="connection_progress_title">Working...</string>
-	<string name="connection_progress_body">Connecting to server: </string>
+	<string name="connection_progress_body">Connecting with computer</string>
 	
 	<!-- App Selector -->
 	<string name="app_selector_title">Select Media Player</string>
