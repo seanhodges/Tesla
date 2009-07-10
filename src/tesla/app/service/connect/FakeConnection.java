@@ -52,6 +52,9 @@ public class FakeConnection implements IConnection {
 				"dict entry(\n variant artist:\n variant string \"Radiohead\"\n)\n" +
 				"dict entry(\n variant album:\n variant string \"OK Computer\"\n)\n";
 		}
+		else if (command.getKey().equals(Command.IS_PLAYING)) {
+			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   boolean true";
+		}
 		else {
 			return "";
 		}
