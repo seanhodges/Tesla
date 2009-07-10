@@ -25,6 +25,11 @@ import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.RhythmDBHelper;
+import tesla.app.command.provider.app.AmarokConfig;
+import tesla.app.command.provider.app.DragonPlayerConfig;
+import tesla.app.command.provider.app.RhythmboxConfig;
+import tesla.app.command.provider.app.TotemConfig;
+import tesla.app.command.provider.app.VlcConfig;
 import tesla.app.mediainfo.MediaInfo;
 
 public class AppConfigProvider implements IConfigProvider {
@@ -80,269 +85,42 @@ public class AppConfigProvider implements IConfigProvider {
 	}
 	
 	public String getCommand(String key) {
-		
-		// These commands will be extracted from
-		// a database of application configurations
-		
 		String out = null;
-		
 		if (appName.equals(APP_RHYTHMBOX)) {
-			out = rhythmBoxCommand(key);
+			out = new RhythmboxConfig().getCommand(key);
 		}
 		else if (appName.equals(APP_AMAROK)) {
-			out = amarokCommand(key);
+			out = new AmarokConfig().getCommand(key);
 		}
 		else if (appName.equals(APP_VLC)) {
-			out = vlcCommand(key);
+			out = new VlcConfig().getCommand(key);
 		}
 		else if (appName.equals(APP_TOTEM)) {
-			out = totemCommand(key);
+			out = new TotemConfig().getCommand(key);
 		}
 		else if (appName.equals(APP_DRAGONPLAYER)) {
-			out = dragonPlayerCommand(key);
+			out = new DragonPlayerConfig().getCommand(key);
 		}
-		
 		return out;
 	}
 	
 	public Map<String, String> getSettings(String key) {
-		Map<String, String> settings = null;
-		
+		Map<String, String> settings = null;	
 		if (appName.equals(APP_RHYTHMBOX)) {
-			settings = rhythmboxSettings(key);
+			settings = new RhythmboxConfig().getSettings(key);
 		}
 		else if (appName.equals(APP_AMAROK)) {
-			settings = amarokSettings(key);
+			settings = new AmarokConfig().getSettings(key);
 		}
 		else if (appName.equals(APP_VLC)) {
-			settings = vlcSettings(key);
+			settings = new VlcConfig().getSettings(key);
 		}
 		else if (appName.equals(APP_DRAGONPLAYER)) {
-			settings = dragonPlayerSettings(key);
+			settings = new DragonPlayerConfig().getSettings(key);
 		}
 		else if (appName.equals(APP_TOTEM)) {
-			settings = totemSettings(key);
-		}
-		
-		return settings;
-	}
-	
-	Map<String, String> rhythmboxSettings(String key) {
-		Map<String, String> settings = new HashMap<String, String>();
-		if (key.equals(Command.VOL_CURRENT)) {
-			settings.put("MIN", "0.0");
-			settings.put("MAX", "1.0");
-		}
-		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			settings.put("ENABLED", "true");
-			settings.put("FORMAT", MediaInfo.FORMAT_RHYTHMDB);
-		}
-		else if (key.equals(Command.IS_PLAYING)) {
-			settings.put("ENABLED", "true");
+			settings = new TotemConfig().getSettings(key);
 		}
 		return settings;
-	}
-	
-	Map<String, String> amarokSettings(String key) {
-		Map<String, String> settings = new HashMap<String, String>();
-		if (key.equals(Command.VOL_CURRENT)) {
-			settings.put("MIN", "0.0");
-			settings.put("MAX", "100.0");
-		}
-		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			settings.put("ENABLED", "true");
-			settings.put("FORMAT", MediaInfo.FORMAT_DBUS);
-		}
-		return settings;
-	}
-	
-	Map<String, String> vlcSettings(String key) {
-		Map<String, String> settings = new HashMap<String, String>();
-		if (key.equals(Command.VOL_CURRENT)) {
-			settings.put("MIN", "0.0");
-			settings.put("MAX", "25.0");
-		}
-		return settings;
-	}
-
-	Map<String, String> dragonPlayerSettings(String key) {
-		Map<String, String> settings = new HashMap<String, String>();
-		if (key.equals(Command.VOL_CURRENT)) {
-			settings.put("MIN", "0.0");
-			settings.put("MAX", "100.0");
-		}
-		return settings;
-	}
-	
-	Map<String, String> totemSettings(String key) {
-		Map<String, String> settings = new HashMap<String, String>();
-		if (key.equals(Command.VOL_CURRENT)) {
-			settings.put("MIN", "0.0");
-			settings.put("MAX", "100.0");
-		}
-		return settings;
-	}
-	
-	String rhythmBoxCommand(String key) {
-		final String dest = "org.gnome.Rhythmbox";
-		List<String> args = new ArrayList<String>();
-		String out = null;
-		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			args.add(new DBusHelper().evaluateArg("false"));
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.playPause", args);
-		}
-		else if (key.equals(Command.PREV)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.previous");
-		}
-		else if (key.equals(Command.NEXT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.next");
-		}
-		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add(new DBusHelper().evaluateArg("%f"));
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.setVolume", args);
-		}
-		else if (key.equals(Command.VOL_MUTE)) {
-			args.add(new DBusHelper().evaluateArg("0.0"));
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.setVolume", args);
-		}
-		else if (key.equals(Command.VOL_CURRENT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.getVolume");
-		}
-		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			String uriCommand = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.getPlayingUri");
-			out = new RhythmDBHelper().compileQuery(uriCommand);
-		}
-		else if (key.equals(Command.IS_PLAYING)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.getPlaying");
-		}
-		
-		return out;
-	}
-
-	String amarokCommand(String key) {
-		final String dest = "org.kde.amarok";
-		List<String> args = new ArrayList<String>();
-		String out = null;
-		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Pause");
-		}
-		else if (key.equals(Command.PREV)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Prev");
-		}
-		else if (key.equals(Command.NEXT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Next");
-		}
-		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add(new DBusHelper().evaluateArg("%i"));
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);
-		}
-		else if (key.equals(Command.VOL_MUTE)) {
-			args.add(new DBusHelper().evaluateArg("0"));
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);
-		}
-		else if (key.equals(Command.VOL_CURRENT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeGet");
-		}
-		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.GetMetadata");
-		}
-		return out;
-	}
-
-	String vlcCommand(String key) {
-		final String dest = "org.mpris.vlc";
-		List<String> args = new ArrayList<String>();
-		String out = null;
-		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Pause");
-		}
-		else if (key.equals(Command.PREV)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Prev");
-		}
-		else if (key.equals(Command.NEXT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Next");
-		}
-		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add(new DBusHelper().evaluateArg("%i"));
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);
-		}
-		else if (key.equals(Command.VOL_MUTE)) {
-			args.add(new DBusHelper().evaluateArg("0"));
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);
-		}
-		else if (key.equals(Command.VOL_CURRENT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeGet");
-		}
-		return out;
-	}
-	
-	String totemCommand(String key) {
-		String out = null;
-		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = "DISPLAY=:0 totem --play-pause";
-		}
-		else if (key.equals(Command.PREV)) {
-			out = "DISPLAY=:0 totem --previous";
-		}
-		else if (key.equals(Command.NEXT)) {
-			out = "DISPLAY=:0 totem --next";
-		}
-		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "gconftool-2 -s /apps/totem/volume --type=int %i";
-		}
-		else if (key.equals(Command.VOL_MUTE)) {
-			out = "gconftool-2 -s /apps/totem/volume --type=int 0";
-		}
-		else if (key.equals(Command.VOL_CURRENT)) {
-			out = "gconftool-2 -g /apps/totem/volume";
-		}
-		
-		return out;
-	}
-	
-	String dragonPlayerCommand(String key) {
-		final String dest = "org.mpris.dragonplayer-$(pidof dragon)";
-		List<String> args = new ArrayList<String>();
-		String out = null;
-		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.PlayPause");
-		}
-		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add(new DBusHelper().evaluateArg("%i"));
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);
-		}
-		else if (key.equals(Command.VOL_MUTE)) {
-			args.add(new DBusHelper().evaluateArg("0"));
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);
-		}
-		else if (key.equals(Command.VOL_CURRENT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeGet");
-		}
-		return out;
 	}
 }
