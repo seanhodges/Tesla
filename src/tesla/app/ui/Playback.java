@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -100,7 +101,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			commandService.registerErrorHandler(errorHandler);
 			switch (v.getId()) {
 			case R.id.pc_power:
-				command = commandService.queryForCommand(Command.POWER);
+				confirmPowerButton();
 				break;
 			case R.id.play_pause: 
 				togglePlayPauseButtonMode();
@@ -118,6 +119,11 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 				new AlertDialog.Builder(Playback.this)
 					.setTitle("Not implemented")
 					.setMessage("Playlist support is not yet available.")
+					.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					})
 					.show();
 				break;
 			case R.id.volume:
@@ -134,6 +140,34 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			// Failed to send command
 			e.printStackTrace();
 		}
+	}
+
+	private void confirmPowerButton() {
+		// Ask the user before executing this action
+		new AlertDialog.Builder(Playback.this)
+		.setTitle("Confirm shutdown")
+		.setMessage("Are you sure you want to turn off the computer?")
+		.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		})
+		.setPositiveButton("Turn Off", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				try {
+					commandService.registerErrorHandler(errorHandler);
+					Command command = commandService.queryForCommand(Command.POWER);
+					if (command != null) {
+						commandService.sendCommand(command);
+					}
+					commandService.unregisterErrorHandler(errorHandler);
+				} catch (RemoteException e) {
+					// Failed to send command
+					e.printStackTrace();
+				}
+			}
+		})
+		.show();
 	}
 
 	private void togglePlayPauseButtonMode() {
@@ -195,6 +229,11 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			new AlertDialog.Builder(Playback.this)
 				.setTitle(title)
 				.setMessage(message)
+				.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				})
 				.show();
 		}
 	}
