@@ -45,6 +45,7 @@ public final class Command implements Parcelable {
 	private ArrayList<Object> args;
 	long executionDelay = 0;
 	private String output;
+	private String targetApp;
 
 	public static final Parcelable.Creator<Command> CREATOR = new Parcelable.Creator<Command>() {
 		public Command createFromParcel(Parcel in) {
@@ -158,6 +159,7 @@ public final class Command implements Parcelable {
 		dest.writeBundle(settingsBundle);
 		dest.writeLong(executionDelay);
 		dest.writeString(output);
+		dest.writeString(targetApp);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,6 +174,7 @@ public final class Command implements Parcelable {
 		}
 		executionDelay = src.readLong();
 		output = src.readString();
+		targetApp = src.readString();
 	}
 
 	public void setOutput(String output) {
@@ -180,5 +183,13 @@ public final class Command implements Parcelable {
 
 	public String getOutput() {
 		return output;
+	}
+
+	public void setTargetApp(String appName) {
+		targetApp = appName;
+	}
+	
+	public String getTargetApp() {
+		return targetApp;
 	}
 }

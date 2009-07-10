@@ -44,8 +44,10 @@ public class LastfmProvider implements IMediaInfoProvider {
 	public boolean populate(MediaInfo info) {
 		boolean reachable = false;
 		try {
-			InetAddress dnsQuery = InetAddress.getByName(DEFAULT_API_ROOT);
-			reachable = dnsQuery.isReachable(3000);
+			InetAddress dnsQuery = InetAddress.getByName("ws.audioscrobbler.com");
+			if (dnsQuery != null) {
+				reachable = dnsQuery.isReachable(3000);
+			}
 		} catch (Exception e) {
 			reachable = false;
 		}

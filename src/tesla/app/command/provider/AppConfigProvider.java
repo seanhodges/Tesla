@@ -123,4 +123,8 @@ public class AppConfigProvider implements IConfigProvider {
 		}
 		return settings;
 	}
+
+	public String getAppName() {
+		return appName;
+	}
 }

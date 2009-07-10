@@ -17,6 +17,7 @@
 package tesla.app.service.connect;
 
 import tesla.app.command.Command;
+import tesla.app.command.provider.AppConfigProvider;
 
 public class FakeConnection implements IConnection {
 
@@ -43,14 +44,50 @@ public class FakeConnection implements IConnection {
 			return "success\n";
 		}
 		else if (command.getKey().equals(Command.VOL_CURRENT)) {
-			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
+			String out = "";
+			if (command.getTargetApp().equals(AppConfigProvider.APP_RHYTHMBOX)) {
+				out = "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   double 0.5";
+			}
+			else {
+				out = "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
+			}
+			return out;
 		}
 		else if (command.getKey().equals(Command.GET_MEDIA_INFO)) {
-			return "" +
-				"dict entry(\n variant tracknumber:\n variant int32 1\n)\n" +
-				"dict entry(\n variant title:\n variant string \"Karma Police\"\n)\n" +
-				"dict entry(\n variant artist:\n variant string \"Radiohead\"\n)\n" +
-				"dict entry(\n variant album:\n variant string \"OK Computer\"\n)\n";
+			if (command.getTargetApp().equals(AppConfigProvider.APP_RHYTHMBOX)) {
+				return "" + 
+					"<entry type=\"song\">" +
+				    "<title>Perfect Symmetry</title>" +
+				    "<genre>Unknown</genre>" +
+				    "<artist>Keane</artist>" +
+				    "<album>Perfect Symmetry</album>" +
+				    "<track-number>5</track-number>" +
+				    "<duration>312</duration>" +
+				    "<file-size>6057394</file-size>" +
+				    "<location>file:///home/sean/Music/Keane/Perfect%20Symmetry/05%20-%20Perfect%20Symmetry.ogg</location>" +
+				    "<mountpoint>file:///</mountpoint>" +
+				    "<mtime>1224489723</mtime>" +
+				    "<first-seen>1224489724</first-seen>" +
+				    "<last-seen>1247218028</last-seen>" +
+				    "<play-count>12</play-count>" +
+				    "<last-played>1246918067</last-played>" +
+				    "<bitrate>160</bitrate>" +
+				    "<date>733325</date>" +
+				    "<mimetype>application/ogg</mimetype>" +
+				    "<mb-trackid>67f5d228-2d37-4e5a-8339-2044cd0df26b</mb-trackid>" +
+				    "<mb-artistid>c7020c6d-cae9-4db3-92a7-e5c561cbad50</mb-artistid>" +
+				    "<mb-albumid>13812b86-90ca-4bf2-9818-168fad7be13e</mb-albumid>" +
+				    "<mb-albumartistid>c7020c6d-cae9-4db3-92a7-e5c561cbad50</mb-albumartistid>" +
+				    "<mb-artistsortname>Keane</mb-artistsortname>" +
+				    "</entry>";
+			}
+			else {
+				return "" +
+					"dict entry(\n variant tracknumber:\n variant int32 1\n)\n" +
+					"dict entry(\n variant title:\n variant string \"Karma Police\"\n)\n" +
+					"dict entry(\n variant artist:\n variant string \"Radiohead\"\n)\n" +
+					"dict entry(\n variant album:\n variant string \"OK Computer\"\n)\n";
+			}
 		}
 		else if (command.getKey().equals(Command.IS_PLAYING)) {
 			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   boolean true";

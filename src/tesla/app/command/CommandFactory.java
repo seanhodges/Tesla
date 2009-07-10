@@ -64,6 +64,10 @@ public class CommandFactory {
 			IConfigProvider currentProvider = providerOrderIt.next(); 
 			command = currentProvider.getCommand(key);
 			settings = currentProvider.getSettings(key);
+			// Set the target app name
+			if (currentProvider instanceof AppConfigProvider) {
+				out.setTargetApp(((AppConfigProvider)currentProvider).getAppName());
+			}
 		}
 		out.setCommandString(command);
 		out.setSettings(settings);

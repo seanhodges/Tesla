@@ -19,6 +19,7 @@ package tesla.app.ui;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.concurrent.RejectedExecutionException;
 
 import tesla.app.R;
 import tesla.app.command.Command;
@@ -50,7 +51,7 @@ import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
-	protected static final long SONG_INFO_UPDATE_PERIOD = 1000;
+	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
 
 	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
@@ -179,13 +180,23 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 
 	private void updateSongInfo(boolean isOverride) {
 		if (commandService != null && stopSongInfoPolling == false) {
-			IsPlayingTask isPlayingTask = new IsPlayingTask();
-			isPlayingTask.registerListener(this);
-			isPlayingTask.execute(commandService);
+			try {
+				IsPlayingTask isPlayingTask = new IsPlayingTask();
+				isPlayingTask.registerListener(this);
+				isPlayingTask.execute(commandService);
+			}
+			catch (RejectedExecutionException e) {
+				// Ignore failed executions
+			}
 			
-			GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
-			getSongInfoTask.registerListener(this);
-			getSongInfoTask.execute(commandService);
+			try {
+				GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
+				getSongInfoTask.registerListener(this);
+				getSongInfoTask.execute(commandService);
+			}
+			catch (RejectedExecutionException e) {
+				// Ignore failed executions
+			}
 			
 			if (!isOverride) {
 				ImageView artwork = (ImageView)findViewById(R.id.album_cover);
