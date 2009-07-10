@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -135,6 +136,11 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 		new AlertDialog.Builder(VolumeControl.this)
 			.setTitle(title)
 			.setMessage(message)
+			.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			})
 			.show();
 	}
 

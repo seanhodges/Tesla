@@ -217,6 +217,11 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)
 			.setMessage(message)
+			.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			})
 			.show();
 	}
 }
