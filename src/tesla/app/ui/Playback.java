@@ -39,6 +39,7 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.KeyEvent;
@@ -52,11 +53,18 @@ import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
-	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
+	private static final long SONG_INFO_UPDATE_PERIOD = 1000;
 	private static final int APP_SELECTOR_RESULT = 1;
 	
 	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
+	
+	private Handler updateSongInfoHandler = new Handler();
+	private Runnable updateSongInfoRunnable = new Runnable() {
+		public void run() {
+			updateSongInfo(false);
+		}
+	};
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -201,12 +209,8 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			}
 			
 			if (!isOverride) {
-				ImageView artwork = (ImageView)findViewById(R.id.album_cover);
-				artwork.postDelayed(new Runnable() {
-					public void run() {
-						updateSongInfo(false);
-					}
-				}, SONG_INFO_UPDATE_PERIOD);
+				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
+				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
 			}
 		}
 	}
@@ -283,11 +287,12 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		if (info.title != null && info.artist != null && info.album != null) {
 			TextView label;
 			label = (TextView)this.findViewById(R.id.song_title);
-			label.setText(info.track + " - " + info.title);
+			String newTitle = info.track + " - " + info.title;
+			if (!newTitle.equals(label.getText())) label.setText(newTitle);
 			label = (TextView)this.findViewById(R.id.song_artist);
-			label.setText(info.artist);
+			if (!info.artist.equals(label.getText())) label.setText(info.artist);
 			label = (TextView)this.findViewById(R.id.song_album);
-			label.setText(info.album);
+			if (!info.album.equals(label.getText())) label.setText(info.album);
 			
 			// Load the artwork from the cache store
 			if (info.artwork != null && new File(info.artwork).exists()) {
