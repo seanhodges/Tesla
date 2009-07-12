@@ -9,7 +9,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     
-    <string name="application_selection">Application</string>
+    <string name="application_selection">Media Player</string>
     <string name="change_app">Change...</string>
 	<string name="amarok_item">Amarok</string>
 	<string name="dragonplayer_item">Dragon Player</string>
@@ -36,6 +36,8 @@
 	
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>
+	
+	<string name="menu_application_change">Change Media Player...</string>
 	
 	<!-- Volume control -->
 	<string name="volume_title">Volume</string>

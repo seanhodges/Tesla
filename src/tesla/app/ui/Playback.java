@@ -42,6 +42,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -51,7 +53,8 @@ import android.widget.TextView;
 public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
 	protected static final long SONG_INFO_UPDATE_PERIOD = 2000;
-
+	private static final int APP_SELECTOR_RESULT = 1;
+	
 	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
 	
@@ -230,6 +233,33 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		return super.onKeyDown(keyCode, event); 
 	}
 	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(R.string.menu_application_change);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Currently only one item to select
+		startActivityForResult(new Intent(Playback.this, AppSelector.class), APP_SELECTOR_RESULT);
+		return true;
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == Activity.RESULT_OK) {
+			switch (requestCode) {
+			case APP_SELECTOR_RESULT:
+				// Target media player has been changed
+				try {
+					commandService.reloadCommandFactory();
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+	}
+
 	public void onServiceErrorAction(String title, String message) {
 		onServiceError(title, message);
 	}

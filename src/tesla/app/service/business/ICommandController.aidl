@@ -12,4 +12,5 @@ interface ICommandController {
 	Command queryForCommand(in String key);
 	void sendCommand(in Command command);
 	Command sendQuery(in Command command);
+	void reloadCommandFactory();
 }

@@ -85,6 +85,10 @@ public class CommandService extends Service {
 			public Command sendQuery(Command command) throws RemoteException {
 				return sendQueryAction(command);
 			}
+			
+			public void reloadCommandFactory() throws RemoteException {
+				reloadCommandFactoryAction();
+			}
 
 			public void registerErrorHandler(IErrorHandler cb) throws RemoteException {
 				registerErrorHandlerAction(cb);
@@ -222,5 +226,10 @@ public class CommandService extends Service {
 
 	protected void registerErrorHandlerAction(IErrorHandler cb) {
 		if (cb != null) callbacks.register(cb);
+	}
+
+	private void reloadCommandFactoryAction() {
+		connectOptions.reloadSettings();
+		factory = new CommandFactory(connectOptions.appSelection);
 	}
 }

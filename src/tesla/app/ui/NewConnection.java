@@ -47,7 +47,7 @@ import android.widget.TextView;
 
 public class NewConnection extends Activity implements OnClickListener, ConnectToServerTask.OnConnectionListener {
 
-	public static final int APP_SELECTOR_RESULT = 1;
+	private static final int APP_SELECTOR_RESULT = 1;
 
 	private ConnectionOptions config;
 	private ProgressDialog progressDialog;
