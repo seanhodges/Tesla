@@ -21,7 +21,6 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.view.animation.CycleInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.TextView;
