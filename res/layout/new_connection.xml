@@ -79,6 +79,25 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 					android:layout_gravity="right"/>
 			</TableRow>
 			
+			<TableRow
+				android:paddingBottom="5dip">
+				
+	 			<TextView
+					android:singleLine="true" 
+					android:text="" 
+					android:layout_width="fill_parent"
+					android:paddingRight="10dip"/>
+					
+				<CheckBox
+					android:id="@+id/fake_connection"
+					android:text="@string/fake_connection" 
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#BBBBBB"
+					android:paddingLeft="45dip"
+					android:singleLine="true"
+					android:layout_weight="1"/>
+			</TableRow>
+			
 		</TableLayout>
 		
 		<FrameLayout

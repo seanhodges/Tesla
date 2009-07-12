@@ -17,6 +17,8 @@
 	<string name="totem_item">Totem</string>
 	<string name="vlc_item">VLC</string>
 	
+	<string name="fake_connection">Fake Connect (For Testing)</string>
+	
 	<string name="cancel">Cancel</string>
 	<string name="connect">Connect</string>
 	

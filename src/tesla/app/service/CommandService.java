@@ -28,6 +28,7 @@ import tesla.app.service.connect.ConnectionOptions;
 import tesla.app.service.connect.FakeConnection;
 import tesla.app.service.connect.IConnection;
 import tesla.app.service.connect.SSHConnection;
+import tesla.app.service.connect.ConnectionOptions.ConnectMode;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +40,6 @@ import android.os.RemoteException;
 public class CommandService extends Service {
 
 	private static final int EXEC_POLL_PERIOD = 50; // Cycles
-	private static final boolean DEBUG_MODE = true;
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
@@ -49,34 +49,20 @@ public class CommandService extends Service {
 	private Timer commandExecutioner;
 	private Command nextCommand = null;
 	private Command lastCommand = null;
+	private ConnectionOptions connectOptions;
 	
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		if (DEBUG_MODE) {
+		connectOptions = new ConnectionOptions(this);
+		
+		if (connectOptions.mode == ConnectMode.FAKE) {
 			connection = new FakeConnection();
 		}
 		else {
-			// Start the wifi service if it is not running already
-			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-			wifi.setWifiEnabled(true);
-			if (wifi.isWifiEnabled()) {
-				while (wifi.getConnectionInfo().getIpAddress() <= 0) {
-					// Poll for WIFI connection
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			else {
-				// Wifi management is not possible on this device, try to connect anyway
-			}
-			
 			connection = new SSHConnection();
 		}
-		ConnectionOptions options = new ConnectionOptions(this);
-		factory = new CommandFactory(options.appSelection);
+		
+		factory = new CommandFactory(connectOptions.appSelection);
 	}
 
 	public IBinder onBind(Intent arg0) {
@@ -113,11 +99,28 @@ public class CommandService extends Service {
 	
 	public synchronized boolean connectAction() throws RemoteException {
 		boolean success = false;
-		
-		ConnectionOptions options = new ConnectionOptions(this);
-		
         try {
-			connection.connect(options);
+        	if (connectOptions.mode == ConnectMode.SSH) {
+        		// Start the wifi service if it is not running already
+    			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+    			wifi.setWifiEnabled(true);
+    			if (wifi.isWifiEnabled()) {
+    				while (wifi.getConnectionInfo().getIpAddress() <= 0) {
+    					// Poll for WIFI connection
+    					try {
+    						Thread.sleep(10);
+    					} catch (InterruptedException e) {
+    						e.printStackTrace();
+    					}
+    				}
+    			}
+    			else {
+    				// Wifi management is not possible on this device, try to connect anyway
+    			}
+        	}
+        	
+			connection.connect(connectOptions);
+			
 			// Initialise the DBUS connection
 			String response = connection.sendCommand(factory.getInitScript());
 			if (!response.equals("success\n")) {

@@ -25,6 +25,12 @@ public class ConnectionOptions {
 	
 	private Context owner;
 	
+	public enum ConnectMode {
+		FAKE,
+		SSH
+	}
+	
+	public ConnectMode mode = ConnectMode.SSH;
 	public String hostname = null;
 	public int port = 0;
 	public String username = null;
@@ -40,6 +46,7 @@ public class ConnectionOptions {
 		// This is a simple load/save mechanism from a simple file
 		// TODO: replace/extend with a profile manager
 		SharedPreferences settings = owner.getSharedPreferences(PREFS_NAME, 0);
+		mode = ConnectMode.valueOf(settings.getString("mode", ConnectMode.SSH.toString()));
 		hostname = settings.getString("hostname", "192.168.0.1");
 		port = settings.getInt("port", 22);
 		username= settings.getString("username", "User");
@@ -50,6 +57,7 @@ public class ConnectionOptions {
 	public void saveSettings() {
 		SharedPreferences settings = owner.getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("mode", mode.toString());
 		editor.putString("hostname", hostname);
 		editor.putInt("port", port);
 		editor.putString("username", username);
