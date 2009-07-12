@@ -186,13 +186,13 @@ public class CommandService extends Service {
 		return factory.getCommand(key);
 	}
 
-	protected void sendCommandAction(Command command) {
+	protected synchronized void sendCommandAction(Command command) {
 		if (command != null) {
 			nextCommand = command;
 		}
 	}
 	
-	protected Command sendQueryAction(Command command) throws RemoteException {
+	protected synchronized Command sendQueryAction(Command command) throws RemoteException {
 		// Queries are returned synchronously
 		if (command != null) {
 			try {
