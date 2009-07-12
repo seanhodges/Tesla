@@ -302,19 +302,20 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	}
 
 	public void onMediaInfoChanged(MediaInfo info) {
+		TextView labelTitle = (TextView)this.findViewById(R.id.song_title);
+		TextView labelArtist = (TextView)this.findViewById(R.id.song_artist);
+		TextView labelAlbum = (TextView)this.findViewById(R.id.song_album);
+		ImageView artwork = (ImageView)this.findViewById(R.id.album_cover);
+		
 		if (info.title != null && info.artist != null && info.album != null) {
-			TextView label;
-			label = (TextView)this.findViewById(R.id.song_title);
 			String newTitle = info.track + " - " + info.title;
-			if (!newTitle.equals(label.getText())) label.setText(newTitle);
-			label = (TextView)this.findViewById(R.id.song_artist);
-			if (!info.artist.equals(label.getText())) label.setText(info.artist);
-			label = (TextView)this.findViewById(R.id.song_album);
-			if (!info.album.equals(label.getText())) label.setText(info.album);
+			setLabelTextIfChanged(labelTitle, newTitle);
+			setLabelTextIfChanged(labelArtist, info.artist);
+			setLabelTextIfChanged(labelAlbum, info.album);
 			
 			// Load the artwork from the cache store
+			boolean failed = false;
 			if (info.artwork != null && new File(info.artwork).exists()) {
-				ImageView artwork = (ImageView)this.findViewById(R.id.album_cover);
 				FileInputStream fis;
 				try {
 					fis = new FileInputStream(info.artwork);
@@ -324,9 +325,27 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 					artwork.setImageBitmap(scaled);
 				} catch (Exception e) {
 					// Failed to load image from cache store
-					e.printStackTrace();
+					failed = true;
 				}
 			}
+			else failed = true;
+			if (failed == true) {
+				// Revert to the generic CD cover image
+				artwork.setImageResource(R.drawable.album_cover);
+			}
+		}
+		else {
+			// Revert to the generic media info text
+			setLabelTextIfChanged(labelTitle, getResources().getText(R.string.info_title).toString());
+			setLabelTextIfChanged(labelArtist, getResources().getText(R.string.info_artist).toString());
+			setLabelTextIfChanged(labelAlbum, getResources().getText(R.string.info_album).toString());
+			artwork.setImageResource(R.drawable.album_cover);
+		}
+	}
+	
+	private void setLabelTextIfChanged(TextView label, String newString) {
+		if (!label.getText().equals(newString)) {
+			label.setText(newString);
 		}
 	}
 
