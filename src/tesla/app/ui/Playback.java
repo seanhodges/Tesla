@@ -19,14 +19,17 @@ package tesla.app.ui;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import tesla.app.R;
 import tesla.app.command.Command;
+import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
+import tesla.app.service.connect.ConnectionOptions;
 import tesla.app.ui.task.GetMediaInfoTask;
 import tesla.app.ui.task.IsPlayingTask;
 import android.app.Activity;
@@ -104,6 +107,8 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
+        
+        setAppIcon();
     }
 	
     public void onClick(View v) {
@@ -256,10 +261,23 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 				// Target media player has been changed
 				try {
 					commandService.reloadCommandFactory();
+					setAppIcon();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 				break;
+			}
+		}
+	}
+
+	private void setAppIcon() {
+		ConnectionOptions config = new ConnectionOptions(this);
+		Map<String, String> appInfo = AppConfigProvider.findAppMatchingName(config.appSelection);
+		if (appInfo.containsKey("icon")) {
+			int iconRef = Integer.valueOf(appInfo.get("icon"));
+			if (iconRef > 0) {
+				ImageView appIcon = (ImageView)findViewById(R.id.app_icon);
+				appIcon.setImageResource(iconRef);
 			}
 		}
 	}

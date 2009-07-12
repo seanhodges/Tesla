@@ -54,28 +54,13 @@ public class AppSelector extends ListActivity {
         
         if (!config.appSelection.equals("")) {
         	// Load the last saved settings
-        	setSelection(findAppMatchingName(config.appSelection));
+        	setSelection(AppConfigProvider.findAppIndexMatchingName(config.appSelection));
         }
         else {
     		// Default to Rhythmbox
-        	setSelection(findAppMatchingName(AppConfigProvider.APP_RHYTHMBOX));
+        	setSelection(AppConfigProvider.findAppIndexMatchingName(AppConfigProvider.APP_RHYTHMBOX));
         }
     }
-
-	private int findAppMatchingName(String appSelection) {
-		Iterator<Map<String, String>> it = providerList.iterator();
-		boolean found = false;
-		int out = -1;
-		while (it.hasNext() && !found) {
-			out += 1;
-			Map<String, String> current = it.next();
-			if (current.get("ref").equalsIgnoreCase(appSelection)) {
-				found = true;
-			}
-		}
-		if (found == false) out = -1;
-		return out;
-	}
 	
 	@SuppressWarnings("unchecked")
 	protected void onListItemClick(ListView l, View v, int position, long id) {

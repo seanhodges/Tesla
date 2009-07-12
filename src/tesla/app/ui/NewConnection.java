@@ -51,7 +51,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 
 	private ConnectionOptions config;
 	private ProgressDialog progressDialog;
-	private List<Map<String, String>> providerList;
 	
 	private ICommandController commandService;
 	protected ConnectToServerTask connectTask;
@@ -81,8 +80,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
         super.onCreate(icicle);
         setContentView(R.layout.new_connection);
         
-        providerList = AppConfigProvider.getAppDirectory();
-        
         // Attach the button listeners
         View cancelButton = this.findViewById(R.id.cancel);
         cancelButton.setOnClickListener(this);
@@ -110,7 +107,7 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
     }
     
 	private void setAppButtonData(String appSelectionItem) {
-		Map<String, String> app = findAppMatchingName(appSelectionItem);
+		Map<String, String> app = AppConfigProvider.findAppMatchingName(appSelectionItem);
 		
 		TextView appName = (TextView)this.findViewById(R.id.app_current_name);
 		appName.setText(app.get("name"));
@@ -118,20 +115,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		int resId = Integer.parseInt(app.get("icon"));
 		Drawable icon = getResources().getDrawable(resId);
 		appName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
-	}
-	
-	private Map<String, String> findAppMatchingName(String appSelection) {
-		Iterator<Map<String, String>> it = providerList.iterator();
-		boolean found = false;
-		Map<String, String>  out = null;
-		while (it.hasNext() && !found) {
-			out = it.next();
-			if (out.get("ref").equalsIgnoreCase(appSelection)) {
-				found = true;
-			}
-		}
-		if (found == false) out = null;
-		return out;
 	}
 
 	protected void onDestroy() {

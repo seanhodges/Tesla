@@ -18,6 +18,7 @@ package tesla.app.command.provider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,35 @@ public class AppConfigProvider implements IConfigProvider {
         providerList.add(entry);
         
         return providerList;
+	}
+
+	public static Map<String, String> findAppMatchingName(String appSelection) {
+		Iterator<Map<String, String>> it = getAppDirectory().iterator();
+		boolean found = false;
+		Map<String, String> out = new HashMap<String, String>();
+		while (it.hasNext() && !found) {
+			Map<String, String> current = it.next();
+			if (current.get("ref").equalsIgnoreCase(appSelection)) {
+				out = current;
+				found = true;
+			}
+		}
+		return out;
+	}
+
+	public static int findAppIndexMatchingName(String appSelection) {
+		Iterator<Map<String, String>> it = getAppDirectory().iterator();
+		boolean found = false;
+		int out = -1;
+		while (it.hasNext() && !found) {
+			out += 1;
+			Map<String, String> current = it.next();
+			if (current.get("ref").equalsIgnoreCase(appSelection)) {
+				found = true;
+			}
+		}
+		if (found == false) out = -1;
+		return out;
 	}
 	
 	public AppConfigProvider(String appName) {
