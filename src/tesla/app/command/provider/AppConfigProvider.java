@@ -22,15 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import tesla.app.R;
-import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
-import tesla.app.command.helper.RhythmDBHelper;
 import tesla.app.command.provider.app.AmarokConfig;
 import tesla.app.command.provider.app.DragonPlayerConfig;
 import tesla.app.command.provider.app.RhythmboxConfig;
 import tesla.app.command.provider.app.TotemConfig;
 import tesla.app.command.provider.app.VlcConfig;
-import tesla.app.mediainfo.MediaInfo;
 
 public class AppConfigProvider implements IConfigProvider {
 

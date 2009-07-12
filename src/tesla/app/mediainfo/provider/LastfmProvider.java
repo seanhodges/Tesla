@@ -16,24 +16,19 @@
 
 package tesla.app.mediainfo.provider;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import net.roarsoftware.lastfm.Album;
 import net.roarsoftware.lastfm.Caller;
 import net.roarsoftware.lastfm.ImageSize;
 import net.roarsoftware.lastfm.cache.MemoryCache;
-
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.mediainfo.helper.CacheStoreHelper;
 
 public class LastfmProvider implements IMediaInfoProvider {
 	
-	private static final String DEFAULT_API_ROOT = "http://ws.audioscrobbler.com/2.0/";
 	private static final String LAST_FM_KEY = "ef451aaf87a01a1cc9d349dab20de89a";
 	
 	public LastfmProvider() {
