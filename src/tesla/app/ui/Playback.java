@@ -24,6 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import tesla.app.R;
 import tesla.app.command.Command;
+import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;
@@ -61,6 +62,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	
 	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
+	private boolean appReportingIfPlaying = false;
 	
 	private Handler updateSongInfoHandler = new Handler();
 	private Runnable updateSongInfoRunnable = new Runnable() {
@@ -72,6 +74,20 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
+	        
+	        // If the application is reporting whether it is playing, we don't want to toggle the play button manually
+	        try {
+				commandService.registerErrorHandler(errorHandler);
+				Command command = commandService.queryForCommand(Command.IS_PLAYING);
+				
+				Map<String, String> settings = command.getSettings();
+				if (settings.containsKey("ENABLED")) {
+					appReportingIfPlaying = Boolean.parseBoolean(settings.get("ENABLED"));
+				}
+				commandService.unregisterErrorHandler(errorHandler);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 			
 			// Update the song info now, and start the polling update 
 			updateSongInfo(false);
@@ -107,7 +123,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
-        
+		
         setAppIcon();
     }
 	
@@ -188,9 +204,11 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	}
 
 	private void togglePlayPauseButtonMode() {
-		ImageButton button = (ImageButton)this.findViewById(R.id.play_pause);
-		button.setSelected(!button.isSelected());
-		button.refreshDrawableState();
+		if (!appReportingIfPlaying) {
+			ImageButton button = (ImageButton)this.findViewById(R.id.play_pause);
+			button.setSelected(!button.isSelected());
+			button.refreshDrawableState();
+		}
 	}
 
 	private void updateSongInfo(boolean isOverride) {
