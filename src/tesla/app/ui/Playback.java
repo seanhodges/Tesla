@@ -115,6 +115,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.play_pause);
         targetButton.setOnClickListener(this);
+        targetButton.setSelected(true);
         targetButton = this.findViewById(R.id.last_song);
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.next_song);
@@ -213,13 +214,15 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 
 	private void updateSongInfo(boolean isOverride) {
 		if (commandService != null && stopSongInfoPolling == false) {
-			try {
-				IsPlayingTask isPlayingTask = new IsPlayingTask();
-				isPlayingTask.registerListener(this);
-				isPlayingTask.execute(commandService);
-			}
-			catch (RejectedExecutionException e) {
-				// Ignore failed executions
+			if (appReportingIfPlaying) {
+				try {
+					IsPlayingTask isPlayingTask = new IsPlayingTask();
+					isPlayingTask.registerListener(this);
+					isPlayingTask.execute(commandService);
+				}
+				catch (RejectedExecutionException e) {
+					// Ignore failed executions
+				}
 			}
 			
 			try {
