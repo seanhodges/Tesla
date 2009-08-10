@@ -45,6 +45,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -63,6 +64,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
 	private boolean appReportingIfPlaying = false;
+	private PowerManager.WakeLock wakeLock;
 	
 	private Handler updateSongInfoHandler = new Handler();
 	private Runnable updateSongInfoRunnable = new Runnable() {
@@ -109,6 +111,10 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
         super.onCreate(icicle);
         setContentView(R.layout.playback);
         
+        // Used to keep the Wifi available as long as the activity is running
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Tesla SSH session");
+		 
         // Attach the button listeners for playback controls
         View targetButton;
         targetButton = this.findViewById(R.id.pc_power);
@@ -245,10 +251,12 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		super.onPause();
 		stopSongInfoPolling = true;
 		if (connection != null) unbindService(connection);
+		wakeLock.release();
 	}
 
 	protected void onResume() {
 		super.onResume();
+		wakeLock.acquire();
 		stopSongInfoPolling = false;
 		bindService(new Intent(Playback.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}

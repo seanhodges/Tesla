@@ -32,12 +32,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.RemoteException;
 
 public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLevelChangeListener, GetVolumeLevelTask.OnGetVolumeLevelListener {
 	
 	private VolumeSlider volumeSlider;
 	private ICommandController commandService;
+	private PowerManager.WakeLock wakeLock;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -62,6 +64,10 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.volume_control);
+
+        // Used to keep the Wifi available as long as the activity is running
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Tesla SSH session");
         
         volumeSlider = (VolumeSlider)this.findViewById(R.id.volume);
         volumeSlider.setOnVolumeLevelChangeListener(this);
@@ -100,10 +106,12 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	protected void onPause() {
 		super.onPause();
 		if (connection != null) unbindService(connection);
+		wakeLock.release();
 	}
 
 	protected void onResume() {
 		super.onResume();
+		wakeLock.acquire();
 		bindService(new Intent(VolumeControl.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 
