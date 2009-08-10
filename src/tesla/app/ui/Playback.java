@@ -24,7 +24,6 @@ import java.util.concurrent.RejectedExecutionException;
 
 import tesla.app.R;
 import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;

@@ -108,19 +108,17 @@ public class CommandService extends Service {
         		// Start the wifi service if it is not running already
     			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
     			wifi.setWifiEnabled(true);
-    			if (wifi.isWifiEnabled()) {
-    				while (wifi.getConnectionInfo().getIpAddress() <= 0) {
-    					// Poll for WIFI connection
-    					try {
-    						Thread.sleep(10);
-    					} catch (InterruptedException e) {
-    						e.printStackTrace();
-    					}
-    				}
-    			}
-    			else {
-    				// Wifi management is not possible on this device, try to connect anyway
-    			}
+				// Poll for successful WIFI connection
+				while (!wifi.isWifiEnabled()
+						|| wifi.getConnectionInfo().getIpAddress() <= 0 
+						|| wifi.getConnectionInfo().getSSID() == null
+						|| wifi.getConnectionInfo().getBSSID() == null) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
         	}
         	
 			connection.connect(connectOptions);
