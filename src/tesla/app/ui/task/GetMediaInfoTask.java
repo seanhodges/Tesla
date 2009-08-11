@@ -102,8 +102,13 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 					}
 					
 					info.track = output.get("tracknumber");
+					if (info.track == null) info.track = output.get("track-number");
+					
 					info.title = output.get("title");
+					if (info.title == null) info.title = output.get("name");
+					
 					info.artist = output.get("artist");
+					
 					info.album = output.get("album");
 	
 					// Pass the pod to the MediaInfoFactory for processing
