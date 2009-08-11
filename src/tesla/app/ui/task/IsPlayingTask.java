@@ -68,7 +68,15 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 			if (enabled) {
 				command = commandService.sendQuery(command);
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
-					out = new DBusHelper().evaluateOutputAsBoolean(command.getOutput());
+					String data = new DBusHelper().evaluateOutputAsString(command.getOutput());
+					if (data.equalsIgnoreCase("TRUE") || data.equalsIgnoreCase("FALSE")) {
+						// DBus has returned a boolean value
+						out = new DBusHelper().evaluateOutputAsBoolean(command.getOutput());
+					}
+					else {
+						// DBus has returned a string, only Banshee does this right now
+						out = data.equalsIgnoreCase("PLAYING");
+					}
 				}
 			}
 		

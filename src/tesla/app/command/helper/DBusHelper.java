@@ -88,7 +88,7 @@ public class DBusHelper {
 	private String evaluateOutputAsString(String rawOut, boolean primitive) {
 		String out = rawOut;
 		if (rawOut.contains("\n   ") || !primitive) {
-			if (primitive) out = rawOut.split("\n   ")[1];
+			if (primitive) out = rawOut.split("\n   ")[1].trim();
 			if (out.startsWith("int32")) {
 				out = out.substring(6);
 			}

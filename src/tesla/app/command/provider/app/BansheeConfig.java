@@ -24,7 +24,6 @@ import java.util.Map;
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.provider.IConfigProvider;
-import tesla.app.mediainfo.MediaInfo;
 
 public class BansheeConfig implements IConfigProvider {
 
@@ -60,15 +59,10 @@ public class BansheeConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
 				"org.bansheeproject.Banshee.PlayerEngine.GetVolume");
 		}
-		/*else if (key.equals(Command.GET_MEDIA_INFO)) {
-			String uriCommand = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
-				"org.gnome.Rhythmbox.Player.getPlayingUri");
-			out = new RhythmDBHelper().compileQuery(uriCommand);
-		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
-				"org.gnome.Rhythmbox.Player.getPlaying");
-		}*/
+				"org.bansheeproject.Banshee.PlayerEngine.GetCurrentState");
+		}
 		
 		return out;
 	}
@@ -79,12 +73,8 @@ public class BansheeConfig implements IConfigProvider {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "100.0");
 		}
-		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			settings.put("ENABLED", "false");
-			settings.put("FORMAT", MediaInfo.FORMAT_STRING);
-		}
 		else if (key.equals(Command.IS_PLAYING)) {
-			settings.put("ENABLED", "false");
+			settings.put("ENABLED", "true");
 		}
 		return settings;
 	}
