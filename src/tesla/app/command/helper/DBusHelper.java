@@ -46,6 +46,9 @@ public class DBusHelper {
 		else if (rawArg.equals("%i")) {
 			dataType = "int32:";
 		}
+		else if (rawArg.equals("%u")) {
+			dataType = "uint16:";
+		}
 		else if (rawArg.equals("%f")) {
 			dataType = "double:";
 		}
@@ -84,6 +87,9 @@ public class DBusHelper {
 			if (primitive) out = rawOut.split("\n   ")[1];
 			if (out.startsWith("int32")) {
 				out = out.substring(6);
+			}
+			else if (out.startsWith("uint16")) {
+				out = out.substring(7);
 			}
 			else if (out.startsWith("double")) {
 				out = out.substring(7);

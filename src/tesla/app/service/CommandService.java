@@ -106,7 +106,7 @@ public class CommandService extends Service {
         try {
         	if (connectOptions.mode == ConnectMode.SSH) {
         		// Start the wifi service if it is not running already
-    			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        		WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
     			wifi.setWifiEnabled(true);
 				// Poll for successful WIFI connection
 				while (!wifi.isWifiEnabled()

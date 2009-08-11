@@ -24,6 +24,7 @@ import java.util.Map;
 
 import tesla.app.R;
 import tesla.app.command.provider.app.AmarokConfig;
+import tesla.app.command.provider.app.BansheeConfig;
 import tesla.app.command.provider.app.DragonPlayerConfig;
 import tesla.app.command.provider.app.RhythmboxConfig;
 import tesla.app.command.provider.app.TotemConfig;
@@ -36,6 +37,7 @@ public class AppConfigProvider implements IConfigProvider {
 	public static final String APP_VLC = "vlc";
 	public static final String APP_TOTEM = "totem";
 	public static final String APP_DRAGONPLAYER = "dragon player";
+	public static final String APP_BANSHEE = "banshee";
 	
 	public String appName = "amarok";
 	
@@ -48,6 +50,12 @@ public class AppConfigProvider implements IConfigProvider {
         entry.put("icon", String.valueOf(R.drawable.app_icon_amarok));
         entry.put("name", "amaroK");
         entry.put("ref", AppConfigProvider.APP_AMAROK);
+        providerList.add(entry);
+        
+        entry = new HashMap<String, String>();
+        entry.put("icon", String.valueOf(R.drawable.app_icon_banshee));
+        entry.put("name", "Banshee");
+        entry.put("ref", AppConfigProvider.APP_BANSHEE);
         providerList.add(entry);
         
         entry = new HashMap<String, String>();
@@ -127,6 +135,9 @@ public class AppConfigProvider implements IConfigProvider {
 		else if (appName.equals(APP_DRAGONPLAYER)) {
 			out = new DragonPlayerConfig().getCommand(key);
 		}
+		else if (appName.equals(APP_BANSHEE)) {
+			out = new BansheeConfig().getCommand(key);
+		}
 		return out;
 	}
 	
@@ -146,6 +157,9 @@ public class AppConfigProvider implements IConfigProvider {
 		}
 		else if (appName.equals(APP_TOTEM)) {
 			settings = new TotemConfig().getSettings(key);
+		}
+		else if (appName.equals(APP_BANSHEE)) {
+			settings = new BansheeConfig().getSettings(key);
 		}
 		return settings;
 	}
