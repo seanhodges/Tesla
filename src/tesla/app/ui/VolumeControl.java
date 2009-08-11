@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.widget.Toast;
 
 public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLevelChangeListener, GetVolumeLevelTask.OnGetVolumeLevelListener {
 	
@@ -153,6 +154,8 @@ public class VolumeControl extends Activity implements VolumeSlider.OnVolumeLeve
 	}
 
 	public void onChangeFinished(VolumeSlider volumeSlider) {
+		String message = getResources().getText(R.string.volume_update) + " " + volumeSlider.getLevelPercent() + "%";
+		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 		// Close the activity when the user stops touching the slider
 		finish();
 	}

@@ -157,6 +157,14 @@ public class VolumeSlider extends View {
 	public float getLevel() {
 		return currentLevel;
 	}
+	
+	public byte getLevelPercent() {
+		byte out = 0;
+		if (currentLevel > 0) {
+			out = (byte)((currentLevel / maxVolume) * 100);
+		}
+		return out;
+	}
 
 	public void setLevel(float currentLevel) {
 		this.currentLevel = currentLevel;

@@ -41,4 +41,5 @@
 	
 	<!-- Volume control -->
 	<string name="volume_title">Volume</string>
+	<string name="volume_update">Volume is now</string>
 </resources>
