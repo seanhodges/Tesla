@@ -52,6 +52,10 @@ public class DBusHelper {
 		else if (rawArg.equals("%f")) {
 			dataType = "double:";
 		}
+		else if (rawArg.startsWith("uint16:")) {
+			// The data type was overridden
+			dataType = "";
+		}
 		else if (rawArg.contains(".")) {
 			// Attempt to parse as a float
 			try {

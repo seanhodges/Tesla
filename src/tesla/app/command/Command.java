@@ -130,6 +130,10 @@ public final class Command implements Parcelable {
 					out = out.replaceFirst("%i", ((Integer)arg).toString());
 					success = true;
 				}
+				else if (out.contains("%u")) {
+					out = out.replaceFirst("%u", ((Integer)arg).toString());
+					success = true;
+				}
 			}
 			else if (arg instanceof Boolean) {
 				if (out.contains("%b")) {
