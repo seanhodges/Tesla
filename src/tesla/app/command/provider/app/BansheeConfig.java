@@ -83,7 +83,7 @@ public class BansheeConfig implements IConfigProvider {
 			settings.put("FORMAT", MediaInfo.FORMAT_DBUS);
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
-			settings.put("ENABLED", "true");
+			settings.put("ENABLED", "false");
 		}
 		return settings;
 	}
