@@ -57,7 +57,7 @@ import android.widget.TextView;
 
 public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
-	private static final long SONG_INFO_UPDATE_PERIOD = 1000;
+	private static final long SONG_INFO_UPDATE_PERIOD = 4000;
 	private static final int APP_SELECTOR_RESULT = 1;
 	
 	private ICommandController commandService;
@@ -68,7 +68,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	private Handler updateSongInfoHandler = new Handler();
 	private Runnable updateSongInfoRunnable = new Runnable() {
 		public void run() {
-			updateSongInfo(false);
+			updateSongInfo();
 		}
 	};
 	
@@ -91,7 +91,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			}
 			
 			// Update the song info now, and start the polling update 
-			updateSongInfo(false);
+			updateSongInfo();
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
@@ -148,11 +148,11 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 				break;
 			case R.id.last_song:
 				command = commandService.queryForCommand(Command.PREV);
-				updateSongInfo(true);
+				updateSongInfo();
 				break;
 			case R.id.next_song:
 				command = commandService.queryForCommand(Command.NEXT);
-				updateSongInfo(true);
+				updateSongInfo();
 				break;
 			case R.id.playlist:
 				new AlertDialog.Builder(Playback.this)
@@ -217,7 +217,9 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		}
 	}
 
-	private void updateSongInfo(boolean isOverride) {
+	private void updateSongInfo() {
+		updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
+		
 		if (commandService != null && stopSongInfoPolling == false) {
 			if (appReportingIfPlaying) {
 				try {
@@ -238,12 +240,9 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			catch (RejectedExecutionException e) {
 				// Ignore failed executions
 			}
-			
-			if (!isOverride) {
-				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
-				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
-			}
 		}
+		
+		updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
 	}
 
 	protected void onPause() {

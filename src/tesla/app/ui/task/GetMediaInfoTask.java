@@ -74,14 +74,6 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 			}
 			
 			if (enabled) {
-				// Wait for the track to change before getting song info
-				try {
-					synchronized (this) {
-						wait(500);
-					}
-				} catch (InterruptedException e1) {
-				}
-				
 				command = commandService.sendQuery(command);
 				commandService.unregisterErrorHandler(errorHandler);
 			
