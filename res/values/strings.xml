@@ -17,7 +17,7 @@
 	<string name="totem_item">Totem</string>
 	<string name="vlc_item">VLC</string>
 	
-	<string name="fake_connection">Fake Connect (For Testing)</string>
+	<string name="fake_connection">Fake connect (for testing)</string>
 	
 	<string name="cancel">Cancel</string>
 	<string name="connect">Connect</string>
@@ -32,7 +32,7 @@
 	<!-- Playback -->
 	<string name="info_title">Tesla Demo</string>
 	<string name="info_artist">by Sean Hodges</string>
-	<string name="info_album">v 0.2</string>
+	<string name="info_album">v 0.3</string>
 	
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>

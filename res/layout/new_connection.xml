@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
- 
-	
-<FrameLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
+<LinearLayout
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:paddingTop="5dip"
+	android:paddingLeft="5dip"
+	android:paddingRight="5dip"
+	android:layout_gravity="center_horizontal">
 		
 		<TableLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:paddingLeft="10dip"
-	        android:paddingRight="5dip"
+			android:paddingLeft="5dip"
+	        android:paddingRight="0dip"
 	        android:paddingTop="10dip">
 			
 			<TableRow
@@ -79,6 +82,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 					android:layout_gravity="right"/>
 			</TableRow>
 			
+			<!--
 			<TableRow
 				android:paddingBottom="5dip">
 				
@@ -97,20 +101,22 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 					android:singleLine="true"
 					android:layout_weight="1"/>
 			</TableRow>
+			-->
 			
 		</TableLayout>
 		
-		<FrameLayout
+		<LinearLayout
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:paddingLeft="5dip"
-	        android:paddingRight="5dip">
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_weight="1">
 			
 			<Button
 			android:id="@+id/cancel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="left|bottom"
+			android:layout_weight="1"
 			android:text="@string/cancel" />
 			
 			<Button
@@ -118,7 +124,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="right|bottom"
+			android:layout_weight="1"
 			android:text="@string/connect" />	
-		</FrameLayout>
+		</LinearLayout>
 		
-</FrameLayout>
+</LinearLayout>
