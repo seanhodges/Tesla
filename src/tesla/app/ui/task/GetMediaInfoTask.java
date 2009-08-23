@@ -21,6 +21,7 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
+import tesla.app.command.helper.DCopHelper;
 import tesla.app.command.helper.RhythmDBHelper;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.mediainfo.MediaInfoFactory;
@@ -85,7 +86,9 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 					case DBUS:
 						output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
 						break;
-					
+					case DCOP:
+						output = new DCopHelper().evaluateOutputAsMap(command.getOutput());
+						break;
 					case RHYTHMDB:
 						output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
 						break;

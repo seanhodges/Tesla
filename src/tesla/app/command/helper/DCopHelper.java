@@ -16,7 +16,9 @@
 
 package tesla.app.command.helper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DCopHelper {
 
@@ -46,5 +48,28 @@ public class DCopHelper {
 	public boolean evaluateOutputAsBoolean(String rawOut) {
 		String data = evaluateOutputAsString(rawOut, true);
 		return Boolean.parseBoolean(data);
+	}
+	
+	public Map<String, String> evaluateOutputAsMap(String rawOut) {
+		// This is currently fixed to the implementation imposed in AmarokConfig...
+		// format :- key:value \n key:value \n key:value ...
+		
+		Map<String, String> out = new HashMap<String, String>();
+		while (rawOut.contains("\n")) {
+			int sectionEnd = rawOut.indexOf("\n");
+			String section = rawOut.substring(0, sectionEnd);
+			String[] parts = section.split(":");
+			parts[0] = parts[0].trim();
+			parts[1] = parts[1].trim();
+			
+			// Get the key/value pair and store in the map
+			String key = parts[0];
+			String value = evaluateOutputAsString(parts[1], false);
+			out.put(key, value);
+			
+			// Trim off the section
+			rawOut = rawOut.substring(sectionEnd + 1);
+		}
+		return out;
 	}
 }

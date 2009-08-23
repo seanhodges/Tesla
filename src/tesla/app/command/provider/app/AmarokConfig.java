@@ -78,8 +78,10 @@ public class AmarokConfig implements IConfigProvider {
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+			String dcopCommand = buildMediaInfoDCopMethodCallSet(dcopDest);
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
 				"org.freedesktop.MediaPlayer.GetMetadata");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		return out;
 	}
@@ -92,7 +94,7 @@ public class AmarokConfig implements IConfigProvider {
 			settings.put("FORMAT", Command.OutputFormat.DCOP.name());
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			settings.put("ENABLED", "false");
+			settings.put("ENABLED", "true");
 			settings.put("FORMAT", Command.OutputFormat.DCOP.name());
 		}
 		return settings;
@@ -110,6 +112,20 @@ public class AmarokConfig implements IConfigProvider {
 		builder.append(dbusCommand);
 		
 		builder.append("; fi");
+		return builder.toString();
+	}
+
+	private String buildMediaInfoDCopMethodCallSet(String dcopDest) {
+		// DCOP has no concept of a hashmap, so we build one here
+		StringBuilder builder = new StringBuilder();
+		builder.append("echo -n \"tracknumber:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "track"));
+		builder.append(";echo -n \"title:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "title"));
+		builder.append(";echo -n \"artist:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "artist"));
+		builder.append(";echo -n \"album:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "album"));
 		return builder.toString();
 	}
 }
