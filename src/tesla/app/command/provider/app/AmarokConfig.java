@@ -35,42 +35,47 @@ public class AmarokConfig implements IConfigProvider {
 		List<String> args = new ArrayList<String>();
 		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = new DCopHelper().compileMethodCall(dcopDest, "player", "playPause");
-			/*out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.Pause");*/
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "playPause");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.Pause");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.PREV)) {
-			out = new DCopHelper().compileMethodCall(dcopDest, "player", "prev");
-			/*out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.Prev");*/
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "prev");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.NEXT)) {
-			out = new DCopHelper().compileMethodCall(dcopDest, "player", "next");
-			/*out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.Next");*/
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "next");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
+			
 			args.add("%i");
-			out = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
-			/*
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
+			args.clear();
 			args.add(new DBusHelper().evaluateArg("%i"));
-			out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeSet", args);
-			*/
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
 			args.add("%i");
-			out = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
-			/*
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
+			args.clear();
 			args.add(new DBusHelper().evaluateArg("0"));
-			out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeSet", args);
-			*/
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
-			out = new DCopHelper().compileMethodCall(dcopDest, "player", "getVolume");
-			/*out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeGet");*/
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "getVolume");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeGet");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
@@ -93,4 +98,18 @@ public class AmarokConfig implements IConfigProvider {
 		return settings;
 	}
 
+	private String compileCompositeCommand(String dcopCommand, String dbusCommand) {
+		StringBuilder builder = new StringBuilder();
+		
+		// Use DCOP if Amarok 1.x is present
+		builder.append("if [[ \"$(dcop --all-users amarok player version 2>/dev/null)\" != \"\" ]]; then ");
+		builder.append(dcopCommand);
+		
+		// Use DBUS otherwise
+		builder.append("; else ");
+		builder.append(dbusCommand);
+		
+		builder.append("; fi");
+		return builder.toString();
+	}
 }
