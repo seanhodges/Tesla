@@ -104,7 +104,9 @@ public class CommandService extends Service {
 	public synchronized boolean connectAction() throws RemoteException {
 		boolean success = false;
         try {
-        	if (connectOptions.mode == ConnectMode.SSH) {
+        	// Ignore fake connections, and loopback connections (for emulator)
+        	if (connectOptions.mode == ConnectMode.SSH 
+        			&& !connectOptions.hostname.equals("10.0.2.2")) {
         		// Start the wifi service if it is not running already
         		WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
     			wifi.setWifiEnabled(true);
