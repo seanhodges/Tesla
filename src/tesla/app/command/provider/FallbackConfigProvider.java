@@ -32,6 +32,7 @@ public class FallbackConfigProvider implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "0.0");
+			settings.put("FORMAT", Command.OutputFormat.DBUS.name());
 		}
 		return settings;
 	}

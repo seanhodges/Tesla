@@ -68,9 +68,9 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 				enabled = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 			
-			String format = MediaInfo.FORMAT_STRING; 
+			Command.OutputFormat format = Command.OutputFormat.STRING; 
 			if (settings.containsKey("FORMAT")) {
-				format = settings.get("FORMAT");
+				format = Command.OutputFormat.valueOf(settings.get("FORMAT"));
 			}
 			
 			if (enabled) {
@@ -81,14 +81,16 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
 					
 					Map<String, String> output;
-					if (format.equalsIgnoreCase(MediaInfo.FORMAT_DBUS)) {
+					switch (format) {
+					case DBUS:
 						output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
-					}
-					else if (format.equalsIgnoreCase(MediaInfo.FORMAT_RHYTHMDB)) {
+						break;
+					
+					case RHYTHMDB:
 						output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
-					}
-					else {
-						// format defaults to MediaInfo.FORMAT_STRING
+						break;
+					default:
+						// format defaults to OutputFormat.STRING
 						output = new HashMap<String, String>();
 						output.put("title", command.getOutput());
 					}

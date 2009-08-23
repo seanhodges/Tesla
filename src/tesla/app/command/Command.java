@@ -38,6 +38,11 @@ public final class Command implements Parcelable {
 	public static final String GET_MEDIA_INFO = "get_media_info";
 	public static final String IS_PLAYING = "is_playing";
 
+	// Format of the commands output
+	public enum OutputFormat {
+		STRING, DBUS, DCOP, RHYTHMDB
+	};
+
 	private String key;
 	private String commandString;
 	private Map<String, String> settings;

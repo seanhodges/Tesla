@@ -25,7 +25,6 @@ import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.DCopHelper;
 import tesla.app.command.provider.IConfigProvider;
-import tesla.app.mediainfo.MediaInfo;
 
 public class AmarokConfig implements IConfigProvider {
 
@@ -51,16 +50,22 @@ public class AmarokConfig implements IConfigProvider {
 				"org.freedesktop.MediaPlayer.Next");*/
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add(new DBusHelper().evaluateArg("%i"));
+			args.add("%i");
 			out = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
-			/*out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);*/
+			/*
+			args.add(new DBusHelper().evaluateArg("%i"));
+			out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
+			*/
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			args.add(new DBusHelper().evaluateArg("0"));
+			args.add("%i");
 			out = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
-			/*out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.VolumeSet", args);*/
+			/*
+			args.add(new DBusHelper().evaluateArg("0"));
+			out = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.VolumeSet", args);
+			*/
 		}
 		else if (key.equals(Command.VOL_CURRENT)) {
 			out = new DCopHelper().compileMethodCall(dcopDest, "player", "getVolume");
@@ -79,10 +84,11 @@ public class AmarokConfig implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "100.0");
+			settings.put("FORMAT", Command.OutputFormat.DCOP.name());
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			settings.put("ENABLED", "false");
-			settings.put("FORMAT", MediaInfo.FORMAT_DBUS);
+			settings.put("FORMAT", Command.OutputFormat.DCOP.name());
 		}
 		return settings;
 	}

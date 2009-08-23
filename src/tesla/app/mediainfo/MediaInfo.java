@@ -17,9 +17,6 @@
 package tesla.app.mediainfo;
 
 public class MediaInfo {
-	public static final String FORMAT_STRING = "STRING";
-	public static final String FORMAT_DBUS = "DBUS";
-	public static final String FORMAT_RHYTHMDB = "RHYTHMDB";
 	
 	public String track;
 	public String title;

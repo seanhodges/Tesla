@@ -24,7 +24,6 @@ import java.util.Map;
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.provider.IConfigProvider;
-import tesla.app.mediainfo.MediaInfo;
 
 public class BansheeConfig implements IConfigProvider {
 
@@ -80,7 +79,7 @@ public class BansheeConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			settings.put("ENABLED", "true");
-			settings.put("FORMAT", MediaInfo.FORMAT_DBUS);
+			settings.put("FORMAT", Command.OutputFormat.DBUS.name());
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			settings.put("ENABLED", "false");

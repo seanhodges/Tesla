@@ -25,7 +25,6 @@ import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.RhythmDBHelper;
 import tesla.app.command.provider.IConfigProvider;
-import tesla.app.mediainfo.MediaInfo;
 
 public class RhythmboxConfig implements IConfigProvider {
 
@@ -81,7 +80,7 @@ public class RhythmboxConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			settings.put("ENABLED", "true");
-			settings.put("FORMAT", MediaInfo.FORMAT_RHYTHMDB);
+			settings.put("FORMAT", Command.OutputFormat.RHYTHMDB.name());
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			settings.put("ENABLED", "false");
