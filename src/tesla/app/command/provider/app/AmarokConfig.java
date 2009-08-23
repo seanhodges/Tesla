@@ -91,11 +91,9 @@ public class AmarokConfig implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "100.0");
-			settings.put("FORMAT", Command.OutputFormat.DCOP.name());
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			settings.put("ENABLED", "true");
-			settings.put("FORMAT", Command.OutputFormat.DCOP.name());
 		}
 		return settings;
 	}
@@ -118,14 +116,15 @@ public class AmarokConfig implements IConfigProvider {
 	private String buildMediaInfoDCopMethodCallSet(String dcopDest) {
 		// DCOP has no concept of a hashmap, so we build one here
 		StringBuilder builder = new StringBuilder();
+		builder.append("echo \"[dcop]\";");
 		builder.append("echo -n \"tracknumber:\";");
-		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "track"));
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "track", false));
 		builder.append(";echo -n \"title:\";");
-		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "title"));
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "title", false));
 		builder.append(";echo -n \"artist:\";");
-		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "artist"));
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "artist", false));
 		builder.append(";echo -n \"album:\";");
-		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "album"));
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "album", false));
 		return builder.toString();
 	}
 }

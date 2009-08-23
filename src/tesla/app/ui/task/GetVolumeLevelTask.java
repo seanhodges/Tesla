@@ -19,8 +19,8 @@ package tesla.app.ui.task;
 import java.util.Map;
 
 import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
-import tesla.app.command.helper.DCopHelper;
+import tesla.app.command.helper.CommandHelperFactory;
+import tesla.app.command.helper.ICommandHelper;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import android.os.AsyncTask;
@@ -90,26 +90,9 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 		
 		// Parse the result as a level percentage
 		if (command != null && command.getOutput() != null && command.getOutput() != "") {
+			ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
 			
-			// Determine the output format
-			Map<String, String> settings = command.getSettings();
-			Command.OutputFormat format = Command.OutputFormat.STRING; 
-			if (settings.containsKey("FORMAT")) {
-				format = Command.OutputFormat.valueOf(settings.get("FORMAT"));
-			}
-			
-			String volumeData;
-			switch (format) {
-			case DBUS:
-				volumeData = new DBusHelper().evaluateOutputAsString(command.getOutput());
-				break;
-			case DCOP:
-				volumeData = new DCopHelper().evaluateOutputAsString(command.getOutput());
-				break;
-			default:
-				volumeData = command.getOutput();
-			}
-			
+			String volumeData = helper.evaluateOutputAsString(command.getOutput());
 			try {
 				// Convert the data to a float value
 				volumeLevel = Float.parseFloat(volumeData);

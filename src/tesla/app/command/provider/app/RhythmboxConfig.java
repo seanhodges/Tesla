@@ -80,7 +80,6 @@ public class RhythmboxConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			settings.put("ENABLED", "true");
-			settings.put("FORMAT", Command.OutputFormat.RHYTHMDB.name());
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			settings.put("ENABLED", "false");

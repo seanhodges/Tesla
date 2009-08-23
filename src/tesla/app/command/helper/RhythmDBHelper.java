@@ -26,10 +26,13 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-public class RhythmDBHelper {
+public class RhythmDBHelper implements ICommandHelper {
+	
+	public static final String MAGIC_MARKER = "[rhythmdb]";
 	
 	public String compileQuery(String uriCommand) {
-		String out = "rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; " +
+		String out = "echo " + MAGIC_MARKER + ";" + 
+			"rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; " +
 			"if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then " +
 			"rhythmdb_path=~/.local/share/rhythmbox/rhythmdb.xml; " + 
 			"fi; " + 
@@ -49,7 +52,7 @@ public class RhythmDBHelper {
 		return out;
 	}
 	
-	public Map<String, String> evaluateMediaInfoAsMap(String rawOut) {
+	public Map<String, String> evaluateOutputAsMap(String rawOut) {
 		
 		rawOut = rawOut.trim();
 		
@@ -68,5 +71,13 @@ public class RhythmDBHelper {
 		}
 		
 		return contentHandler.getOutput();
+	}
+
+	public boolean evaluateOutputAsBoolean(String rawOut) {
+		return false;
+	}
+
+	public String evaluateOutputAsString(String rawOut) {
+		return null;
 	}
 }

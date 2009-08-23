@@ -20,21 +20,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DCopHelper {
+public class DCopHelper implements ICommandHelper {
 
+	public static final String MAGIC_MARKER = "[dcop]";
+	
 	public String compileMethodCall(String dest, String path, String command,
-			List<String> args) {
-		String out = "dcop --all-users " + dest + " " + path + " " + command;
+			List<String> args, boolean includeMarker) {
+		StringBuilder builder = new StringBuilder();
+		if (includeMarker) {
+			builder.append("echo " + MAGIC_MARKER + ";");
+		}
+		builder.append("dcop --all-users " + dest + " " + path + " " + command);
 		if (args != null) {
 			for (String arg : args) {
-				out += " " + arg;
+				builder.append(" " + arg);
 			}
 		}
-		return out;
+		return builder.toString();
+	}
+	
+	public String compileMethodCall(String dest, String path, String command, List<String> args) {
+		return compileMethodCall(dest, path, command, args, true);
 	}
 
 	public String compileMethodCall(String dest, String path, String command) {
 		return compileMethodCall(dest, path, command, null);
+	}
+
+	public String compileMethodCall(String dest, String path, String command, boolean includeMarker) {
+		return compileMethodCall(dest, path, command, null, includeMarker);
 	}
 	
 	public String evaluateOutputAsString(String rawOut) {

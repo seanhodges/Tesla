@@ -16,13 +16,11 @@
 
 package tesla.app.ui.task;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
-import tesla.app.command.helper.DCopHelper;
-import tesla.app.command.helper.RhythmDBHelper;
+import tesla.app.command.helper.CommandHelperFactory;
+import tesla.app.command.helper.ICommandHelper;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.mediainfo.MediaInfoFactory;
 import tesla.app.service.business.ICommandController;
@@ -69,34 +67,16 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 				enabled = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 			
-			Command.OutputFormat format = Command.OutputFormat.STRING; 
-			if (settings.containsKey("FORMAT")) {
-				format = Command.OutputFormat.valueOf(settings.get("FORMAT"));
-			}
-			
 			if (enabled) {
 				command = commandService.sendQuery(command);
 				commandService.unregisterErrorHandler(errorHandler);
 			
 				// Compile a MediaInfo pod with servers metadata
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
+					ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
 					
 					Map<String, String> output;
-					switch (format) {
-					case DBUS:
-						output = new DBusHelper().evaluateOutputAsMap(command.getOutput());
-						break;
-					case DCOP:
-						output = new DCopHelper().evaluateOutputAsMap(command.getOutput());
-						break;
-					case RHYTHMDB:
-						output = new RhythmDBHelper().evaluateMediaInfoAsMap(command.getOutput());
-						break;
-					default:
-						// format defaults to OutputFormat.STRING
-						output = new HashMap<String, String>();
-						output.put("title", command.getOutput());
-					}
+					output = helper.evaluateOutputAsMap(command.getOutput());
 					
 					info.track = output.get("tracknumber");
 					if (info.track == null) info.track = output.get("track-number");

@@ -19,7 +19,8 @@ package tesla.app.ui.task;
 import java.util.Map;
 
 import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
+import tesla.app.command.helper.CommandHelperFactory;
+import tesla.app.command.helper.ICommandHelper;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
 import android.os.AsyncTask;
@@ -68,10 +69,12 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 			if (enabled) {
 				command = commandService.sendQuery(command);
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
-					String data = new DBusHelper().evaluateOutputAsString(command.getOutput());
+					ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
+					
+					String data = helper.evaluateOutputAsString(command.getOutput());
 					if (data.equalsIgnoreCase("TRUE") || data.equalsIgnoreCase("FALSE")) {
 						// DBus has returned a boolean value
-						out = new DBusHelper().evaluateOutputAsBoolean(command.getOutput());
+						out = helper.evaluateOutputAsBoolean(command.getOutput());
 					}
 					else {
 						// DBus has returned a string, only Banshee does this right now

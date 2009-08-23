@@ -46,16 +46,16 @@ public class FakeConnection implements IConnection {
 		else if (command.getKey().equals(Command.VOL_CURRENT)) {
 			String out = "";
 			if (command.getTargetApp().equals(AppConfigProvider.APP_RHYTHMBOX)) {
-				out = "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   double 0.5";
+				out = "[dbus]\nmethod return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   double 0.5";
 			}
 			else {
-				out = "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
+				out = "[dbus]\nmethod return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   int32 50";
 			}
 			return out;
 		}
 		else if (command.getKey().equals(Command.GET_MEDIA_INFO)) {
 			if (command.getTargetApp().equals(AppConfigProvider.APP_RHYTHMBOX)) {
-				return "" + 
+				return "[rhythmdb]\n" + 
 					"<entry type=\"song\">" +
 				    "<title>Perfect Symmetry</title>" +
 				    "<genre>Unknown</genre>" +
@@ -82,7 +82,7 @@ public class FakeConnection implements IConnection {
 				    "</entry>";
 			}
 			else {
-				return "" +
+				return "[dbus]\n" +
 					"dict entry(\n variant tracknumber:\n variant int32 1\n)\n" +
 					"dict entry(\n variant title:\n variant string \"Karma Police\"\n)\n" +
 					"dict entry(\n variant artist:\n variant string \"Radiohead\"\n)\n" +
@@ -90,7 +90,7 @@ public class FakeConnection implements IConnection {
 			}
 		}
 		else if (command.getKey().equals(Command.IS_PLAYING)) {
-			return "method return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   boolean true";
+			return "[dbus]\nmethod return sender=:1.66 -> dest=:1.1267 reply_serial=2\n   boolean true";
 		}
 		else {
 			return "";

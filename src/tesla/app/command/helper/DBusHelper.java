@@ -20,11 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DBusHelper {
+public class DBusHelper implements ICommandHelper {
 
+	public static final String MAGIC_MARKER = "[dbus]";
+	
 	public String compileMethodCall(String dest, String path, String command,
 			List<String> args) {
-		String out = "dbus-send --session --print-reply --dest=" + dest 
+		String out = "echo " + MAGIC_MARKER + ";" + "dbus-send --session --print-reply --dest=" + dest 
 			+ " --type=\"method_call\" " + path + " " + command;
 		if (args != null) {
 			for (String arg : args) {
