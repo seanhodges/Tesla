@@ -111,41 +111,52 @@ public final class Command implements Parcelable {
 	private String parseArguments(String out)
 				throws IllegalArgumentException {
 		// Add the arguments to the command
-		for (Object arg : args) {
-			boolean success = false;
-			if (arg instanceof String) {
-				if (out.contains("%s")) {
-					out = out.replaceFirst("%s", (String)arg);
-					success = true;
+		while (stillHasArgs(out)) {
+			for (Object arg : args) {
+				boolean success = false;
+				// !!! Remember to add new data types to stillHasArgs()
+				if (arg instanceof String) {
+					if (out.contains("%s")) {
+						out = out.replaceFirst("%s", (String)arg);
+						success = true;
+					}
 				}
-			}
-			else if (arg instanceof Float) {
-				if (out.contains("%f")) {
-					out = out.replaceFirst("%f", ((Float)arg).toString());
-					success = true;
+				else if (arg instanceof Float) {
+					if (out.contains("%f")) {
+						out = out.replaceFirst("%f", ((Float)arg).toString());
+						success = true;
+					}
 				}
-			}
-			else if (arg instanceof Integer) {
-				if (out.contains("%i")) {
-					out = out.replaceFirst("%i", ((Integer)arg).toString());
-					success = true;
+				else if (arg instanceof Integer) {
+					if (out.contains("%i")) {
+						out = out.replaceFirst("%i", ((Integer)arg).toString());
+						success = true;
+					}
+					else if (out.contains("%u")) {
+						out = out.replaceFirst("%u", ((Integer)arg).toString());
+						success = true;
+					}
 				}
-				else if (out.contains("%u")) {
-					out = out.replaceFirst("%u", ((Integer)arg).toString());
-					success = true;
+				else if (arg instanceof Boolean) {
+					if (out.contains("%b")) {
+						out = out.replaceFirst("%b", ((Boolean)arg).toString());
+						success = true;
+					}
 				}
-			}
-			else if (arg instanceof Boolean) {
-				if (out.contains("%b")) {
-					out = out.replaceFirst("%b", ((Boolean)arg).toString());
-					success = true;
+				if (!success) {
+					throw new IllegalArgumentException("Argument " + arg.toString() + " is not valid for command");
 				}
-			}
-			if (!success) {
-				throw new IllegalArgumentException("Argument " + arg.toString() + " is not valid for command");
 			}
 		}
 		return out;
+	}
+	
+	private boolean stillHasArgs(String data) {
+		String[] argList = {"%s", "%f", "%i", "%u", "%b"};
+		for (String argIt : argList) {
+			if (data.contains(argIt)) return true;
+		}
+		return false;
 	}
 
 	public int describeContents() {
