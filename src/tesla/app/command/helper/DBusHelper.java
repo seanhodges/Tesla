@@ -25,19 +25,32 @@ public class DBusHelper implements ICommandHelper {
 	public static final String MAGIC_MARKER = "[dbus]";
 	
 	public String compileMethodCall(String dest, String path, String command,
-			List<String> args) {
-		String out = "echo " + MAGIC_MARKER + ";" + "dbus-send --session --print-reply --dest=" + dest 
-			+ " --type=\"method_call\" " + path + " " + command;
+			List<String> args, boolean includeMarker) {
+		StringBuilder builder = new StringBuilder();
+		if (includeMarker) {
+			builder.append("echo " + MAGIC_MARKER + ";");
+		}
+		builder.append("dbus-send --session --print-reply --dest=" + dest);
+		builder.append(" --type=\"method_call\" " + path + " " + command);
 		if (args != null) {
 			for (String arg : args) {
-				out += " " + arg;
+				builder.append(" " + arg);
 			}
 		}
-		return out;
+		return builder.toString();
+	}
+	
+	public String compileMethodCall(String dest, String path, String command,
+			List<String> args) {
+		return compileMethodCall(dest, path, command, args, true);
 	}
 
 	public String compileMethodCall(String dest, String path, String command) {
-		return compileMethodCall(dest, path, command, null);
+		return compileMethodCall(dest, path, command, null, true);
+	}
+
+	public String compileMethodCall(String dest, String path, String command, boolean includeMarker) {
+		return compileMethodCall(dest, path, command, null, includeMarker);
 	}
 
 	public String evaluateArg(String rawArg) {

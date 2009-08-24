@@ -61,7 +61,7 @@ public class RhythmboxConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
 			String uriCommand = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-				"org.gnome.Rhythmbox.Player.getPlayingUri");
+				"org.gnome.Rhythmbox.Player.getPlayingUri", false);
 			out = new RhythmDBHelper().compileQuery(uriCommand);
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
