@@ -32,7 +32,7 @@
 	<!-- Playback -->
 	<string name="info_title">Tesla Demo</string>
 	<string name="info_artist">by Sean Hodges</string>
-	<string name="info_album">v 0.3</string>
+	<string name="info_album">v 0.4</string>
 	
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>
