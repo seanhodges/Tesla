@@ -78,19 +78,21 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 					Map<String, String> output;
 					output = helper.evaluateOutputAsMap(command.getOutput());
 					
-					info.track = output.get("tracknumber");
-					if (info.track == null) info.track = output.get("track-number");
-					
-					info.title = output.get("title");
-					if (info.title == null) info.title = output.get("name");
-					
-					info.artist = output.get("artist");
-					
-					info.album = output.get("album");
-	
-					// Pass the pod to the MediaInfoFactory for processing
-					MediaInfoFactory factory = new MediaInfoFactory();
-					info = factory.process(info);
+					if (output != null) {
+						info.track = output.get("tracknumber");
+						if (info.track == null) info.track = output.get("track-number");
+						
+						info.title = output.get("title");
+						if (info.title == null) info.title = output.get("name");
+						
+						info.artist = output.get("artist");
+						
+						info.album = output.get("album");
+						
+						// Pass the pod to the MediaInfoFactory for processing
+						MediaInfoFactory factory = new MediaInfoFactory();
+						info = factory.process(info);
+					}
 				}
 			}
 		} catch (RemoteException e) {
