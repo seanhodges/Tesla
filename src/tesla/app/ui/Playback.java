@@ -39,6 +39,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -65,6 +68,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	private boolean stopSongInfoPolling = false;
 	private boolean appReportingIfPlaying = false;
 	private PowerManager.WakeLock wakeLock;
+	private String versionString;
 	
 	private Handler updateSongInfoHandler = new Handler();
 	private Runnable updateSongInfoRunnable = new Runnable() {
@@ -131,6 +135,17 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
 		
+        // Get the version string
+        PackageInfo info;
+		try {
+			info = getPackageManager().getPackageInfo(getPackageName(), 0);
+			versionString = "version " + info.versionName;
+		} catch (NameNotFoundException e) {
+			// Could not get version info
+			versionString = "";
+		}
+		setLabelTextIfChanged((TextView)this.findViewById(R.id.song_album), versionString);
+        
         setAppIcon();
     }
 	
@@ -376,7 +391,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 			// Revert to the generic media info text
 			setLabelTextIfChanged(labelTitle, getResources().getText(R.string.info_title).toString());
 			setLabelTextIfChanged(labelArtist, getResources().getText(R.string.info_artist).toString());
-			setLabelTextIfChanged(labelAlbum, getResources().getText(R.string.info_album).toString());
+			setLabelTextIfChanged(labelAlbum, versionString);
 			artwork.setImageResource(R.drawable.album_cover);
 		}
 	}

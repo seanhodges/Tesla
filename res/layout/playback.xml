@@ -129,7 +129,7 @@
 				android:id="@+id/song_album"
 				android:layout_width="150dip"
 				android:layout_height="wrap_content"
-				android:text="@string/info_album"
+				android:text=""
 				android:singleLine="true" />
 			</TableRow>
 			

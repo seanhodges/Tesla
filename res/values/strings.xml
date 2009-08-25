@@ -30,9 +30,8 @@
 	<string name="no_apps">No applications available</string>
 	
 	<!-- Playback -->
-	<string name="info_title">Tesla Demo</string>
+	<string name="info_title">Tesla - Remote Control</string>
 	<string name="info_artist">by Sean Hodges</string>
-	<string name="info_album">v 0.5</string>
 	
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>
