@@ -64,7 +64,7 @@ public class VlcConfig implements IConfigProvider {
 		Map<String, String> settings = new HashMap<String, String>();
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
-			settings.put("MAX", "25.0");
+			settings.put("MAX", "50.0");
 		}
 		return settings;
 	}
