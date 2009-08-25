@@ -73,14 +73,15 @@ public class DCopHelper implements ICommandHelper {
 			int sectionEnd = rawOut.indexOf("\n");
 			String section = rawOut.substring(0, sectionEnd);
 			String[] parts = section.split(":");
-			parts[0] = parts[0].trim();
-			parts[1] = parts[1].trim();
-			
-			// Get the key/value pair and store in the map
-			String key = parts[0];
-			String value = evaluateOutputAsString(parts[1], false);
-			out.put(key, value);
-			
+			if (parts.length > 1) {
+				parts[0] = parts[0].trim();
+				parts[1] = parts[1].trim();
+				
+				// Get the key/value pair and store in the map
+				String key = parts[0];
+				String value = evaluateOutputAsString(parts[1], false);
+				out.put(key, value);
+			}
 			// Trim off the section
 			rawOut = rawOut.substring(sectionEnd + 1);
 		}
