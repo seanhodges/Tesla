@@ -57,6 +57,10 @@ public class VlcConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetMetadata");
+		}
 		return out;
 	}
 
@@ -65,6 +69,9 @@ public class VlcConfig implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "50.0");
+		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
 		}
 		return settings;
 	}

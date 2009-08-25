@@ -338,6 +338,7 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		ImageView artwork = (ImageView)this.findViewById(R.id.album_cover);
 		
 		if (info.title != null && info.artist != null && info.album != null) {
+			// All media info is available
 			String newTitle = info.track + " - " + info.title;
 			setLabelTextIfChanged(labelTitle, newTitle);
 			setLabelTextIfChanged(labelArtist, info.artist);
@@ -363,6 +364,13 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 				// Revert to the generic CD cover image
 				artwork.setImageResource(R.drawable.album_cover);
 			}
+		}
+		else if (info.title != null) {
+			// Only the title is available
+			setLabelTextIfChanged(labelTitle, "");
+			setLabelTextIfChanged(labelArtist, info.title);
+			setLabelTextIfChanged(labelAlbum, "");
+			artwork.setImageResource(R.drawable.album_cover);
 		}
 		else {
 			// Revert to the generic media info text

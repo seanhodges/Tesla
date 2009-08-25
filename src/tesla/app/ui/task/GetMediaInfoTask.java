@@ -82,8 +82,14 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 						info.track = output.get("tracknumber");
 						if (info.track == null) info.track = output.get("track-number");
 						
+						// Title can be taken from several metadata fields
 						info.title = output.get("title");
 						if (info.title == null) info.title = output.get("name");
+						if (info.title == null) info.title = output.get("location");
+						if (info.title == null) info.title = output.get("URI");
+						if (info.title == null) info.title = output.get("uri");
+						
+						if (info.title != null && (info.title.startsWith("file:/") || info.title.startsWith("/"))) info.title = stripTitleFromUrl(info.title);
 						
 						info.artist = output.get("artist");
 						
@@ -102,6 +108,10 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 		return info;
 	}
 	
+	private String stripTitleFromUrl(String uri) {
+		return uri.substring(uri.lastIndexOf("/") + 1);
+	}
+
 	protected void onPostExecute(MediaInfo result) {
 		if (errorTitle != null && errorMessage != null) {
 			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
