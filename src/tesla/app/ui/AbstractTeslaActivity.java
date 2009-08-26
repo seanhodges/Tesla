@@ -112,6 +112,8 @@ public abstract class AbstractTeslaActivity extends Activity {
 				.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
+						// Close the activity to avoid more of these
+						finish();
 					}
 				})
 				.show();
