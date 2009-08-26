@@ -51,4 +51,8 @@
 	<!-- Help browser -->
 	<string name="help_title">Tesla Help</string>
 	<string name="close">Close</string>
+	
+	<!-- Error messages -->
+	<string name="user_error_title">Tesla has encountered a problem</string>
+	<string name="user_error_body">Please report the following error code: \n\n%errorcode%\n\nTo seanhodges84@gmail.com, along with a brief description of what you were trying to do when this message appeared.</string>
 </resources>

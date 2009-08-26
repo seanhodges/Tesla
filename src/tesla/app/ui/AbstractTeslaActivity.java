@@ -24,6 +24,7 @@ import tesla.app.service.business.IErrorHandler;
 import tesla.app.ui.task.GetMediaInfoTask;
 import tesla.app.ui.task.GetVolumeLevelTask;
 import tesla.app.ui.task.IsPlayingTask;
+import tesla.app.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -99,11 +100,9 @@ public abstract class AbstractTeslaActivity extends Activity {
 			// Digest message for user-friendly display
 			String errorCode = generateErrorCode(invoker, title, command);
 			
-			title = "Tesla has encountered a problem";
-			message = "Please report the following error code: \n\n" +
-					errorCode + "\n\n" +
-					"To seanhodges84@gmail.com, along with a brief description " +
-					"of what you were trying to do when this message appeared.";
+			title = getResources().getString(R.string.user_error_title);
+			message = getResources().getString(R.string.user_error_body);
+			message = message.replaceAll("%errorcode%", errorCode);
 			
 			// Show error message
 			new AlertDialog.Builder(AbstractTeslaActivity.this)
