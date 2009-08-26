@@ -26,6 +26,8 @@
         	android:screenOrientation="portrait" 
         	android:label="@string/volume_title"
         	android:theme="@android:style/Theme.Dialog" />
+        	
+        <activity android:name=".ui.HelpBrowser" />        
         
 		<service android:name=".service.CommandService"/>
     </application>

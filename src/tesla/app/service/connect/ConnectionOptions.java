@@ -36,6 +36,7 @@ public class ConnectionOptions {
 	public String username = null;
 	public String password = null;
 	public String appSelection = "";
+	public boolean firstTimeVlc = true;
 	
 	public ConnectionOptions(Context owner) {
 		this.owner = owner;
@@ -52,6 +53,7 @@ public class ConnectionOptions {
 		username= settings.getString("username", "User");
 		password = settings.getString("password", "");
 		appSelection = settings.getString("appSelection", "");
+		firstTimeVlc = settings.getBoolean("firstTimeVlc", true);
 	}
 	
 	public void saveSettings() {
@@ -63,6 +65,7 @@ public class ConnectionOptions {
 		editor.putString("username", username);
 		editor.putString("password", password);
 		editor.putString("appSelection", appSelection);
+		editor.putBoolean("firstTimeVlc", firstTimeVlc);
 		editor.commit();
 	}
 }

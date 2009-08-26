@@ -38,11 +38,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class NewConnection extends Activity implements OnClickListener, ConnectToServerTask.OnConnectionListener {
+public class NewConnection extends Activity implements View.OnClickListener, ConnectToServerTask.OnConnectionListener {
 
 	private static final int APP_SELECTOR_RESULT = 1;
 
@@ -119,7 +118,8 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.connect:
-			startConnection();
+			// Show any set-up instructions before connecting to player
+			prepareConnect();
 			break;
 		case R.id.cancel:
 			finish();
@@ -169,6 +169,36 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		bindService(new Intent(NewConnection.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
+	private void prepareConnect() {
+		if (config.appSelection.equalsIgnoreCase(AppConfigProvider.APP_VLC) 
+				&& config.firstTimeVlc == true) {
+			String title = "VLC set-up information";
+			String message = "You are seeing this message because you have selected VLC for the first time.\n\n" +
+					"Please ensure that you have enabled 'D-Bus control interface' in the preferences, before pressing Continue.\n\n" +
+					"Press Help for step-by-step instructions.";
+			new AlertDialog.Builder(this)
+			.setTitle(title)
+			.setMessage(message)
+			.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					config.firstTimeVlc = false;
+					// Start connection
+					startConnection();
+				}
+			})
+			.setNeutralButton("Help", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					startActivity(new Intent(NewConnection.this, HelpBrowser.class));
+				}
+			})
+			.show();
+		}
+		else {
+			// Just connect
+			startConnection();
+		}
+	}
+
 	private void showConnectionProgress() {
 		OnCancelListener cancelListener = new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {

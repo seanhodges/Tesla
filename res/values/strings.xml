@@ -47,4 +47,7 @@
 	<!-- Volume control -->
 	<string name="volume_title">Volume</string>
 	<string name="volume_update">Volume is now</string>
+	
+	<!-- Help browser -->
+	<string name="help_title">Tesla Help</string>
 </resources>
