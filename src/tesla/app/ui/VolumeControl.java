@@ -97,8 +97,8 @@ public class VolumeControl extends AbstractTeslaActivity implements VolumeSlider
 		volumeSlider.refresh();
 	}
 
-	public void onServiceError(String title, String message) {
-		showErrorMessage(title, message);
+	public void onServiceError(Class<? extends Object> invoker, String title, String message, Command command) {
+		showErrorMessage(invoker, title, message, command);
 	}
 
 	public void onChangeFinished(VolumeSlider volumeSlider) {

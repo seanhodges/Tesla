@@ -31,6 +31,7 @@ import android.os.RemoteException;
 public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, MediaInfo> {
 
 	private OnGetMediaInfoListener listener = null;
+	private Command command;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -45,7 +46,7 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 	};
 	
 	public interface OnGetMediaInfoListener {
-		void onServiceError(String title, String message);
+		void onServiceError(Class<? extends Object> invoker, String title, String message, Command command);
 		void onMediaInfoChanged(MediaInfo info);
 	}
 	
@@ -54,7 +55,6 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 		MediaInfo info = new MediaInfo();
 		
 		// Get the available metadata from the server
-		Command command = null;
 		ICommandController commandService = args[0];
 		try {
 			commandService.registerErrorHandler(errorHandler);
@@ -69,7 +69,6 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 			
 			if (enabled) {
 				command = commandService.sendQuery(command);
-				commandService.unregisterErrorHandler(errorHandler);
 			
 				// Compile a MediaInfo pod with servers metadata
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
@@ -101,6 +100,9 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 					}
 				}
 			}
+			
+			commandService.unregisterErrorHandler(errorHandler);
+			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -114,7 +116,7 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 
 	protected void onPostExecute(MediaInfo result) {
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(getClass(), errorTitle, errorMessage, command);
 		}
 		else {
 			if (listener != null) listener.onMediaInfoChanged(result);

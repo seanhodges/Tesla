@@ -16,9 +16,14 @@
 
 package tesla.app.ui;
 
+import tesla.app.command.Command;
+import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
+import tesla.app.ui.task.GetMediaInfoTask;
+import tesla.app.ui.task.GetVolumeLevelTask;
+import tesla.app.ui.task.IsPlayingTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -51,7 +56,7 @@ public abstract class AbstractTeslaActivity extends Activity {
 	
 	protected IErrorHandler errorHandler = new IErrorHandler.Stub() {
 		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
-			showErrorMessage(title, message);
+			showErrorMessage(AbstractTeslaActivity.this.getClass(), title, message, null);
 		}
 	};
 	
@@ -88,8 +93,19 @@ public abstract class AbstractTeslaActivity extends Activity {
 	protected abstract void onTeslaServiceConnected();
 	protected abstract void onTeslaServiceDisconnected();
 
-	protected void showErrorMessage(String title, String message) {
+	protected void showErrorMessage(Class<? extends Object> invoker, String title, String message, Command command) {
 		if (!isFinishing()) {
+			
+			// Digest message for user-friendly display
+			String errorCode = generateErrorCode(invoker, title, command);
+			
+			title = "Tesla has encountered a problem";
+			message = "Please report the following error code: \n\n" +
+					errorCode + "\n\n" +
+					"To seanhodges84@gmail.com, along with a brief description " +
+					"of what you were trying to do when this message appeared.";
+			
+			// Show error message
 			new AlertDialog.Builder(AbstractTeslaActivity.this)
 				.setTitle(title)
 				.setMessage(message)
@@ -100,5 +116,61 @@ public abstract class AbstractTeslaActivity extends Activity {
 				})
 				.show();
 		}
+	}
+
+	private String generateErrorCode(Class<? extends Object> invoker, String title, Command command) {
+		
+		// This is a little hacky, but should suffice for the time being
+		
+		// Get the invoker ID
+		int idInvoker = 0;
+		if (invoker.equals(Playback.class)) { idInvoker = 1; }
+		else if (invoker.equals(VolumeControl.class)) { idInvoker = 2; }
+		else if (invoker.equals(GetMediaInfoTask.class)) { idInvoker = 3; }
+		else if (invoker.equals(GetVolumeLevelTask.class)) { idInvoker = 4; }
+		else if (invoker.equals(IsPlayingTask.class)) { idInvoker = 5; }
+		
+		// Get the service function ID
+		int idServiceCall = 0;
+		if (title.equals("Failed to connect to remote machine")) { idServiceCall = 1; } // Failed to connect
+		if (title.equals("Failed to send command to remote machine")) { idServiceCall = 2; } // Failed to send command
+		if (title.equals("Failed to send query to remote machine")) { idServiceCall = 3; } // Failed to perform query
+		
+		int idApp = 0;
+		int idCommand = 0;
+		
+		if (command != null) {
+			// Get the player ID
+			String app = command.getTargetApp();
+			if (app.equals(AppConfigProvider.APP_AMAROK)) { idApp = 1; }
+			else if (app.equals(AppConfigProvider.APP_BANSHEE)) { idApp = 2; }
+			else if (app.equals(AppConfigProvider.APP_DRAGONPLAYER)) { idApp = 3; }
+			else if (app.equals(AppConfigProvider.APP_RHYTHMBOX)) { idApp = 4; }
+			else if (app.equals(AppConfigProvider.APP_TOTEM)) { idApp = 5; }
+			else if (app.equals(AppConfigProvider.APP_VLC)) { idApp = 6; }
+			
+			// Get the command ID
+			String commandKey = command.getKey();
+			if (commandKey.equals(Command.GET_MEDIA_INFO)) { idCommand = 1; }
+			else if (commandKey.equals(Command.INIT)) { idCommand = 2; }
+			else if (commandKey.equals(Command.IS_PLAYING)) { idCommand = 3; }
+			else if (commandKey.equals(Command.NEXT)) { idCommand = 4; }
+			else if (commandKey.equals(Command.PAUSE)) { idCommand = 5; }
+			else if (commandKey.equals(Command.PLAY)) { idCommand = 6; }
+			else if (commandKey.equals(Command.POWER)) { idCommand = 7; }
+			else if (commandKey.equals(Command.PREV)) { idCommand = 8; }
+			else if (commandKey.equals(Command.VOL_CHANGE)) { idCommand = 9; }
+			else if (commandKey.equals(Command.VOL_CURRENT)) { idCommand = 10; }
+			else if (commandKey.equals(Command.VOL_MUTE)) { idCommand = 11; }
+		}
+		
+		// Build the code
+		StringBuilder builder = new StringBuilder();
+		builder.append("8"); // Sanity number
+		builder.append(idInvoker);
+		builder.append(idServiceCall);
+		builder.append(idApp);
+		builder.append(idCommand);
+		return builder.toString();
 	}
 }

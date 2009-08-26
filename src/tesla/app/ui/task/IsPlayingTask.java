@@ -32,6 +32,7 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 	private static final boolean DEFAULT_PLAY_MODE = false;
 
 	private OnIsPlayingListener listener = null;
+	private Command command;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -46,7 +47,7 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 	};
 	
 	public interface OnIsPlayingListener {
-		void onServiceError(String title, String message);
+		void onServiceError(Class<? extends Object> invoker, String title, String message, Command command);
 		void onPlayingChanged(boolean isPlaying);
 	}
 	
@@ -54,7 +55,6 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 	{	
 		boolean out = DEFAULT_PLAY_MODE;
 		
-		Command command = null;
 		ICommandController commandService = args[0];
 		try {
 			commandService.registerErrorHandler(errorHandler);
@@ -94,7 +94,7 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 	
 	protected void onPostExecute(Boolean result) {
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(getClass(), errorTitle, errorMessage, command);
 		}
 		else {
 			if (listener != null) listener.onPlayingChanged(result);

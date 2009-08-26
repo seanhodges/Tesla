@@ -47,7 +47,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 	
 	public interface OnGetVolumeLevelListener {
 		void onGetVolumeExtents(float min, float max);
-		void onServiceError(String errorTitle, String errorMessage);
+		void onServiceError(Class<? extends Object> invoker, String errorTitle, String errorMessage, Command command);
 		void onGetVolumeComplete(Float result);
 	}
 
@@ -70,7 +70,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 			e.printStackTrace();
 		}
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(getClass(), errorTitle, errorMessage, command);
 		}
 		else {
 			if (listener != null) listener.onGetVolumeExtents(min, max);
@@ -83,7 +83,6 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 		
 		try {
 			command = commandService.sendQuery(command);
-			commandService.unregisterErrorHandler(errorHandler);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -107,8 +106,14 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 	}
 	
 	protected void onPostExecute(Float result) {
+		try {
+			commandService.unregisterErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
 		if (errorTitle != null && errorMessage != null) {
-			if (listener != null) listener.onServiceError(errorTitle, errorMessage);
+			if (listener != null) listener.onServiceError(getClass(), errorTitle, errorMessage, command);
 		}
 		else {
 			if (listener != null) listener.onGetVolumeComplete(result);

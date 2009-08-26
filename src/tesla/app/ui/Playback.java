@@ -299,9 +299,9 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 		}
 	}
 
-	public void onServiceError(String title, String message) {
+	public void onServiceError(Class<? extends Object> invoker, String title, String message, Command command) {
 		stopSongInfoPolling = true;
-		showErrorMessage(title, message);
+		showErrorMessage(invoker, title, message, command);
 	}
 
 	public void onMediaInfoChanged(MediaInfo info) {
