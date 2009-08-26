@@ -27,28 +27,20 @@ import tesla.app.command.Command;
 import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;
-import tesla.app.service.business.ICommandController;
-import tesla.app.service.business.IErrorHandler;
 import tesla.app.service.connect.ConnectionOptions;
 import tesla.app.ui.task.GetMediaInfoTask;
 import tesla.app.ui.task.IsPlayingTask;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.PowerManager;
 import android.os.RemoteException;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,16 +50,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
+public class Playback extends AbstractTeslaActivity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
 	private static final long SONG_INFO_UPDATE_PERIOD = 4000;
 	private static final long SONG_INFO_CHANGE_PERIOD = 4000;
 	private static final int APP_SELECTOR_RESULT = 1;
 	
-	private ICommandController commandService;
 	private boolean stopSongInfoPolling = false;
 	private boolean appReportingIfPlaying = false;
-	private PowerManager.WakeLock wakeLock;
 	private String versionString;
 	
 	private Handler updateSongInfoHandler = new Handler();
@@ -77,48 +67,12 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		}
 	};
 	
-	private ServiceConnection connection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			commandService = ICommandController.Stub.asInterface(service);
-	        
-	        // If the application is reporting whether it is playing, we don't want to toggle the play button manually
-	        try {
-				commandService.registerErrorHandler(errorHandler);
-				Command command = commandService.queryForCommand(Command.IS_PLAYING);
-				
-				Map<String, String> settings = command.getSettings();
-				if (settings.containsKey("ENABLED")) {
-					appReportingIfPlaying = Boolean.parseBoolean(settings.get("ENABLED"));
-				}
-				commandService.unregisterErrorHandler(errorHandler);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			
-			// Update the song info now, and start the polling update 
-			updateSongInfo();
-		}
-		
-		public void onServiceDisconnected(ComponentName name) {
-			commandService = null;
-		}
-	};
-	
-	private IErrorHandler errorHandler = new IErrorHandler.Stub() {
-		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
-			onServiceErrorAction(title, message);
-		}
-	};
-	
     /* This is the main screen, providing the playback controls. */
+	
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.playback);
         
-        // Used to keep the Wifi available as long as the activity is running
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Tesla SSH session");
-		 
         // Attach the button listeners for playback controls
         View targetButton;
         targetButton = this.findViewById(R.id.pc_power);
@@ -148,6 +102,29 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
         
         setAppIcon();
     }
+
+	protected void onTeslaServiceConnected() {
+		// If the application is reporting whether it is playing, we don't want to toggle the play button manually
+        try {
+			commandService.registerErrorHandler(errorHandler);
+			Command command = commandService.queryForCommand(Command.IS_PLAYING);
+			
+			Map<String, String> settings = command.getSettings();
+			if (settings.containsKey("ENABLED")) {
+				appReportingIfPlaying = Boolean.parseBoolean(settings.get("ENABLED"));
+			}
+			commandService.unregisterErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		// Update the song info now, and start the polling update 
+		updateSongInfo();
+	}
+	
+	protected void onTeslaServiceDisconnected() {
+		// Do nothing
+	}
 	
     public void onClick(View v) {
 		Command command = null;
@@ -275,25 +252,11 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	protected void onPause() {
 		super.onPause();
 		stopSongInfoPolling = true;
-		if (connection != null) unbindService(connection);
-		wakeLock.release();
 	}
 
 	protected void onResume() {
 		super.onResume();
-		wakeLock.acquire();
 		stopSongInfoPolling = false;
-		bindService(new Intent(Playback.this, CommandService.class), connection, Context.BIND_AUTO_CREATE);
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_HOME:
-			// If the HOME button is pressed, the application is shutting down.
-			// Therefore, stop the service...
-			stopService(new Intent(Playback.this, CommandService.class));
-		}
-		return super.onKeyDown(keyCode, event); 
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -336,23 +299,9 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 		}
 	}
 
-	public void onServiceErrorAction(String title, String message) {
-		onServiceError(title, message);
-	}
-
 	public void onServiceError(String title, String message) {
 		stopSongInfoPolling = true;
-		if (!isFinishing()) {
-			new AlertDialog.Builder(Playback.this)
-				.setTitle(title)
-				.setMessage(message)
-				.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				})
-				.show();
-		}
+		showErrorMessage(title, message);
 	}
 
 	public void onMediaInfoChanged(MediaInfo info) {
