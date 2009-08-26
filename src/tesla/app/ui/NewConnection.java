@@ -55,7 +55,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 	private EditText hostText;
 	private EditText userText;
 	private EditText passText;
-	//private CheckBox fakeCheck;
 	
 	private ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -90,11 +89,9 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		hostText = (EditText)this.findViewById(R.id.host);
 		userText = (EditText)this.findViewById(R.id.user);
 		passText = (EditText)this.findViewById(R.id.pass);
-		//fakeCheck = (CheckBox)this.findViewById(R.id.fake_connection);
 		hostText.setText(config.hostname);
 		userText.setText(config.username);
 		passText.setText(config.password);
-		//fakeCheck.setChecked(config.mode == ConnectMode.FAKE);
 		
 		if (config.appSelection.equals("")) {
 			// Default to Rhythmbox
@@ -152,9 +149,6 @@ public class NewConnection extends Activity implements OnClickListener, ConnectT
 		config.password = passText.getText().toString();
 		
 		config.mode = ConnectMode.SSH;
-		/*if (fakeCheck.isChecked()) {
-			config.mode = ConnectMode.FAKE;
-		}*/
 		
 		// Check the input
 		if (config.port == 0) config.port = 22;

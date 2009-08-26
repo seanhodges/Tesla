@@ -35,8 +35,6 @@ public class AppSelector extends ListActivity {
 	private List<Map<String, String>> providerList;
 	private ConnectionOptions config;
 	
-	
-	
 	protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_selector);
