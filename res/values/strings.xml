@@ -50,4 +50,5 @@
 	
 	<!-- Help browser -->
 	<string name="help_title">Tesla Help</string>
+	<string name="close">Close</string>
 </resources>

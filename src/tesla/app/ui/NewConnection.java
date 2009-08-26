@@ -174,7 +174,8 @@ public class NewConnection extends Activity implements View.OnClickListener, Con
 				&& config.firstTimeVlc == true) {
 			String title = "VLC set-up information";
 			String message = "You are seeing this message because you have selected VLC for the first time.\n\n" +
-					"Please ensure that you have enabled 'D-Bus control interface' in the preferences, before pressing Continue.\n\n" +
+					"Please ensure that you have enabled 'D-Bus control interface' in the preferences of VLC, " +
+					"before pressing Continue.\n\n" +
 					"Press Help for step-by-step instructions.";
 			new AlertDialog.Builder(this)
 			.setTitle(title)

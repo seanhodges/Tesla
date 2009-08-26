@@ -27,7 +27,9 @@
         	android:label="@string/volume_title"
         	android:theme="@android:style/Theme.Dialog" />
         	
-        <activity android:name=".ui.HelpBrowser" />        
+        <activity android:name=".ui.HelpBrowser"
+	        android:label="@string/help_title"
+        	android:theme="@android:style/Theme.Dialog" />        
         
 		<service android:name=".service.CommandService"/>
     </application>
