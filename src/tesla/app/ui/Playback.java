@@ -40,7 +40,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -57,6 +56,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Playback extends Activity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
@@ -202,28 +202,37 @@ public class Playback extends Activity implements OnClickListener, IsPlayingTask
 	private void confirmPowerButton() {
 		// Ask the user before executing this action
 		new AlertDialog.Builder(Playback.this)
-		.setTitle("Confirm shutdown")
-		.setMessage("Are you sure you want to turn off the computer?")
-		.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		})
-		.setPositiveButton("Turn Off", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				try {
-					commandService.registerErrorHandler(errorHandler);
-					Command command = commandService.queryForCommand(Command.POWER);
-					if (command != null) {
-						commandService.sendCommand(command);
-					}
-					commandService.unregisterErrorHandler(errorHandler);
-				} catch (RemoteException e) {
-					// Failed to send command
-					e.printStackTrace();
+		.setTitle(getResources().getText(R.string.shut_down_check_title))
+		.setMessage(getResources().getText(R.string.shut_down_check_body))
+		.setNegativeButton(getResources().getText(R.string.shut_down_check_cancel), 
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
 				}
 			}
-		})
+		)
+		.setPositiveButton(getResources().getText(R.string.shut_down_check_continue), 
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					try {
+						commandService.registerErrorHandler(errorHandler);
+						Command command = commandService.queryForCommand(Command.POWER);
+						if (command != null) {
+							commandService.sendCommand(command);
+						}
+						commandService.unregisterErrorHandler(errorHandler);
+					} catch (RemoteException e) {
+						// Failed to send command
+						e.printStackTrace();
+					}
+					// Finish the service/activity regardless of the outcome
+					String message = (String)getResources().getText(R.string.shutting_down);
+					Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+					stopService(new Intent(Playback.this, CommandService.class));
+					finish();
+				}
+			}
+		)
 		.show();
 	}
 

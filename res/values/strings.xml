@@ -38,6 +38,12 @@
 	
 	<string name="menu_application_change">Change Media Player...</string>
 	
+	<string name="shut_down_check_title">Confirm shut down</string>
+	<string name="shut_down_check_body">Are you sure you want to turn off the computer?</string>
+	<string name="shut_down_check_cancel">Cancel</string>
+	<string name="shut_down_check_continue">Turn Off</string>
+	<string name="shutting_down">Your PC is shutting down</string>
+	
 	<!-- Volume control -->
 	<string name="volume_title">Volume</string>
 	<string name="volume_update">Volume is now</string>
