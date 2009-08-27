@@ -149,6 +149,7 @@ public abstract class AbstractTeslaActivity extends Activity {
 			else if (app.equals(AppConfigProvider.APP_RHYTHMBOX)) { idApp = 4; }
 			else if (app.equals(AppConfigProvider.APP_TOTEM)) { idApp = 5; }
 			else if (app.equals(AppConfigProvider.APP_VLC)) { idApp = 6; }
+			else if (app.equals(AppConfigProvider.APP_EXAILE)) { idApp = 7; }
 			
 			// Get the command ID
 			String commandKey = command.getKey();

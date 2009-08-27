@@ -19,6 +19,10 @@ public class CommandHelperFactory {
 			command.setOutput(command.getOutput().substring(RhythmDBHelper.MAGIC_MARKER.length() + 1));
 			out = new RhythmDBHelper();
 		}
+		else if (data.startsWith(ExaileHelper.MAGIC_MARKER)) {
+			command.setOutput(command.getOutput().substring(ExaileHelper.MAGIC_MARKER.length() + 1));
+			out = new ExaileHelper();
+		}
 		else {
 			out = new SimpleStringHelper();
 		}
