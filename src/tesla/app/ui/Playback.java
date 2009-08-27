@@ -312,7 +312,11 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 		
 		if (info.title != null && info.artist != null && info.album != null) {
 			// All media info is available
-			String newTitle = info.track + " - " + info.title;
+			String newTitle = info.title;
+			if (info.track != null) {
+				newTitle = info.track + " - " + newTitle; 
+			}
+				
 			setLabelTextIfChanged(labelTitle, newTitle);
 			setLabelTextIfChanged(labelArtist, info.artist);
 			setLabelTextIfChanged(labelAlbum, info.album);

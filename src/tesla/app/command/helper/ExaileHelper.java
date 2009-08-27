@@ -51,7 +51,7 @@ public class ExaileHelper implements ICommandHelper {
 			}
 		}
 		else if (target == "track") {
-			value = "";
+			value = null;
 		}
 		return value;
 	}
