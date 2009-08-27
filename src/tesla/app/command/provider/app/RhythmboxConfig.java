@@ -86,4 +86,8 @@ public class RhythmboxConfig implements IConfigProvider {
 		}
 		return settings;
 	}
+
+	public String getLaunchAppCommand() {
+		return "pidof rhythmbox 1>/dev/null || rhythmbox &>/dev/null &";
+	}
 }

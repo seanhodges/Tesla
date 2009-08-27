@@ -27,7 +27,7 @@ import tesla.app.command.helper.DCopHelper;
 import tesla.app.command.provider.IConfigProvider;
 
 public class AmarokConfig implements IConfigProvider {
-
+	
 	public String getCommand(String key) {
 		final String dbusDest = "org.kde.amarok";
 		final String dcopDest = "amarok";
@@ -126,5 +126,9 @@ public class AmarokConfig implements IConfigProvider {
 		builder.append(";echo -n \"album:\";");
 		builder.append(new DCopHelper().compileMethodCall(dcopDest, "player", "album", false));
 		return builder.toString();
+	}
+
+	public String getLaunchAppCommand() {
+		return "pidof amarok 1>/dev/null || DISPLAY=:0 amarok &>/dev/null &";
 	}
 }

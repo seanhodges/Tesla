@@ -131,6 +131,9 @@ public class CommandService extends Service {
 				throw new Exception("Init script failed with output: " + response);
 			}
 			
+			// Start the target player if not already running
+			response = connection.sendCommand(factory.getLaunchAppCommand());
+			
 			// Start the command thread
 			handleCommands();
 			success = true;

@@ -195,4 +195,33 @@ public class AppConfigProvider implements IConfigProvider {
 	public String getAppName() {
 		return appName;
 	}
+
+	public String getLaunchAppCommand() {
+		String out = null;
+		if (appName.equals(APP_RHYTHMBOX)) {
+			out = new RhythmboxConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_AMAROK)) {
+			out = new AmarokConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_VLC)) {
+			out = new VlcConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_TOTEM)) {
+			out = new TotemConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_DRAGONPLAYER)) {
+			out = new DragonPlayerConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_BANSHEE)) {
+			out = new BansheeConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_EXAILE)) {
+			out = new ExaileConfig().getLaunchAppCommand();
+		}
+		else if (appName.equals(APP_KAFFEINE)) {
+			out = new KaffeineConfig().getLaunchAppCommand();
+		}
+		return out;
+	}
 }

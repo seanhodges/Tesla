@@ -16,13 +16,10 @@
 
 package tesla.app.command.provider.app;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import tesla.app.command.Command;
-import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.DCopHelper;
 import tesla.app.command.provider.IConfigProvider;
 
@@ -30,7 +27,6 @@ public class KaffeineConfig implements IConfigProvider {
 
 	public String getCommand(String key) {
 		final String dest = "kaffeine";
-		List<String> args = new ArrayList<String>();
 		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			out = new DCopHelper().compileMethodCall(dest, "KaffeineIface", "pause");
@@ -47,6 +43,10 @@ public class KaffeineConfig implements IConfigProvider {
 	public Map<String, String> getSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
 		return settings;
+	}
+
+	public String getLaunchAppCommand() {
+		return "pidof kaffeine 1>/dev/null || kaffeine &>/dev/null &";
 	}
 
 }

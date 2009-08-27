@@ -51,4 +51,8 @@ public class FallbackConfigProvider implements IConfigProvider {
 		return settings;
 	}
 
+	public String getLaunchAppCommand() {
+		return "";
+	}
+
 }

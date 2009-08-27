@@ -31,11 +31,12 @@ public class CommandFactory {
 	private static final long COMMAND_DELAY = 600;
 	private static final long INIT_SCRIPT_DELAY = 1000;
 
-	ArrayList<IConfigProvider> providerScanner = new ArrayList<IConfigProvider>();
+	private IConfigProvider appProvider;
+	private ArrayList<IConfigProvider> providerScanner = new ArrayList<IConfigProvider>();
 	
 	public CommandFactory(String initialApp) {
 		IConfigProvider globalProvider = new GlobalConfigProvider();
-		IConfigProvider appProvider = new AppConfigProvider(initialApp);
+		appProvider = new AppConfigProvider(initialApp);
 		IConfigProvider fallbackProvider = new FallbackConfigProvider();
 		
 		// Scan the config providers in this order
@@ -49,6 +50,14 @@ public class CommandFactory {
 		out.setKey(Command.INIT);
 		out.setDelay(INIT_SCRIPT_DELAY);
 		out.setCommandString(InitScriptProvider.getInitScript());
+		return out;
+	}
+	
+	public Command getLaunchAppCommand() {
+		Command out = new Command();
+		out.setKey(Command.LAUNCH_PLAYER);
+		out.setDelay(COMMAND_DELAY);
+		out.setCommandString(appProvider.getLaunchAppCommand());
 		return out;
 	}
 

@@ -61,4 +61,8 @@ public class DragonPlayerConfig implements IConfigProvider {
 		return settings;
 	}
 
+	public String getLaunchAppCommand() {
+		return "pidof dragon 1>/dev/null || dragon &>/dev/null &";
+	}
+
 }

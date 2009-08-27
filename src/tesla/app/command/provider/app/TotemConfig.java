@@ -44,4 +44,8 @@ public class TotemConfig implements IConfigProvider {
 		return settings;
 	}
 
+	public String getLaunchAppCommand() {
+		return "pidof totem 1>/dev/null || totem &>/dev/null &";
+	}
+
 }

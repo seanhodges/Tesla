@@ -58,4 +58,8 @@ public class GlobalConfigProvider implements IConfigProvider {
 		return null;
 	}
 
+	public String getLaunchAppCommand() {
+		return null;
+	}
+
 }

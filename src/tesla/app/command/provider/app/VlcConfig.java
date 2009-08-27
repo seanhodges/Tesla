@@ -76,4 +76,8 @@ public class VlcConfig implements IConfigProvider {
 		return settings;
 	}
 
+	public String getLaunchAppCommand() {
+		return "pidof vlc 1>/dev/null || vlc &>/dev/null &";
+	}
+
 }

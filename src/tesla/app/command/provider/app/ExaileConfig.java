@@ -64,4 +64,8 @@ public class ExaileConfig implements IConfigProvider {
 		}
 		return settings;
 	}
+
+	public String getLaunchAppCommand() {
+		return "pidof exaile 1>/dev/null || exaile &>/dev/null &";
+	}
 }
