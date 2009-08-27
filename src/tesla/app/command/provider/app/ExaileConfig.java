@@ -9,7 +9,6 @@ import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.ExaileHelper;
 import tesla.app.command.provider.IConfigProvider;
-import tesla.app.mediainfo.MediaInfo;
 
 public class ExaileConfig implements IConfigProvider {
 
