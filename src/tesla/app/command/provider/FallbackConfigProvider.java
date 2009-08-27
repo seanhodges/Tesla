@@ -24,14 +24,29 @@ import tesla.app.command.Command;
 public class FallbackConfigProvider implements IConfigProvider {
 
 	public String getCommand(String key) {
-		return "";
+		String out = null;
+		if (key.equals(Command.VOL_CURRENT)) {
+			out = "amixer get \"Front\" | grep \"Front Left:\" | cut -d \" \" -f 7 | sed -e \"s/[^0-9]//g\"";
+		}
+		else if (key.equals(Command.VOL_CHANGE)) {
+			out = "amixer set \"Front\" %i% unmute 1>/dev/null";
+		}
+		else if (key.equals(Command.VOL_MUTE)) {
+			out = "amixer set \"Front\" 0% mute 1>/dev/null";
+		}
+		else {
+			// No command was found
+			out = "";
+		}
+		
+		return out;
 	}
 
 	public Map<String, String> getSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
-			settings.put("MAX", "0.0");
+			settings.put("MAX", "100.0");
 		}
 		return settings;
 	}
