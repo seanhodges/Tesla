@@ -36,16 +36,24 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 public abstract class AbstractTeslaActivity extends Activity {
 	
 	protected ICommandController commandService;
 	private PowerManager.WakeLock wakeLock;
+	private boolean phoneIsBusy = false;
 	
 	protected ServiceConnection connection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			commandService = ICommandController.Stub.asInterface(service);
+			
+			// Detect phone calls
+			TelephonyManager tm = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+			tm.listen(callStateHandler, PhoneStateListener.LISTEN_CALL_STATE);
+			
 			onTeslaServiceConnected();
 		}
 
@@ -59,6 +67,56 @@ public abstract class AbstractTeslaActivity extends Activity {
 		public void onServiceError(String title, String message, boolean fatal) throws RemoteException {
 			showErrorMessage(AbstractTeslaActivity.this.getClass(), title, message, null);
 		}
+	};
+	
+	private PhoneStateListener callStateHandler = new PhoneStateListener() {
+	        public void onCallStateChanged(int state, String incomingNumber) {
+                
+	        	switch (state) {
+				case TelephonyManager.CALL_STATE_RINGING:
+				case TelephonyManager.CALL_STATE_OFFHOOK:
+					// Pause playback during a call
+					if (!phoneIsBusy) {
+						phoneIsBusy = true;
+						try {
+							commandService.registerErrorHandler(errorHandler);
+							Command command = commandService.queryForCommand(Command.PAUSE);
+							if (command != null) {
+								commandService.sendCommand(command);
+								onPhoneIsBusy();
+							}
+			        	
+							commandService.unregisterErrorHandler(errorHandler);
+						
+						} catch (RemoteException e) {
+			    			// Failed to send command
+			    			e.printStackTrace();
+			    		}
+					}
+					break;
+
+				case TelephonyManager.CALL_STATE_IDLE:
+					// Resume playback when call ends
+					if (phoneIsBusy) {
+						phoneIsBusy = false;
+						try {
+							commandService.registerErrorHandler(errorHandler);
+							Command command = commandService.queryForCommand(Command.PLAY);
+							if (command != null) {
+								commandService.sendCommand(command);
+								onPhoneIsIdle();
+							}
+							commandService.unregisterErrorHandler(errorHandler);
+						} catch (RemoteException e) {
+			    			// Failed to send command
+			    			e.printStackTrace();
+			    		}
+					}
+					
+				default:
+					// Do nothing
+				}
+	        }
 	};
 	
 	public void onCreate(Bundle icicle) {
@@ -93,6 +151,9 @@ public abstract class AbstractTeslaActivity extends Activity {
 	
 	protected abstract void onTeslaServiceConnected();
 	protected abstract void onTeslaServiceDisconnected();
+	
+	protected abstract void onPhoneIsBusy();
+	protected abstract void onPhoneIsIdle();
 
 	protected void showErrorMessage(Class<? extends Object> invoker, String title, String message, Command command) {
 		if (!isFinishing()) {

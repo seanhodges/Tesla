@@ -107,4 +107,12 @@ public class VolumeControl extends AbstractTeslaActivity implements VolumeSlider
 		// Close the activity when the user stops touching the slider
 		finish();
 	}
+	
+	protected void onPhoneIsBusy() {
+		// Do nothing
+	}
+	
+	protected void onPhoneIsIdle() {
+		// Do nothing
+	}
 }

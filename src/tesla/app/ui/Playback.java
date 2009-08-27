@@ -368,4 +368,12 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
         ImageButton playPauseButton = (ImageButton)this.findViewById(R.id.play_pause);
         playPauseButton.setSelected(isPlaying);
 	}
+	
+	protected void onPhoneIsBusy() {
+		togglePlayPauseButtonMode();
+	}
+	
+	protected void onPhoneIsIdle() {
+		togglePlayPauseButtonMode();
+	}
 }
