@@ -211,6 +211,7 @@ public abstract class AbstractTeslaActivity extends Activity {
 			else if (app.equals(AppConfigProvider.APP_TOTEM)) { idApp = 5; }
 			else if (app.equals(AppConfigProvider.APP_VLC)) { idApp = 6; }
 			else if (app.equals(AppConfigProvider.APP_EXAILE)) { idApp = 7; }
+			else if (app.equals(AppConfigProvider.APP_KAFFEINE)) { idApp = 8; }
 			
 			// Get the command ID
 			String commandKey = command.getKey();
@@ -225,6 +226,7 @@ public abstract class AbstractTeslaActivity extends Activity {
 			else if (commandKey.equals(Command.VOL_CHANGE)) { idCommand = 9; }
 			else if (commandKey.equals(Command.VOL_CURRENT)) { idCommand = 10; }
 			else if (commandKey.equals(Command.VOL_MUTE)) { idCommand = 11; }
+			else if (commandKey.equals(Command.LAUNCH_PLAYER)) { idCommand = 12; }
 		}
 		
 		// Build the code
