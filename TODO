@@ -1,17 +1,3 @@
-Long term objectives:
+Please see the bug tracker at:
 
-* Album cover / song metadata retrieval
-* Playlist/collection manager
-* Power button for turning off PC
-* Loading DBUS configurations from filesystem
-* Dependency injection (dynamic resolution of connection/dbus/commandfactory objects
-* Incorporate service providers and intents for third-party access (OpenIntents?)
-* Connection profile manager (save/load connection config)
-* Reduce battery consumption
-* Bluetooth support
-
-Future players to support:
-1) Totem / KPlayer
-2) Kaffeine / MeTV
-3) MythTV
-4) MPlayer / Xine
+http://sourceforge.net/apps/trac/android-tesla/report/1
