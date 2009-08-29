@@ -44,6 +44,8 @@ import android.view.KeyEvent;
 
 public abstract class AbstractTeslaActivity extends Activity {
 	
+	private static final boolean USE_FRIENDLY_ERRORS = true;
+	
 	protected ICommandController commandService;
 	private PowerManager.WakeLock wakeLock;
 	private boolean phoneIsBusy = false;
@@ -169,9 +171,11 @@ public abstract class AbstractTeslaActivity extends Activity {
 			// Digest message for user-friendly display
 			String errorCode = generateErrorCode(invoker, title, command);
 			
-			title = getResources().getString(R.string.user_error_title);
-			message = getResources().getString(R.string.user_error_body);
-			message = message.replaceAll("%errorcode%", errorCode);
+			if (USE_FRIENDLY_ERRORS) {
+				title = getResources().getString(R.string.user_error_title);
+				message = getResources().getString(R.string.user_error_body);
+				message = message.replaceAll("%errorcode%", errorCode);
+			}
 			
 			// Show error message
 			new AlertDialog.Builder(AbstractTeslaActivity.this)

@@ -156,7 +156,7 @@ public class SSHConnection implements IConnection  {
 					// Read the STDOUT output to return as a response
 					response = getResponseFromSessionStream(responseStream);
 				} catch (Exception e) {
-					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getKey());
+					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
 				}	
 			}
 		}
