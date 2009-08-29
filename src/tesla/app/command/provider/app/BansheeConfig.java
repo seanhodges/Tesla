@@ -87,6 +87,6 @@ public class BansheeConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof banshee 1>/dev/null || banshee &>/dev/null &";
+		return "pidof banshee 1>/dev/null || DISPLAY=:0 banshee &>/dev/null & sleep 5";
 	}
 }
