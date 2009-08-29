@@ -185,14 +185,14 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 		new AlertDialog.Builder(Playback.this)
 		.setTitle(getResources().getText(R.string.shut_down_check_title))
 		.setMessage(getResources().getText(R.string.shut_down_check_body))
-		.setNegativeButton(getResources().getText(R.string.shut_down_check_cancel), 
+		.setNegativeButton(getResources().getText(R.string.btn_close), 
 			new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
 				}
 			}
 		)
-		.setPositiveButton(getResources().getText(R.string.shut_down_check_continue), 
+		.setPositiveButton(getResources().getText(R.string.btn_shutdown), 
 			new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					try {

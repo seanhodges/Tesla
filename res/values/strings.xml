@@ -3,6 +3,15 @@
     <string name="app_name">Tesla</string>
     <string name="app_desc">Universal Remote Control</string>
     
+    <!-- Activity buttons -->
+    <string name="btn_close">Close</string>
+	<string name="btn_connect">Connect</string>
+	<string name="btn_shutdown">Turn Off</string>	
+	<string name="btn_playlist">Playlist</string>
+	<string name="btn_volume">Volume</string>
+	<string name="btn_change_app">Change...</string>
+	<string name="btn_help">Help</string>
+	
     <!-- NewConnection -->
     <string name="host">Host</string>
     <string name="port">Port</string>
@@ -10,7 +19,6 @@
     <string name="password">Password</string>
     
     <string name="application_selection">Media Player</string>
-    <string name="change_app">Change...</string>
 	<string name="amarok_item">Amarok</string>
 	<string name="dragonplayer_item">Dragon Player</string>
 	<string name="rhythmbox_item">Rhythmbox</string>
@@ -19,9 +27,6 @@
 	
 	<string name="fake_connection">Fake connect (for testing)</string>
 	
-	<string name="cancel">Cancel</string>
-	<string name="connect">Connect</string>
-	
 	<string name="connection_progress_title">Working...</string>
 	<string name="connection_progress_body">Connecting with computer</string>
 	
@@ -29,20 +34,19 @@
 	<string name="app_selector_title">Select Media Player</string>
 	<string name="no_apps">No applications available</string>
 	
+	<!-- VLC notification -->
+	<string name="vlc_notify_title">VLC set-up information</string>
+	<string name="vlc_notify_body">You are seeing this message because you have selected VLC for the first time.\n\nPlease ensure that you have enabled 'D-Bus control interface' in the preferences of VLC, before pressing %connectBtnText%.\n\nPress %helpBtnText% for step-by-step instructions.</string>
+	
 	<!-- Playback -->
 	<string name="info_title">Tesla - Remote Control</string>
 	<string name="info_artist">by Sean Hodges</string>
-	
-	<string name="playlist">Playlist</string>
-	<string name="volume">Volume</string>
 	
 	<string name="menu_application_change">Change Media Player</string>
 	<string name="menu_preferences_launch">Preferences</string>
 	
 	<string name="shut_down_check_title">Confirm shut down</string>
 	<string name="shut_down_check_body">Are you sure you want to turn off the computer?</string>
-	<string name="shut_down_check_cancel">Cancel</string>
-	<string name="shut_down_check_continue">Turn Off</string>
 	<string name="shutting_down">Your PC is shutting down</string>
 	
 	<!-- Volume control -->
@@ -53,14 +57,13 @@
 	<string name="preferences_title">Preferences</string>
 	<string name="volume_target_key">volumeTarget</string>
 	<string name="volume_target_title">Target volume</string>
-	<string name="volume_target_summary">Control the system or the player volume</string>
+	<string name="volume_target_summary">Control either the system or the media player volume</string>
 	<string name="on_call_pause_key">onCallPauseMode</string>
-	<string name="on_call_pause_title">Incoming call</string>
-	<string name="on_call_pause_summary">Pause play-back when call in progress</string>
+	<string name="on_call_pause_title">Pause during phone call</string>
+	<string name="on_call_pause_summary">Pause play-back when call is in progress</string>
 	
 	<!-- Help browser -->
 	<string name="help_title">Tesla Help</string>
-	<string name="close">Close</string>
 	
 	<!-- Error messages -->
 	<string name="user_error_title">Tesla has encountered a problem</string>

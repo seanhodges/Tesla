@@ -169,13 +169,15 @@ public abstract class AbstractTeslaActivity extends Activity {
 			new AlertDialog.Builder(AbstractTeslaActivity.this)
 				.setTitle(title)
 				.setMessage(message)
-				.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						// Close the activity to avoid more of these
-						finish();
+				.setNegativeButton(getResources().getText(R.string.btn_close), 
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							// Close the activity to avoid more of these
+							finish();
+						}
 					}
-				})
+				)
 				.show();
 		}
 	}

@@ -170,24 +170,26 @@ public class NewConnection extends Activity implements View.OnClickListener, Con
 	}
 	
 	private void prepareConnect() {
+		String helpBtnText = getResources().getText(R.string.btn_help).toString();
+		String connectBtnText = getResources().getText(R.string.btn_connect).toString();
 		if (config.appSelection.equalsIgnoreCase(AppConfigProvider.APP_VLC) 
 				&& config.firstTimeVlc == true) {
-			String title = "VLC set-up information";
-			String message = "You are seeing this message because you have selected VLC for the first time.\n\n" +
-					"Please ensure that you have enabled 'D-Bus control interface' in the preferences of VLC, " +
-					"before pressing Continue.\n\n" +
-					"Press Help for step-by-step instructions.";
+			String title = getResources().getText(R.string.vlc_notify_title).toString();
+			String message = getResources().getText(R.string.vlc_notify_body).toString();
+			message = message.replaceAll("%connectBtnText%", connectBtnText);
+			message = message.replaceAll("%helpBtnText%", helpBtnText);
+			
 			new AlertDialog.Builder(this)
 			.setTitle(title)
 			.setMessage(message)
-			.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+			.setPositiveButton(connectBtnText, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					config.firstTimeVlc = false;
 					// Start connection
 					startConnection();
 				}
 			})
-			.setNeutralButton("Help", new DialogInterface.OnClickListener() {
+			.setNeutralButton(helpBtnText, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					startActivity(new Intent(NewConnection.this, HelpBrowser.class));
 				}
@@ -232,11 +234,13 @@ public class NewConnection extends Activity implements View.OnClickListener, Con
 		new AlertDialog.Builder(NewConnection.this)
 			.setTitle(title)
 			.setMessage(message)
-			.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
+			.setNegativeButton(getResources().getText(R.string.btn_close), 
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
 				}
-			})
+			)
 			.show();
 	}
 }

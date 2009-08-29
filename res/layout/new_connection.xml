@@ -78,7 +78,7 @@
 					
 				<Button
 					android:id="@+id/change_app" 
-					android:text="@string/change_app" 
+					android:text="@string/btn_change_app" 
 					android:layout_gravity="right"/>
 			</TableRow>
 			
@@ -96,7 +96,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="left|bottom"
 			android:layout_weight="1"
-			android:text="@string/cancel" />
+			android:text="@string/btn_close" />
 			
 			<Button
 			android:id="@+id/connect"
@@ -104,7 +104,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="right|bottom"
 			android:layout_weight="1"
-			android:text="@string/connect" />	
+			android:text="@string/btn_connect" />	
 		</LinearLayout>
 		
 </LinearLayout>
