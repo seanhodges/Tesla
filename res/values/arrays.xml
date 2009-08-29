@@ -16,8 +16,8 @@
 		<item></item>
 	</string-array>
 	<string-array name="on_call_pause_options_labels">
-		<item>Phone rings</item>
-		<item>Call in progress</item>
+		<item>When phone rings</item>
+		<item>Only when answered</item>
 		<item>None of the above</item>
 	</string-array>
 	

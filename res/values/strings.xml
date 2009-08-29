@@ -59,8 +59,8 @@
 	<string name="volume_target_title">Target volume</string>
 	<string name="volume_target_summary">Control either the system or the media player volume</string>
 	<string name="on_call_pause_key">onCallPauseMode</string>
-	<string name="on_call_pause_title">Pause during phone call</string>
-	<string name="on_call_pause_summary">Pause play-back when call is in progress</string>
+	<string name="on_call_pause_title">Pause player during call</string>
+	<string name="on_call_pause_summary">Pause media player when phone call is in progress</string>
 	
 	<!-- Help browser -->
 	<string name="help_title">Tesla Help</string>
