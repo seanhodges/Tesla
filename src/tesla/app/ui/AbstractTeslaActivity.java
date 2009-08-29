@@ -32,10 +32,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.provider.UserDictionary.Words;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
@@ -71,10 +74,16 @@ public abstract class AbstractTeslaActivity extends Activity {
 	
 	private PhoneStateListener callStateHandler = new PhoneStateListener() {
 	        public void onCallStateChanged(int state, String incomingNumber) {
-                
+	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+	        	String onCallPauseMode = prefs.getString(getResources().getText(R.string.on_call_pause_key).toString(), "RINGING");
+	        	
 	        	switch (state) {
 				case TelephonyManager.CALL_STATE_RINGING:
+					// Pause playback when ringing
+					if (!onCallPauseMode.equals("RINGING")) break;
+					
 				case TelephonyManager.CALL_STATE_OFFHOOK:
+					if (onCallPauseMode.equals("")) break;
 					// Pause playback during a call
 					if (!phoneIsBusy) {
 						phoneIsBusy = true;
