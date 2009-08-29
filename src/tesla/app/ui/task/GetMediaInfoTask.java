@@ -98,6 +98,11 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 						MediaInfoFactory factory = new MediaInfoFactory();
 						info = factory.process(info);
 					}
+					else {
+						// Debugging
+						//errorTitle = "MEDIA INFO FAILED TO PARSE";
+						//errorMessage = command.getCommandString() + "\n" + command.getOutput();
+					}
 				}
 			}
 			

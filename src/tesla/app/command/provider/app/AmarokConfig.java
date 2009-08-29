@@ -129,6 +129,6 @@ public class AmarokConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof amarok 1>/dev/null || DISPLAY=:0 amarok &>/dev/null & sleep 5";
+		return "pidof amarok 1>/dev/null || DISPLAY=:0 amarok &>/dev/null & sleep 5 && echo success";
 	}
 }

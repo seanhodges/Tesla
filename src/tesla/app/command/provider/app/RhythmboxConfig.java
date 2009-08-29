@@ -88,6 +88,6 @@ public class RhythmboxConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof rhythmbox 1>/dev/null || DISPLAY=:0 rhythmbox &>/dev/null & sleep 5";
+		return "pidof rhythmbox 1>/dev/null || DISPLAY=:0 rhythmbox &>/dev/null & sleep 5 && echo success";
 	}
 }

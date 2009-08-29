@@ -66,6 +66,6 @@ public class ExaileConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof exaile 1>/dev/null || DISPLAY=:0 exaile &>/dev/null & sleep 5";
+		return "pidof exaile 1>/dev/null || DISPLAY=:0 exaile &>/dev/null & sleep 5 && echo success";
 	}
 }

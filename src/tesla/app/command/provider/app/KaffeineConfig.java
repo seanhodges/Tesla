@@ -46,7 +46,7 @@ public class KaffeineConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof kaffeine 1>/dev/null || DISPLAY=:0 kaffeine &>/dev/null & sleep 5";
+		return "pidof kaffeine 1>/dev/null || DISPLAY=:0 kaffeine &>/dev/null & sleep 5 && echo success";
 	}
 
 }

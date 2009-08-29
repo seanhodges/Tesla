@@ -122,7 +122,7 @@ public class SSHConnection implements IConnection  {
 	}
 	
 	public String sendCommand(Command command) throws ConnectionException {
-		String response = null;
+		String response = "";
 		if (session != null) {
 			try {
 				if (responseStream.available() > 0) {
@@ -137,22 +137,27 @@ public class SSHConnection implements IConnection  {
 			try {
 				stdin.write((command.getCommandString() + "\n").getBytes());
 				stdin.flush();
-				// This is a bit of a fudge, wait for command to finish before collecting streams
-				Thread.sleep(command.getDelay());
 			} catch (Exception e) {
 				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, "Failed to send command to client, error returned was: " + e.getMessage());
 			}
 			
-			try {
-				// Any STDERR output is treated as a failure for now
-				if (errorStream.available() > 0) {
-					String stderr = getResponseFromSessionStream(errorStream);
-					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
-				}
-				// Read the STDOUT output to return as a response
-				response = getResponseFromSessionStream(responseStream);
-			} catch (IOException e) {
-				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getKey());
+			String stderr = "";
+			
+			// Keep polling for a response until something comes back
+			while (response.length() == 0 && stderr.length() == 0) {
+				try {
+					Thread.sleep(command.getDelay());
+					
+					// Any STDERR output is treated as a failure for now
+					if (errorStream.available() > 0) {
+						stderr = getResponseFromSessionStream(errorStream);
+						throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
+					}
+					// Read the STDOUT output to return as a response
+					response = getResponseFromSessionStream(responseStream);
+				} catch (Exception e) {
+					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getKey());
+				}	
 			}
 		}
 		else {
