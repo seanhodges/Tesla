@@ -12,18 +12,28 @@ public class ExaileConfig implements IConfigProvider {
 
 	public String getCommand(String key) {
 		final String dest = "org.exaile.Exaile";
+		final String legacyDest = "org.exaile.DBusInterface";
 		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+			String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
 				"org.exaile.Exaile.PlayPause");
+			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
+				"org.exaile.DBusInterface.play_pause");
+			out = compileCompositeCommand(command, legacyCommand);
 		}
 		else if (key.equals(Command.PREV)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+			String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
 				"org.exaile.Exaile.Prev");
+			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
+				"org.exaile.DBusInterface.prev_track");
+			out = compileCompositeCommand(command, legacyCommand);
 		}
 		else if (key.equals(Command.NEXT)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+			String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
 				"org.exaile.Exaile.Next");
+			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
+				"org.exaile.DBusInterface.next_track");
+			out = compileCompositeCommand(command, legacyCommand);
 		}
 		// Volume control does not currently work for Exaile, fall back to system volume
 		/* 
@@ -42,13 +52,18 @@ public class ExaileConfig implements IConfigProvider {
 				"org.exaile.Exaile.GetVolume");
 		}*/
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+			String command = "echo " + ExaileHelper.MAGIC_MARKER + "; " +  new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
 				"org.exaile.Exaile.Query", false);
-			out = "echo " + ExaileHelper.MAGIC_MARKER + "; " + out;
+			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
+				"org.exaile.DBusInterface.get_title", false);
+			out = compileCompositeCommand(command, legacyCommand);
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
-			out = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+			String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
 				"org.exaile.Exaile.IsPlaying");
+			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
+				"org.exaile.DBusInterface.IsPlaying");
+			out = compileCompositeCommand(command, legacyCommand);
 		}
 		
 		return out;
@@ -63,6 +78,21 @@ public class ExaileConfig implements IConfigProvider {
 			settings.put("ENABLED", "false");
 		}
 		return settings;
+	}
+	
+	private String compileCompositeCommand(String command, String legacyCommand) {
+		StringBuilder builder = new StringBuilder();
+		
+		// Use legacyCommand if eXaile 0.2.x is present
+		builder.append("if [[ \"$(exaile --version)\" =~ \"0.2\" ]]; then ");
+		builder.append(legacyCommand);
+		
+		// Use command otherwise
+		builder.append("; else ");
+		builder.append(command);
+		
+		builder.append("; fi");
+		return builder.toString();
 	}
 
 	public String getLaunchAppCommand() {
