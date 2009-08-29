@@ -29,6 +29,8 @@ import com.trilead.ssh2.Session;
 
 public class SSHConnection implements IConnection  {
 	
+	private static final int MAX_STDOUT_ATTEMPTS = 8;
+
 	private ConnectionOptions config;
 	
 	private Connection connection;
@@ -144,7 +146,8 @@ public class SSHConnection implements IConnection  {
 			String stderr = "";
 			
 			// Keep polling for a response until something comes back
-			while (response.length() == 0 && stderr.length() == 0) {
+			int attempts = 0;
+			while (response.length() == 0 && stderr.length() == 0 && attempts < MAX_STDOUT_ATTEMPTS) {
 				try {
 					Thread.sleep(command.getDelay());
 					
@@ -157,7 +160,8 @@ public class SSHConnection implements IConnection  {
 					response = getResponseFromSessionStream(responseStream);
 				} catch (Exception e) {
 					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
-				}	
+				}
+				attempts++;
 			}
 		}
 		else {
