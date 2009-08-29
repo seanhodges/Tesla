@@ -111,7 +111,7 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 		// If the application is reporting whether it is playing, we don't want to toggle the play button manually
         try {
 			commandService.registerErrorHandler(errorHandler);
-			Command command = commandService.queryForCommand(Command.IS_PLAYING);
+			Command command = commandService.queryForCommand(Command.IS_PLAYING, false);
 			
 			Map<String, String> settings = command.getSettings();
 			if (settings.containsKey("ENABLED")) {
@@ -141,15 +141,15 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 				break;
 			case R.id.play_pause: 
 				togglePlayPauseButtonMode();
-				command = commandService.queryForCommand(Command.PLAY);
+				command = commandService.queryForCommand(Command.PLAY, false);
 				break;
 			case R.id.last_song:
-				command = commandService.queryForCommand(Command.PREV);
+				command = commandService.queryForCommand(Command.PREV, false);
 				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
 				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_CHANGE_PERIOD);
 				break;
 			case R.id.next_song:
-				command = commandService.queryForCommand(Command.NEXT);
+				command = commandService.queryForCommand(Command.NEXT, false);
 				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
 				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_CHANGE_PERIOD);
 				break;
@@ -157,11 +157,13 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 				new AlertDialog.Builder(Playback.this)
 					.setTitle("Not implemented")
 					.setMessage("Playlist support is not yet available.")
-					.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
+					.setNegativeButton(getResources().getText(R.string.btn_close), 
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
 						}
-					})
+					)
 					.show();
 				break;
 			case R.id.volume:
@@ -197,7 +199,7 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 				public void onClick(DialogInterface dialog, int which) {
 					try {
 						commandService.registerErrorHandler(errorHandler);
-						Command command = commandService.queryForCommand(Command.POWER);
+						Command command = commandService.queryForCommand(Command.POWER, false);
 						if (command != null) {
 							commandService.sendCommand(command);
 						}

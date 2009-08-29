@@ -58,7 +58,7 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 		ICommandController commandService = args[0];
 		try {
 			commandService.registerErrorHandler(errorHandler);
-			command = commandService.queryForCommand(Command.IS_PLAYING);
+			command = commandService.queryForCommand(Command.IS_PLAYING, false);
 			
 			boolean enabled = false;
 			Map<String, String> settings = command.getSettings();

@@ -61,7 +61,7 @@ public class CommandFactory {
 		return out;
 	}
 
-	public Command getCommand(String key) {
+	public Command getCommand(String key, boolean ignoreAppCommand) {
 		Command out = new Command();
 		out.setKey(key);
 		out.setDelay(COMMAND_DELAY);
@@ -70,7 +70,11 @@ public class CommandFactory {
 		String command = null;
 		Iterator<IConfigProvider> providerOrderIt = providerScanner.iterator();
 		while (command == null && providerOrderIt.hasNext()) {
-			IConfigProvider currentProvider = providerOrderIt.next(); 
+			IConfigProvider currentProvider = providerOrderIt.next();
+			
+			// Ignore app command if requested
+			if (currentProvider instanceof AppConfigProvider && ignoreAppCommand) continue;
+			
 			command = currentProvider.getCommand(key);
 			settings = currentProvider.getSettings(key);
 			// Set the target app name

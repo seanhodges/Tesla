@@ -20,13 +20,16 @@ import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.ui.task.GetVolumeLevelTask;
 import tesla.app.ui.widget.VolumeSlider;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 public class VolumeControl extends AbstractTeslaActivity implements VolumeSlider.OnVolumeLevelChangeListener, GetVolumeLevelTask.OnGetVolumeLevelListener {
 	
 	private VolumeSlider volumeSlider;
+	private boolean ignoreAppSetting;
 	
     /* This is the volume control. */
 	
@@ -34,6 +37,11 @@ public class VolumeControl extends AbstractTeslaActivity implements VolumeSlider
         super.onCreate(icicle);
         setContentView(R.layout.volume_control);
         
+        // Get app/fallback command based on user preferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    	String volumeTargetSetting = prefs.getString(getResources().getText(R.string.volume_target_key).toString(), "PLAYER");
+    	ignoreAppSetting = volumeTargetSetting.equals("SYSTEM");
+    	
         volumeSlider = (VolumeSlider)this.findViewById(R.id.volume);
         volumeSlider.setOnVolumeLevelChangeListener(this);
     }
@@ -53,10 +61,10 @@ public class VolumeControl extends AbstractTeslaActivity implements VolumeSlider
 			commandService.registerErrorHandler(errorHandler);
 			
 	    	if (level == 0) {
-	    		command = commandService.queryForCommand(Command.VOL_MUTE); 
+	    		command = commandService.queryForCommand(Command.VOL_MUTE, ignoreAppSetting);
 	    	}
 	    	else {
-				command = commandService.queryForCommand(Command.VOL_CHANGE);
+				command = commandService.queryForCommand(Command.VOL_CHANGE, ignoreAppSetting);
 		    	Object levelArg = null;
 		    	if (level > 1) {
 		    		// Values above a fraction should be absolute integers
@@ -82,7 +90,7 @@ public class VolumeControl extends AbstractTeslaActivity implements VolumeSlider
 	
 	private void setInitialVolume() {
         volumeSlider.setLevel(0.0f);
-		GetVolumeLevelTask getVolumeTask = new GetVolumeLevelTask(commandService);
+		GetVolumeLevelTask getVolumeTask = new GetVolumeLevelTask(commandService, ignoreAppSetting);
 		getVolumeTask.registerListener(VolumeControl.this);
 		getVolumeTask.execute();
 	}

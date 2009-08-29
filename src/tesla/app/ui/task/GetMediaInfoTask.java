@@ -58,7 +58,7 @@ public class GetMediaInfoTask extends AsyncTask<ICommandController, Boolean, Med
 		ICommandController commandService = args[0];
 		try {
 			commandService.registerErrorHandler(errorHandler);
-			command = commandService.queryForCommand(Command.GET_MEDIA_INFO);
+			command = commandService.queryForCommand(Command.GET_MEDIA_INFO, false);
 			
 			Map<String, String> settings = command.getSettings();
 			

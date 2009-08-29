@@ -38,7 +38,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.provider.UserDictionary.Words;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
@@ -89,7 +88,7 @@ public abstract class AbstractTeslaActivity extends Activity {
 						phoneIsBusy = true;
 						try {
 							commandService.registerErrorHandler(errorHandler);
-							Command command = commandService.queryForCommand(Command.PAUSE);
+							Command command = commandService.queryForCommand(Command.PAUSE, false);
 							if (command != null) {
 								commandService.sendCommand(command);
 								onPhoneIsBusy();
@@ -110,7 +109,7 @@ public abstract class AbstractTeslaActivity extends Activity {
 						phoneIsBusy = false;
 						try {
 							commandService.registerErrorHandler(errorHandler);
-							Command command = commandService.queryForCommand(Command.PLAY);
+							Command command = commandService.queryForCommand(Command.PLAY, false);
 							if (command != null) {
 								commandService.sendCommand(command);
 								onPhoneIsIdle();

@@ -9,7 +9,7 @@ interface ICommandController {
 	
 	boolean connect();
 	
-	Command queryForCommand(in String key);
+	Command queryForCommand(in String key, in boolean ignoreAppCommand);
 	void sendCommand(in Command command);
 	Command sendQuery(in Command command);
 	void reloadCommandFactory();

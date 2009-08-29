@@ -32,6 +32,7 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 	
 	ICommandController commandService;
 	private Command command;
+	private boolean ignoreAppSetting = false;
 	
 	// Error messages need to be passed back to main UI thread
 	private String errorTitle = null;
@@ -51,17 +52,19 @@ public class GetVolumeLevelTask extends AsyncTask<Object, Boolean, Float> {
 		void onGetVolumeComplete(Float result);
 	}
 
-	public GetVolumeLevelTask(ICommandController commandService) {
+	public GetVolumeLevelTask(ICommandController commandService, boolean ignoreAppSetting) {
 		this.commandService = commandService;
+		this.ignoreAppSetting = ignoreAppSetting;
 	}
 
 	protected void onPreExecute() {
 		float min = 0.0f;
 		float max = 1.0f;
+    	
 		try {
 			commandService.registerErrorHandler(errorHandler);
 			
-			command = commandService.queryForCommand(Command.VOL_CURRENT);
+			command = commandService.queryForCommand(Command.VOL_CURRENT, ignoreAppSetting);
 			
 			Map<String, String> settings = command.getSettings();
 	        min = Float.parseFloat(settings.get("MIN"));

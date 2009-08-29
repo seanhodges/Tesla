@@ -74,8 +74,8 @@ public class CommandService extends Service {
 				return connectAction();
 			}
 			
-			public Command queryForCommand(String key) throws RemoteException {
-				return queryForCommandAction(key);
+			public Command queryForCommand(String key, boolean ignoreAppCommand) throws RemoteException {
+				return queryForCommandAction(key, ignoreAppCommand);
 			}
 			
 			public void sendCommand(Command command) throws RemoteException {
@@ -185,8 +185,8 @@ public class CommandService extends Service {
 		}, 0, EXEC_POLL_PERIOD);
 	}
 	
-	protected Command queryForCommandAction(String key) {
-		return factory.getCommand(key);
+	protected Command queryForCommandAction(String key, boolean ignoreAppCommand) {
+		return factory.getCommand(key, ignoreAppCommand);
 	}
 
 	protected synchronized void sendCommandAction(Command command) {
