@@ -36,7 +36,8 @@
 	<string name="playlist">Playlist</string>
 	<string name="volume">Volume</string>
 	
-	<string name="menu_application_change">Change Media Player...</string>
+	<string name="menu_application_change">Change Media Player</string>
+	<string name="menu_preferences_launch">Preferences</string>
 	
 	<string name="shut_down_check_title">Confirm shut down</string>
 	<string name="shut_down_check_body">Are you sure you want to turn off the computer?</string>
@@ -47,6 +48,15 @@
 	<!-- Volume control -->
 	<string name="volume_title">Volume</string>
 	<string name="volume_update">Volume is now</string>
+	
+	<!-- Preferences -->
+	<string name="preferences_title">Preferences</string>
+	<string name="volume_target_key">volumeTarget</string>
+	<string name="volume_target_title">Target volume</string>
+	<string name="volume_target_summary">Control the system or the player volume</string>
+	<string name="on_call_pause_key">onCallPauseMode</string>
+	<string name="on_call_pause_title">Incoming call</string>
+	<string name="on_call_pause_summary">Pause play-back when call in progress</string>
 	
 	<!-- Help browser -->
 	<string name="help_title">Tesla Help</string>

@@ -17,16 +17,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity android:name=".ui.AppSelector"
         	android:label="@string/app_selector_title"
         	android:theme="@android:style/Theme.Dialog" />
         
         <activity android:name=".ui.Playback" android:screenOrientation="portrait" />
+        
         <activity android:name=".ui.VolumeControl" 
         	android:screenOrientation="portrait" 
         	android:label="@string/volume_title"
         	android:theme="@android:style/Theme.Dialog" />
-        	
+        
+        <activity android:name=".ui.PlaybackPreferences"
+	        android:label="@string/preferences_title" /> 
+        		
         <activity android:name=".ui.HelpBrowser"
 	        android:label="@string/help_title"
         	android:theme="@android:style/Theme.Dialog" />        

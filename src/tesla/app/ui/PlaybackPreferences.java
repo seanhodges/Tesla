@@ -14,20 +14,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package tesla.app.command.provider;
+package tesla.app.ui;
 
+import tesla.app.R;
+import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
-public class InitScriptProvider {
+public class PlaybackPreferences extends PreferenceActivity {
 	
-	public static String getInitScript() {
-		return script;
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		addPreferencesFromResource(R.xml.preferences);
 	}
-	
-	private static String script = "QUERY_ENVIRON=\"$(grep DBUS_SESSION_BUS_ADDRESS= ~/.dbus/session-bus/*-0 | cut -d '=' -f 2,3,4)\"; " +
-			"if [[ \"${QUERY_ENVIRON}\" != \"\" ]]; then " +
-			"	export DBUS_SESSION_BUS_ADDRESS=\"${QUERY_ENVIRON}\"; " +
-			"	echo success; " +
-			"else " +
-			"	echo Could not find dbus session ID in user environment; " +
-			"fi; ";
+
 }

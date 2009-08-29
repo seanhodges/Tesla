@@ -56,6 +56,10 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 	private static final long SONG_INFO_CHANGE_PERIOD = 4000;
 	private static final int APP_SELECTOR_RESULT = 1;
 	
+	// Options menu item ID's
+	private static final int TARGET_APP_SELECTOR_ITEM = 500;
+	private static final int PREFERENCES_MENU_ITEM = 501;
+	
 	private boolean stopSongInfoPolling = false;
 	private boolean appReportingIfPlaying = false;
 	private String versionString;
@@ -260,14 +264,21 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(R.string.menu_application_change);
+		menu.add(0, TARGET_APP_SELECTOR_ITEM, 0, R.string.menu_application_change);
+		menu.add(0, PREFERENCES_MENU_ITEM, 1, R.string.menu_preferences_launch);
 		return true;
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Currently only one item to select
-		startActivityForResult(new Intent(Playback.this, AppSelector.class), APP_SELECTOR_RESULT);
-		return true;
+		switch (item.getItemId()) {
+		case TARGET_APP_SELECTOR_ITEM:
+			startActivityForResult(new Intent(Playback.this, AppSelector.class), APP_SELECTOR_RESULT);
+			return true;
+		case PREFERENCES_MENU_ITEM:
+			startActivity(new Intent(this, PlaybackPreferences.class));
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

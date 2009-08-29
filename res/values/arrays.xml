@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string-array name="volume_target_options">
+		<item>PLAYER</item>
+		<item>SYSTEM</item>
+	</string-array>
+	<string-array name="volume_target_options_labels">
+		<item>Player volume</item>
+		<item>System volume</item>
+	</string-array>
+	
+	<string-array name="on_call_pause_options">
+		<item>RINGING</item>
+		<item>OFFHOOK</item>
+		<item></item>
+	</string-array>
+	<string-array name="on_call_pause_options_labels">
+		<item>Phone rings</item>
+		<item>Call in progress</item>
+		<item>None of the above</item>
+	</string-array>
+	
+</resources>

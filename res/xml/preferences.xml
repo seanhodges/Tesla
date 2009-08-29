@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<ListPreference
+		android:key="@string/volume_target_key"
+		android:title="@string/volume_target_title"
+		android:showDefault="true"
+		android:defaultValue="PLAYER"
+		android:entries="@array/volume_target_options_labels"
+		android:entryValues="@array/volume_target_options"
+		android:summary="@string/volume_target_summary" />
+		
+	<ListPreference
+		android:key="@string/on_call_pause_key"
+		android:title="@string/on_call_pause_title"
+		android:showDefault="true"
+		android:defaultValue="RINGING"
+		android:entries="@array/on_call_pause_options_labels"
+		android:entryValues="@array/on_call_pause_options"
+		android:summary="@string/on_call_pause_summary" />
+		
+</PreferenceScreen>
