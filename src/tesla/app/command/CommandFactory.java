@@ -28,8 +28,8 @@ import tesla.app.command.provider.InitScriptProvider;
 
 public class CommandFactory {
 	
-	private static final long COMMAND_DELAY = 200;
-	private static final long INIT_SCRIPT_DELAY = 500;
+	private static final long COMMAND_DELAY = 300;
+	private static final long INIT_SCRIPT_DELAY = 1000;
 
 	private IConfigProvider appProvider;
 	private ArrayList<IConfigProvider> providerScanner = new ArrayList<IConfigProvider>();
