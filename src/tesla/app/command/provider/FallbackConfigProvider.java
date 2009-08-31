@@ -26,13 +26,16 @@ public class FallbackConfigProvider implements IConfigProvider {
 	public String getCommand(String key) {
 		String out = null;
 		if (key.equals(Command.VOL_CURRENT)) {
-			out = "amixer get \"Front\" | grep \"Front Left:\" | cut -d \" \" -f 7 | sed -e \"s/[^0-9]//g\"";
+			out = "(amixer get \"Master\" 2>/dev/null " +
+					"|| amixer get \"Front\" 2>/dev/null " +
+					"|| amixer get \"PCM\"" +
+					") | grep -m 1 \"\\[on\\]\" | cut -d \"[\" -f 2 | sed -e \"s/[^0-9]//g\"";
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			out = "amixer set \"Front\" %i% unmute 1>/dev/null";
+			out = "amixer set \"Master\" %i% unmute &>/dev/null || amixer set \"Front\" %i% unmute &>/dev/null || amixer set \"PCM\" %i% unmute 1>/dev/null";
 		}
 		else if (key.equals(Command.VOL_MUTE)) {
-			out = "amixer set \"Front\" 0% mute 1>/dev/null";
+			out = "amixer set \"Master\" 0% unmute &>/dev/null || amixer set \"Front\" 0% unmute &>/dev/null || amixer set \"PCM\" 0% unmute 1>/dev/null";
 		}
 		else {
 			// No command was found
