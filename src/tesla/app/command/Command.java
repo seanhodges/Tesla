@@ -44,7 +44,6 @@ public final class Command implements Parcelable {
 	private Map<String, String> settings;
 	
 	private ArrayList<Object> args;
-	long executionDelay = 0;
 	private String output;
 	private String targetApp;
 
@@ -77,10 +76,6 @@ public final class Command implements Parcelable {
 	public void addArg(Object arg) {
 		args.add(arg);
 	}
-	
-	public void setDelay(long executionDelay) {
-		this.executionDelay = executionDelay;
-	}
 
 	public String getKey() {
 		return key;
@@ -103,10 +98,6 @@ public final class Command implements Parcelable {
 
 	public Map<String, String> getSettings() {
 		return settings;
-	}
-
-	public long getDelay() {
-		return executionDelay;
 	}
 
 	private String parseArguments(String out)
@@ -173,7 +164,6 @@ public final class Command implements Parcelable {
 			settingsBundle.putString(key, settings.get(key));	
 		}
 		dest.writeBundle(settingsBundle);
-		dest.writeLong(executionDelay);
 		dest.writeString(output);
 		dest.writeString(targetApp);
 	}
@@ -188,7 +178,6 @@ public final class Command implements Parcelable {
 		for (String key : settingsBundle.keySet()) {
 			settings.put(key, settingsBundle.getString(key));
 		}
-		executionDelay = src.readLong();
 		output = src.readString();
 		targetApp = src.readString();
 	}

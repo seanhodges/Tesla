@@ -35,12 +35,6 @@ public class FakeConnection implements IConnection {
 
 	public String sendCommand(Command command) throws ConnectionException {
 		if (command.getKey().equals(Command.INIT)) {
-			// Simulate the delay used in SSHConnection
-			try {
-				Thread.sleep(command.getDelay());
-			} catch (InterruptedException e) {
-				// Do nothing
-			}
 			return "success\n";
 		}
 		else if (command.getKey().equals(Command.VOL_CURRENT)) {

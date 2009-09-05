@@ -15,7 +15,6 @@ public class SynchronousStabilityTest extends AndroidTestCase {
 	
 	private static final SSHConnection connection = new SSHConnection();
 	
-	@SuppressWarnings("unused")
 	public void setUp() throws Exception {
 		connection.connect(new ConnectionOptions(this.getContext()) {
 			{

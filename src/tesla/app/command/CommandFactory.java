@@ -28,9 +28,6 @@ import tesla.app.command.provider.InitScriptProvider;
 
 public class CommandFactory {
 	
-	private static final long COMMAND_DELAY = 200;
-	private static final long INIT_SCRIPT_DELAY = 500;
-
 	private IConfigProvider appProvider;
 	private ArrayList<IConfigProvider> providerScanner = new ArrayList<IConfigProvider>();
 	
@@ -48,7 +45,6 @@ public class CommandFactory {
 	public Command getInitScript() {
 		Command out = new Command();
 		out.setKey(Command.INIT);
-		out.setDelay(INIT_SCRIPT_DELAY);
 		out.setCommandString(InitScriptProvider.getInitScript());
 		return out;
 	}
@@ -56,7 +52,6 @@ public class CommandFactory {
 	public Command getLaunchAppCommand() {
 		Command out = new Command();
 		out.setKey(Command.LAUNCH_PLAYER);
-		out.setDelay(COMMAND_DELAY);
 		out.setCommandString(appProvider.getLaunchAppCommand());
 		return out;
 	}
@@ -64,7 +59,6 @@ public class CommandFactory {
 	public Command getCommand(String key, boolean ignoreAppCommand) {
 		Command out = new Command();
 		out.setKey(key);
-		out.setDelay(COMMAND_DELAY);
 		Map<String, String> settings = null;
 		
 		String command = null;
