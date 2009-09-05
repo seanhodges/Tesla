@@ -29,8 +29,6 @@ import com.trilead.ssh2.Session;
 
 public class SSHConnection implements IConnection  {
 	
-	private static final int MAX_STDOUT_ATTEMPTS = 8;
-
 	private ConnectionOptions config;
 	
 	private Connection connection;
@@ -124,7 +122,7 @@ public class SSHConnection implements IConnection  {
 	}
 	
 	public String sendCommand(Command command) throws ConnectionException {
-		String response = "";
+		StringBuffer stdOutBuffer = new StringBuffer();
 		if (session != null) {
 			try {
 				if (responseStream.available() > 0) {
@@ -137,7 +135,8 @@ public class SSHConnection implements IConnection  {
 				// Flushing the streams failed, continue anyway
 			}
 			try {
-				stdin.write((command.getCommandString() + "\n").getBytes());
+				byte[] dataToSend = convertToStdinPacket(command.getCommandString());
+				stdin.write(dataToSend);
 				stdin.flush();
 			} catch (Exception e) {
 				throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, "Failed to send command to client, error returned was: " + e.getMessage());
@@ -146,36 +145,58 @@ public class SSHConnection implements IConnection  {
 			String stderr = "";
 			
 			// Keep polling for a response until something comes back
-			int attempts = 0;
-			while (response.length() == 0 && stderr.length() == 0 && attempts < MAX_STDOUT_ATTEMPTS) {
+			while (stderr.length() == 0) {
 				try {
-					Thread.sleep(command.getDelay());
-					
 					// Any STDERR output is treated as a failure for now
 					if (errorStream.available() > 0) {
 						stderr = getResponseFromSessionStream(errorStream);
 						throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
 					}
 					// Read the STDOUT output to return as a response
-					response = getResponseFromSessionStream(responseStream);
+					String responsePart = getResponseFromSessionStream(responseStream);
+					if (responsePart.length() > 0) { 
+						stdOutBuffer.append(responsePart);
+						int bufferSize = stdOutBuffer.length();
+						if (bufferSize > 5) {
+							if (stdOutBuffer.substring(bufferSize - 6, bufferSize - 1).equals("[EOC]")) {
+								break;
+							}
+						}
+					}
 				} catch (Exception e) {
-					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + stderr);
+					throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, command.getCommandString() + " :- " + e);
 				}
-				attempts++;
 			}
 		}
 		else {
 			throw new ConnectionException(ConnectionException.FAILED_AT_COMMAND, config.hostname, "Not connected to a server");
 		}
-		return response;
+		return parseOutput(stdOutBuffer.toString());
 	}
 	
+	private byte[] convertToStdinPacket(String commandString) {
+		StringBuilder out = new StringBuilder();
+		out.append(commandString);
+		if (!commandString.trim().endsWith(";")) {
+			out.append(";");
+		}
+		out.append(" echo \"[EOC]\"");
+		out.append("\n");
+		return out.toString().getBytes();
+	}
+
 	private String getResponseFromSessionStream(InputStream is) throws IOException {
-		if (is.available() > 0) {
-			byte[] buffer = new byte[is.available()];
-			is.read(buffer, 0 ,is.available());
+		int available = is.available();
+		if (available > 0) {
+			byte[] buffer = new byte[available];
+			is.read(buffer, 0, available);
 			return new String(buffer);
 		}
 		return "";
+	}
+	
+	private String parseOutput(String data) {
+		data = data.replaceAll("\\[EOC\\]\\n", "");
+		return data;
 	}
 }
