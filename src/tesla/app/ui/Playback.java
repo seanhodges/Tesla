@@ -52,8 +52,7 @@ import android.widget.Toast;
 
 public class Playback extends AbstractTeslaActivity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
 
-	private static final long SONG_INFO_UPDATE_PERIOD = 4000;
-	private static final long SONG_INFO_CHANGE_PERIOD = 4000;
+	private static final long SONG_INFO_UPDATE_PERIOD = 2000;
 	private static final int APP_SELECTOR_RESULT = 1;
 	
 	// Options menu item ID's
@@ -146,12 +145,12 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 			case R.id.last_song:
 				command = commandService.queryForCommand(Command.PREV, false);
 				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
-				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_CHANGE_PERIOD);
+				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
 				break;
 			case R.id.next_song:
 				command = commandService.queryForCommand(Command.NEXT, false);
 				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
-				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_CHANGE_PERIOD);
+				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
 				break;
 			case R.id.playlist:
 				new AlertDialog.Builder(Playback.this)
