@@ -37,7 +37,13 @@
         	android:theme="@android:style/Theme.Dialog" />        
         
 		<service android:name=".service.CommandService"/>
+		
+		<uses-library android:name="android.test.runner" />
     </application>
+    
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+    	android:targetPackage="tesla.app"
+    	android:label="Tesla Tests" />
     
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 
