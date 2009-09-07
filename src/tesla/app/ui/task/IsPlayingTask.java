@@ -78,7 +78,7 @@ public class IsPlayingTask extends AsyncTask<ICommandController, Boolean, Boolea
 					}
 					else {
 						// DBus has returned a string, only Banshee does this right now
-						out = data.equalsIgnoreCase("PLAYING");
+						out = data.trim().equalsIgnoreCase("PLAYING");
 					}
 				}
 			}

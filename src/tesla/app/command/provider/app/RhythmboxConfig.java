@@ -82,7 +82,7 @@ public class RhythmboxConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
-			settings.put("ENABLED", "false");
+			settings.put("ENABLED", "true");
 		}
 		return settings;
 	}

@@ -53,7 +53,6 @@ public class AmarokConfig implements IConfigProvider {
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			
 			args.add("%i");
 			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "setVolume", args);
 			args.clear();
@@ -83,6 +82,30 @@ public class AmarokConfig implements IConfigProvider {
 				"org.freedesktop.MediaPlayer.GetMetadata");
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			// TODO: Amarok 1 implementation
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetStatus", false);
+			out = "if [[ \"$(" + dbusCommand + " | sed -n '3p')\" == \"      int32 0\" ]]; then echo \"PLAYING\"; fi";
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "trackCurrentTime");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.PositionGet");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
+		}
+		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "trackTotalTime")  + " | grep mtime | cut -d ' ' -f 2";
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetMetadata", false) + " | grep mtime -A 1 | grep variant | sed -e \"s/[^0-9]*//\" | cut -d ' ' -f 2";
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
+		}
+		else if (key.equals(Command.SET_MEDIA_POSITION)) {
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "seek");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.PositionSet");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
+		}
 		return out;
 	}
 
@@ -93,6 +116,12 @@ public class AmarokConfig implements IConfigProvider {
 			settings.put("MAX", "100.0");
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
 			settings.put("ENABLED", "true");
 		}
 		return settings;

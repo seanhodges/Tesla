@@ -29,6 +29,7 @@ import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;
 import tesla.app.service.connect.ConnectionOptions;
 import tesla.app.ui.task.GetMediaInfoTask;
+import tesla.app.ui.task.GetMediaProgressTask;
 import tesla.app.ui.task.IsPlayingTask;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -47,12 +48,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Playback extends AbstractTeslaActivity implements OnClickListener, IsPlayingTask.OnIsPlayingListener, GetMediaInfoTask.OnGetMediaInfoListener {
+public class Playback extends AbstractTeslaActivity 
+		implements 
+			OnClickListener, 
+			IsPlayingTask.OnIsPlayingListener, 
+			GetMediaInfoTask.OnGetMediaInfoListener, 
+			GetMediaProgressTask.OnMediaProgressListener {
 
-	private static final long SONG_INFO_UPDATE_PERIOD = 2000;
+	private static final long UI_UPDATE_PERIOD = 2000;
 	private static final int APP_SELECTOR_RESULT = 1;
 	
 	// Options menu item ID's
@@ -61,12 +68,13 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 	
 	private boolean stopSongInfoPolling = false;
 	private boolean appReportingIfPlaying = false;
+	private boolean seekBarEnabled = false;
 	private String versionString;
 	
-	private Handler updateSongInfoHandler = new Handler();
-	private Runnable updateSongInfoRunnable = new Runnable() {
+	private Handler updateUIHandler = new Handler();
+	private Runnable updateUIRunnable = new Runnable() {
 		public void run() {
-			updateSongInfo();
+			updateUI();
 		}
 	};
 	
@@ -107,22 +115,31 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
     }
 
 	protected void onTeslaServiceConnected() {
-		// If the application is reporting whether it is playing, we don't want to toggle the play button manually
         try {
 			commandService.registerErrorHandler(errorHandler);
-			Command command = commandService.queryForCommand(Command.IS_PLAYING, false);
 			
+			// If the application is reporting whether it is playing, we don't want to toggle the play button manually			
+			Command command = commandService.queryForCommand(Command.IS_PLAYING, false);
 			Map<String, String> settings = command.getSettings();
 			if (settings.containsKey("ENABLED")) {
 				appReportingIfPlaying = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
+			
+			// Turn on the seek bar if the player can support it
+			command = commandService.queryForCommand(Command.GET_MEDIA_POSITION, false);
+			settings = command.getSettings();
+			if (settings.containsKey("ENABLED")) {
+				seekBarEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
+			}
+			
 			commandService.unregisterErrorHandler(errorHandler);
+			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		
 		// Update the song info now, and start the polling update 
-		updateSongInfo();
+		updateUI();
 	}
 	
 	protected void onTeslaServiceDisconnected() {
@@ -144,13 +161,13 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 				break;
 			case R.id.last_song:
 				command = commandService.queryForCommand(Command.PREV, false);
-				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
-				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
+				updateUIHandler.removeCallbacks(updateUIRunnable);
+				updateUIHandler.postDelayed(updateUIRunnable, UI_UPDATE_PERIOD);
 				break;
 			case R.id.next_song:
 				command = commandService.queryForCommand(Command.NEXT, false);
-				updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
-				updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
+				updateUIHandler.removeCallbacks(updateUIRunnable);
+				updateUIHandler.postDelayed(updateUIRunnable, UI_UPDATE_PERIOD);
 				break;
 			case R.id.playlist:
 				new AlertDialog.Builder(Playback.this)
@@ -226,10 +243,22 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 		}
 	}
 
-	private void updateSongInfo() {
-		updateSongInfoHandler.removeCallbacks(updateSongInfoRunnable);
+	private void updateUI() {
+		updateUIHandler.removeCallbacks(updateUIRunnable);
 		
 		if (commandService != null && stopSongInfoPolling == false) {
+			
+			// Update the media info
+			try {
+				GetMediaInfoTask getMediaInfoTask = new GetMediaInfoTask();
+				getMediaInfoTask.registerListener(this);
+				getMediaInfoTask.execute(commandService);
+			}
+			catch (RejectedExecutionException e) {
+				// Ignore failed executions
+			}
+			
+			// Update the play/pause button
 			if (appReportingIfPlaying) {
 				try {
 					IsPlayingTask isPlayingTask = new IsPlayingTask();
@@ -241,17 +270,20 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 				}
 			}
 			
-			try {
-				GetMediaInfoTask getSongInfoTask = new GetMediaInfoTask();
-				getSongInfoTask.registerListener(this);
-				getSongInfoTask.execute(commandService);
-			}
-			catch (RejectedExecutionException e) {
-				// Ignore failed executions
+			// Update the seek bar
+			if (seekBarEnabled) {
+				try {
+					GetMediaProgressTask getMediaProgressTask = new GetMediaProgressTask();
+					getMediaProgressTask.registerListener(this);
+					getMediaProgressTask.execute(commandService);
+				}
+				catch (RejectedExecutionException e) {
+					// Ignore failed executions
+				}
 			}
 		}
 		
-		updateSongInfoHandler.postDelayed(updateSongInfoRunnable, SONG_INFO_UPDATE_PERIOD);
+		updateUIHandler.postDelayed(updateUIRunnable, UI_UPDATE_PERIOD);
 	}
 
 	protected void onPause() {
@@ -387,5 +419,15 @@ public class Playback extends AbstractTeslaActivity implements OnClickListener, 
 	
 	protected void onPhoneIsIdle() {
 		togglePlayPauseButtonMode();
+	}
+
+	public void onMediaProgressChanged(double currentProgress, double mediaLength) {
+		// Seek bar does not accept doubles, so we must convert to percentages to avoid buffer overflows
+		int percent = 0;
+		if (currentProgress > 0 && mediaLength > 0) {
+			percent = (int)((currentProgress / mediaLength) * 100);
+		}
+		SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
+		seekBar.setProgress(percent);
 	}
 }
