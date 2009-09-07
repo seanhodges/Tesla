@@ -19,8 +19,8 @@ public class SynchronousStabilityTest extends AndroidTestCase {
 		connection.connect(new ConnectionOptions(this.getContext()) {
 			{
 				this.hostname = "10.0.2.2";
-				this.username = "sean";
-				this.password = "la5TWord5";
+				this.username = "username";
+				this.password = "password";
 				this.port = 22;
 			}
 			
