@@ -39,7 +39,7 @@
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="40dip"
+		android:paddingTop="20dip"
 		android:orientation="horizontal"
 		android:layout_gravity="center_horizontal">
 		
@@ -69,7 +69,7 @@
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="30dip"
+		android:paddingTop="10dip"
 		android:orientation="horizontal"
 		android:layout_gravity="center_horizontal">
 		
@@ -125,6 +125,14 @@
 		</TableLayout>
 	</LinearLayout>
 
+	<SeekBar android:id="@+id/media_progress"
+		android:layout_width="250dip"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:paddingTop="30dip"
+		android:max="100"
+		android:progress="0" /> 
+        
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
