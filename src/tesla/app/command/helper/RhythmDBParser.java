@@ -30,6 +30,7 @@ public class RhythmDBParser extends DefaultHandler {
 	private static final String TITLE = "title";
 	private static final String ARTIST = "artist";
 	private static final String ALBUM = "album";
+	private static final String LENGTH = "mtime";
 	
 	private Map<String, String> out = new HashMap<String, String>();
 	
@@ -48,6 +49,9 @@ public class RhythmDBParser extends DefaultHandler {
 		}
 		else if (localName.equals("album")) {
 			mode = ALBUM;
+		}
+		else if (localName.equals("mtime")) {
+			mode = LENGTH;
 		}
 		else {
 			mode = "";

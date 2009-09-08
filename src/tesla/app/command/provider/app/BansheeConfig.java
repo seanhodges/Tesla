@@ -46,7 +46,7 @@ public class BansheeConfig implements IConfigProvider {
 				"org.bansheeproject.Banshee.PlaybackController.Next", args);
 		}
 		else if (key.equals(Command.VOL_CHANGE)) {
-			args.add(new DBusHelper().evaluateArg("%u"));
+			args.add(new DBusHelper().evaluateArg("%u16"));
 			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
 				"org.bansheeproject.Banshee.PlayerEngine.SetVolume", args);
 		}

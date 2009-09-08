@@ -127,8 +127,12 @@ public final class Command implements Parcelable {
 						out = out.replaceFirst("%i", ((Integer)arg).toString());
 						success = true;
 					}
-					else if (out.contains("%u")) {
-						out = out.replaceFirst("%u", ((Integer)arg).toString());
+					else if (out.contains("%u16")) {
+						out = out.replaceFirst("%u16", ((Integer)arg).toString());
+						success = true;
+					}
+					else if (out.contains("%u32")) {
+						out = out.replaceFirst("%u32", ((Integer)arg).toString());
 						success = true;
 					}
 				}
@@ -147,7 +151,7 @@ public final class Command implements Parcelable {
 	}
 	
 	private boolean stillHasArgs(String data) {
-		String[] argList = {"%s", "%f", "%i", "%u", "%b"};
+		String[] argList = {"%s", "%f", "%i", "%u16", "%u32", "%b"};
 		for (String argIt : argList) {
 			if (data.contains(argIt)) return true;
 		}

@@ -68,6 +68,23 @@ public class RhythmboxConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
 				"org.gnome.Rhythmbox.Player.getPlaying");
 		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.getElapsed");
+		}
+		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
+			String uriCommand = "\"$(" + new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.getPlayingUri", false) + " | grep string | cut -d '\"' -f 2)\"";
+			args.add(new DBusHelper().evaluateArg(uriCommand));
+			String songQueryCommand = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Shell", 
+					"org.gnome.Rhythmbox.Shell.getSongProperties", args, false);
+			out = songQueryCommand + " | grep duration -A 1 | grep variant | sed -e \"s/[^0-9]*//\" | cut -d ' ' -f 2";
+		}
+		else if (key.equals(Command.SET_MEDIA_POSITION)) {
+			args.add(new DBusHelper().evaluateArg("%u32"));
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+				"org.gnome.Rhythmbox.Player.setElapsed", args);
+		}
 		
 		return out;
 	}
@@ -82,6 +99,9 @@ public class RhythmboxConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
 			settings.put("ENABLED", "true");
 		}
 		return settings;

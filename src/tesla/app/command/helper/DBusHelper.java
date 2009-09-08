@@ -61,8 +61,11 @@ public class DBusHelper implements ICommandHelper {
 		else if (rawArg.equals("%i")) {
 			dataType = "int32:";
 		}
-		else if (rawArg.equals("%u")) {
+		else if (rawArg.equals("%u16")) {
 			dataType = "uint16:";
+		}
+		else if (rawArg.equals("%u32")) {
+			dataType = "uint32:";
 		}
 		else if (rawArg.equals("%f")) {
 			dataType = "double:";
@@ -108,6 +111,9 @@ public class DBusHelper implements ICommandHelper {
 				out = out.substring(6);
 			}
 			else if (out.startsWith("uint16")) {
+				out = out.substring(7);
+			}
+			else if (out.startsWith("uint32")) {
 				out = out.substring(7);
 			}
 			else if (out.startsWith("double")) {

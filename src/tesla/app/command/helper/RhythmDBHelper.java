@@ -30,26 +30,32 @@ public class RhythmDBHelper implements ICommandHelper {
 	
 	public static final String MAGIC_MARKER = "[rhythmdb]";
 	
+	public String compileQuery(String uriCommand, boolean includeMarker) {
+		StringBuilder builder = new StringBuilder();
+		if (includeMarker) {
+			builder.append("echo " + MAGIC_MARKER + ";");
+		}
+		builder.append("rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; ");
+		builder.append("if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then ");
+		builder.append(		"rhythmdb_path=~/.local/share/rhythmbox/rhythmdb.xml; ");
+		builder.append("fi; ");
+		builder.append("uri=\"$(" + uriCommand + " | sed -e \"s/'/\\\\\\'/g\")\"; ");
+		builder.append("uri=\"${uri/method*string \\\"/}\"; ");
+		builder.append("uri=\"${uri/\\\"/}\"; ");
+		builder.append("if [[ ${uri} != \"\" ]]; then ");
+		builder.append(		"python -c \"");
+		builder.append(			"import libxml2;");
+		builder.append(			"doc = libxml2.parseFile('${rhythmdb_path}');");
+		builder.append(			"ctxt = doc.xpathNewContext();");
+		builder.append(			"res = ctxt.xpathEval('//entry[@type=\\\"song\\\"]/location[.=\\\"${uri}\\\"]/..');");
+		builder.append(			"print res[0];");
+		builder.append(			"ctxt.xpathFreeContext(); doc.freeDoc()\"; ");
+		builder.append("fi");
+		return builder.toString();
+	}
+	
 	public String compileQuery(String uriCommand) {
-		String out = "echo " + MAGIC_MARKER + ";" + 
-			"rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; " +
-			"if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then " +
-			"rhythmdb_path=~/.local/share/rhythmbox/rhythmdb.xml; " + 
-			"fi; " + 
-			"uri=\"$(" + uriCommand + " | sed -e \"s/'/\\\\\\'/g\")\"; " +
-			"uri=\"${uri/method*string \\\"/}\"; " +
-			"uri=\"${uri/\\\"/}\"; " +
-			"if [[ ${uri} != \"\" ]]; then " +
-			"python -c \"" +
-			"import libxml2;" + 
-			"doc = libxml2.parseFile('${rhythmdb_path}');" + 
-			"ctxt = doc.xpathNewContext();" + 
-			"res = ctxt.xpathEval('//entry[@type=\\\"song\\\"]/location[.=\\\"${uri}\\\"]/..');" + 
-			"print res[0];" + 
-			"ctxt.xpathFreeContext(); doc.freeDoc()\"; " +
-			"fi";
-		
-		return out;
+		return compileQuery(uriCommand, true);
 	}
 	
 	public Map<String, String> evaluateOutputAsMap(String rawOut) {
