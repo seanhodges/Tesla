@@ -127,23 +127,52 @@ public class Playback extends AbstractTeslaActivity
 				appReportingIfPlaying = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 			
-			// Turn on the seek bar if the player can support it
-			command = commandService.queryForCommand(Command.GET_MEDIA_POSITION, false);
-			settings = command.getSettings();
-			if (settings.containsKey("ENABLED")) {
-				seekBarEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
-			}
-			
 			commandService.unregisterErrorHandler(errorHandler);
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		
+		showHideSeekBar();
+		
 		// Update the song info now, and start the polling update 
 		updateUI();
 	}
 	
+	private void showHideSeekBar() {
+		// Turn on the seek bar if the player can support it
+		try {
+			commandService.registerErrorHandler(errorHandler);
+			Command command = commandService.queryForCommand(Command.GET_MEDIA_POSITION, false);
+			Map<String, String> settings = command.getSettings();
+			if (settings.containsKey("ENABLED")) {
+				seekBarEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
+			}
+			
+			// Hide the seek bar if the player does not support it
+			int visible = View.VISIBLE;
+			if (!seekBarEnabled) {
+				visible = View.INVISIBLE;
+			}
+			SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
+	        seekBar.setVisibility(visible);
+	        
+	        // If the seek bar is hidden, move the media info 
+	        // panel down a bit to accommodate the missing space
+	        int panelTop = 10;
+	        if (!seekBarEnabled) {
+	        	panelTop = 30;
+	        }
+	    	View mediaInfoPanel = (View)findViewById(R.id.media_info_panel);
+	    	mediaInfoPanel.setPadding(-1, panelTop, -1, -1);
+
+			commandService.unregisterErrorHandler(errorHandler);
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
 	protected void onTeslaServiceDisconnected() {
 		// Do nothing
 	}
@@ -336,6 +365,7 @@ public class Playback extends AbstractTeslaActivity
 				try {
 					commandService.reloadCommandFactory();
 					setAppIcon();
+					showHideSeekBar();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

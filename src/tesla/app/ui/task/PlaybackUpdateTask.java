@@ -52,6 +52,10 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 			errorMessage = message;
 		}
 	};
+
+	private boolean mediaInfoEnabled = false;
+	private boolean isPlayingEnabled = false;
+	private boolean mediaPositionEnabled = false;
 	
 	// This should be private, but Java 5 does not allow it
 	class PlaybackUpdateData {
@@ -90,12 +94,11 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 			
 			command = commandService.queryForCommand(Command.GET_MEDIA_INFO, false);
 			Map<String, String> settings = command.getSettings();
-			boolean enabled = false;
 			if (settings.containsKey("ENABLED")) {
-				enabled = Boolean.parseBoolean(settings.get("ENABLED"));
+				mediaInfoEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 			
-			if (enabled) {
+			if (mediaInfoEnabled) {
 				command = commandService.sendQuery(command);
 			
 				// Compile a MediaInfo pod with servers metadata
@@ -134,13 +137,12 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 			 */
 			
 			command = commandService.queryForCommand(Command.IS_PLAYING, false);
-			enabled = false;
 			settings = command.getSettings();
 			if (settings.containsKey("ENABLED")) {
-				enabled = Boolean.parseBoolean(settings.get("ENABLED"));
+				isPlayingEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 
-			if (enabled) {
+			if (isPlayingEnabled) {
 				command = commandService.sendQuery(command);
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
 					ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
@@ -163,13 +165,12 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 			
 			command = commandService.queryForCommand(Command.GET_MEDIA_POSITION, false);
 			
-			enabled = false;
 			settings = command.getSettings();
 			if (settings.containsKey("ENABLED")) {
-				enabled = Boolean.parseBoolean(settings.get("ENABLED"));
+				mediaPositionEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 
-			if (enabled) {
+			if (mediaPositionEnabled) {
 				boolean success = false;
 				
 				command = commandService.sendQuery(command);
@@ -228,9 +229,9 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 		}
 		else {
 			if (listener != null) {
-				listener.onMediaInfoChanged(result.info);
-				listener.onPlayingChanged(result.isPlaying);
-				listener.onMediaProgressChanged(result.mediaProgress.current, result.mediaProgress.max);
+				if (mediaInfoEnabled) listener.onMediaInfoChanged(result.info);
+				if (isPlayingEnabled) listener.onPlayingChanged(result.isPlaying);
+				if (mediaPositionEnabled) listener.onMediaProgressChanged(result.mediaProgress.current, result.mediaProgress.max);
 			}
 		}
 	}

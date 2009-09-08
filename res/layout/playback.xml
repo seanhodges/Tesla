@@ -37,6 +37,7 @@
 	</FrameLayout>
 	
 	<LinearLayout
+		android:id="@+id/playback_panel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:paddingTop="20dip"
@@ -67,6 +68,7 @@
 	</LinearLayout>
 	
 	<LinearLayout
+		android:id="@+id/media_info_panel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:paddingTop="10dip"

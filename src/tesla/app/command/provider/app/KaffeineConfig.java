@@ -42,7 +42,7 @@ public class KaffeineConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			// This is currently broken, isPlaying does not return false if player is paused
-			out = new DCopHelper().compileMethodCall(dest, "KaffeineIface", "isPlaying");
+			//out = new DCopHelper().compileMethodCall(dest, "KaffeineIface", "isPlaying");
 		}
 		return out;
 	}
