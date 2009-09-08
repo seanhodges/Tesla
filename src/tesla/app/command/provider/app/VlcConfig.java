@@ -61,6 +61,19 @@ public class VlcConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.GetMetadata");
 		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.PositionGet");
+		}
+		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetMetadata", false) + " | grep length -A 1 | grep variant | sed -e \"s/[^0-9]*//\" | cut -d ' ' -f 2";
+		}
+		else if (key.equals(Command.SET_MEDIA_POSITION)) {
+			args.add(new DBusHelper().evaluateArg("%i"));
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.PositionSet", args);
+		}
 		return out;
 	}
 
@@ -71,6 +84,9 @@ public class VlcConfig implements IConfigProvider {
 			settings.put("MAX", "50.0");
 		}
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
 			settings.put("ENABLED", "true");
 		}
 		return settings;

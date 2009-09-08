@@ -52,7 +52,8 @@ public class GetMediaProgressTask extends AsyncTask<ICommandController, Boolean,
 		void onMediaProgressChanged(int currentProgress, int mediaLength);
 	}
 	
-	private class ProgressData {
+	// This should be private, but Java 5 does not allow it
+	class ProgressData {
 		public int current = DEFAULT_POSITION;
 		public int max = DEFAULT_MAX;
 	}
