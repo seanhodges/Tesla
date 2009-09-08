@@ -29,8 +29,8 @@ import android.os.RemoteException;
 public class GetMediaProgressTask extends AsyncTask<ICommandController, Boolean, GetMediaProgressTask.ProgressData> {
 
 	// If player does not provide a valid position, then assume this value
-	private static final double DEFAULT_POSITION = 0;
-	private static final double DEFAULT_MAX = 0;
+	private static final int DEFAULT_POSITION = 0;
+	private static final int DEFAULT_MAX = 0;
 
 	private OnMediaProgressListener listener = null;
 	private Command command;
@@ -49,12 +49,12 @@ public class GetMediaProgressTask extends AsyncTask<ICommandController, Boolean,
 	
 	public interface OnMediaProgressListener {
 		void onServiceError(Class<? extends Object> invoker, String title, String message, Command command);
-		void onMediaProgressChanged(double currentProgress, double mediaLength);
+		void onMediaProgressChanged(int currentProgress, int mediaLength);
 	}
 	
 	private class ProgressData {
-		public double current = DEFAULT_POSITION;
-		public double max = DEFAULT_MAX;
+		public int current = DEFAULT_POSITION;
+		public int max = DEFAULT_MAX;
 	}
 	
 	protected ProgressData doInBackground(ICommandController... args) {

@@ -101,9 +101,12 @@ public class AmarokConfig implements IConfigProvider {
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.SET_MEDIA_POSITION)) {
-			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "seek");
+			args.add("%i");
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "seek", args);
+			args.clear();
+			args.add(new DBusHelper().evaluateArg("%i"));
 			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.PositionSet");
+				"org.freedesktop.MediaPlayer.PositionSet", args);
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		return out;

@@ -44,20 +44,24 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class Playback extends AbstractTeslaActivity 
 		implements 
 			OnClickListener, 
 			IsPlayingTask.OnIsPlayingListener, 
 			GetMediaInfoTask.OnGetMediaInfoListener, 
-			GetMediaProgressTask.OnMediaProgressListener {
+			GetMediaProgressTask.OnMediaProgressListener, 
+			OnSeekBarChangeListener {
 
 	private static final long UI_UPDATE_PERIOD = 2000;
 	private static final int APP_SELECTOR_RESULT = 1;
@@ -99,6 +103,9 @@ public class Playback extends AbstractTeslaActivity
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
+        
+        SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
+        seekBar.setOnSeekBarChangeListener(this);
 		
         // Get the version string
         PackageInfo info;
@@ -186,6 +193,7 @@ public class Playback extends AbstractTeslaActivity
 				// Start the volume control activity
 				Intent intent = new Intent(Playback.this, VolumeControl.class);
 				startActivity(intent);
+				break;
 			}
 			
 			if (command != null) {
@@ -196,6 +204,38 @@ public class Playback extends AbstractTeslaActivity
 			// Failed to send command
 			e.printStackTrace();
 		}
+	}
+
+	public void onProgressChanged(SeekBar seekBar, int progress,
+			boolean fromUser) {
+		// Do nothing
+	}
+
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// Do nothing
+	}
+
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		Command command = null;
+		
+		try {
+			commandService.registerErrorHandler(errorHandler);
+			switch (seekBar.getId()) {
+			case R.id.media_progress:
+				command = commandService.queryForCommand(Command.SET_MEDIA_POSITION, false);
+				command.addArg(new Integer(seekBar.getProgress()));
+				break;
+			}
+			
+			if (command != null) {
+				commandService.sendCommand(command);
+			}
+			commandService.unregisterErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			// Failed to send command
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void confirmPowerButton() {
@@ -421,13 +461,9 @@ public class Playback extends AbstractTeslaActivity
 		togglePlayPauseButtonMode();
 	}
 
-	public void onMediaProgressChanged(double currentProgress, double mediaLength) {
-		// Seek bar does not accept doubles, so we must convert to percentages to avoid buffer overflows
-		int percent = 0;
-		if (currentProgress > 0 && mediaLength > 0) {
-			percent = (int)((currentProgress / mediaLength) * 100);
-		}
+	public void onMediaProgressChanged(int currentProgress, int mediaLength) {
 		SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
-		seekBar.setProgress(percent);
+		seekBar.setMax(mediaLength);
+		seekBar.setProgress(currentProgress);
 	}
 }
