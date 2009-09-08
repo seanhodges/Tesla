@@ -145,7 +145,7 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 				if (command != null && command.getOutput() != null && command.getOutput() != "") {
 					ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
 					
-					String data = helper.evaluateOutputAsString(command.getOutput());
+					String data = helper.evaluateOutputAsString(command.getOutput()).trim();
 					if (data.equalsIgnoreCase("TRUE") || data.equalsIgnoreCase("FALSE")) {
 						// DBus has returned a boolean value
 						out.isPlaying = helper.evaluateOutputAsBoolean(command.getOutput());

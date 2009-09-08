@@ -37,12 +37,37 @@ public class KaffeineConfig implements IConfigProvider {
 		else if (key.equals(Command.NEXT)) {
 			out = new DCopHelper().compileMethodCall(dest, "KaffeineIface", "next");
 		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			out = buildMediaInfoDCopMethodCallSet(dest);
+		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			// This is currently broken, isPlaying does not return false if player is paused
+			out = new DCopHelper().compileMethodCall(dest, "KaffeineIface", "isPlaying");
+		}
 		return out;
 	}
 
 	public Map<String, String> getSettings(String key) {
 		Map<String, String> settings = new HashMap<String, String>();
+		if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
+		}
 		return settings;
+	}
+
+	private String buildMediaInfoDCopMethodCallSet(String dcopDest) {
+		// DCOP has no concept of a hashmap, so we build one here
+		StringBuilder builder = new StringBuilder();
+		builder.append("echo \"[dcop]\";");
+		builder.append("echo -n \"tracknumber:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "KaffeineIface", "track", false));
+		builder.append(";echo -n \"title:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "KaffeineIface", "title", false));
+		builder.append(";echo -n \"artist:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "KaffeineIface", "artist", false));
+		builder.append(";echo -n \"album:\";");
+		builder.append(new DCopHelper().compileMethodCall(dcopDest, "KaffeineIface", "album", false));
+		return builder.toString();
 	}
 
 	public String getLaunchAppCommand() {

@@ -56,7 +56,7 @@ public class DCopHelper implements ICommandHelper {
 	}
 	
 	private String evaluateOutputAsString(String rawOut, boolean primitive) {
-		return rawOut;
+		return rawOut.trim();
 	}
 	
 	public boolean evaluateOutputAsBoolean(String rawOut) {
