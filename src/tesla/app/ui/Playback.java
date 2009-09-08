@@ -28,9 +28,8 @@ import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.service.CommandService;
 import tesla.app.service.connect.ConnectionOptions;
-import tesla.app.ui.task.GetMediaInfoTask;
-import tesla.app.ui.task.GetMediaProgressTask;
-import tesla.app.ui.task.IsPlayingTask;
+import tesla.app.ui.task.PlaybackUpdateTask;
+import tesla.app.ui.task.PlaybackUpdateTask.PlaybackUpdateListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -44,10 +43,8 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -58,9 +55,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class Playback extends AbstractTeslaActivity 
 		implements 
 			OnClickListener, 
-			IsPlayingTask.OnIsPlayingListener, 
-			GetMediaInfoTask.OnGetMediaInfoListener, 
-			GetMediaProgressTask.OnMediaProgressListener, 
+			PlaybackUpdateListener,
 			OnSeekBarChangeListener {
 
 	private static final long UI_UPDATE_PERIOD = 2000;
@@ -222,8 +217,10 @@ public class Playback extends AbstractTeslaActivity
 			commandService.registerErrorHandler(errorHandler);
 			switch (seekBar.getId()) {
 			case R.id.media_progress:
-				command = commandService.queryForCommand(Command.SET_MEDIA_POSITION, false);
-				command.addArg(new Integer(seekBar.getProgress()));
+				if (seekBarEnabled) {
+					command = commandService.queryForCommand(Command.SET_MEDIA_POSITION, false);
+					command.addArg(new Integer(seekBar.getProgress()));
+				}
 				break;
 			}
 			
@@ -288,38 +285,14 @@ public class Playback extends AbstractTeslaActivity
 		
 		if (commandService != null && stopSongInfoPolling == false) {
 			
-			// Update the media info
+			// Run the update task
 			try {
-				GetMediaInfoTask getMediaInfoTask = new GetMediaInfoTask();
-				getMediaInfoTask.registerListener(this);
-				getMediaInfoTask.execute(commandService);
+				PlaybackUpdateTask playbackUpdateTask = new PlaybackUpdateTask();
+				playbackUpdateTask.registerListener(this);
+				playbackUpdateTask.execute(commandService);
 			}
 			catch (RejectedExecutionException e) {
 				// Ignore failed executions
-			}
-			
-			// Update the play/pause button
-			if (appReportingIfPlaying) {
-				try {
-					IsPlayingTask isPlayingTask = new IsPlayingTask();
-					isPlayingTask.registerListener(this);
-					isPlayingTask.execute(commandService);
-				}
-				catch (RejectedExecutionException e) {
-					// Ignore failed executions
-				}
-			}
-			
-			// Update the seek bar
-			if (seekBarEnabled) {
-				try {
-					GetMediaProgressTask getMediaProgressTask = new GetMediaProgressTask();
-					getMediaProgressTask.registerListener(this);
-					getMediaProgressTask.execute(commandService);
-				}
-				catch (RejectedExecutionException e) {
-					// Ignore failed executions
-				}
 			}
 		}
 		

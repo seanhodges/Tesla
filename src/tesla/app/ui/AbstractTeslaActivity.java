@@ -21,9 +21,8 @@ import tesla.app.command.provider.AppConfigProvider;
 import tesla.app.service.CommandService;
 import tesla.app.service.business.ICommandController;
 import tesla.app.service.business.IErrorHandler;
-import tesla.app.ui.task.GetMediaInfoTask;
 import tesla.app.ui.task.GetVolumeLevelTask;
-import tesla.app.ui.task.IsPlayingTask;
+import tesla.app.ui.task.PlaybackUpdateTask;
 import tesla.app.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -202,9 +201,8 @@ public abstract class AbstractTeslaActivity extends Activity {
 		int idInvoker = 0;
 		if (invoker.equals(Playback.class)) { idInvoker = 1; }
 		else if (invoker.equals(VolumeControl.class)) { idInvoker = 2; }
-		else if (invoker.equals(GetMediaInfoTask.class)) { idInvoker = 3; }
+		else if (invoker.equals(PlaybackUpdateTask.class)) { idInvoker = 3; }
 		else if (invoker.equals(GetVolumeLevelTask.class)) { idInvoker = 4; }
-		else if (invoker.equals(IsPlayingTask.class)) { idInvoker = 5; }
 		
 		// Get the service function ID
 		int idServiceCall = 0;
