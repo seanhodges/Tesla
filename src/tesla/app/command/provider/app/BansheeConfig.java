@@ -67,6 +67,19 @@ public class BansheeConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
 				"org.bansheeproject.Banshee.PlayerEngine.GetCurrentState");
 		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
+				"org.bansheeproject.Banshee.PlayerEngine.GetPosition");
+		}
+		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
+			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
+			"org.bansheeproject.Banshee.PlayerEngine.GetLength");
+		}
+		else if (key.equals(Command.SET_MEDIA_POSITION)) {
+			args.add(new DBusHelper().evaluateArg("%u32"));
+			out = new DBusHelper().compileMethodCall(dest, "/org/bansheeproject/Banshee/PlayerEngine", 
+				"org.bansheeproject.Banshee.PlayerEngine.SetPosition", args);
+		}
 		
 		return out;
 	}
@@ -81,6 +94,9 @@ public class BansheeConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
 			settings.put("ENABLED", "true");
 		}
 		return settings;
