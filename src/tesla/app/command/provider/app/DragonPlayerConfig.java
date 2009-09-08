@@ -35,6 +35,14 @@ public class DragonPlayerConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.PlayPause");
 		}
+		else if (key.equals(Command.PREV)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev");
+		}
+		else if (key.equals(Command.NEXT)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next");
+		}
 		else if (key.equals(Command.VOL_CHANGE)) {
 			args.add(new DBusHelper().evaluateArg("%i"));
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
@@ -49,6 +57,24 @@ public class DragonPlayerConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.VolumeGet");
 		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetMetadata");
+		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			String dbusCommand = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetStatus", false);
+			out = "if [[ \"$(" + dbusCommand + " | sed -n '3p')\" == \"      int32 0\" ]]; then echo \"PLAYING\"; fi";
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.PositionGet");
+		}
+		else if (key.equals(Command.SET_MEDIA_POSITION)) {
+			args.add(new DBusHelper().evaluateArg("%i"));
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.PositionSet", args);
+		}
 		return out;
 	}
 
@@ -57,6 +83,9 @@ public class DragonPlayerConfig implements IConfigProvider {
 		if (key.equals(Command.VOL_CURRENT)) {
 			settings.put("MIN", "0.0");
 			settings.put("MAX", "100.0");
+		}
+		else if (key.equals(Command.IS_PLAYING)) {
+			settings.put("ENABLED", "true");
 		}
 		return settings;
 	}
