@@ -83,10 +83,11 @@ public class AmarokConfig implements IConfigProvider {
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
-			// TODO: Amarok 1 implementation
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "isPlaying");
 			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
 				"org.freedesktop.MediaPlayer.GetStatus", false);
-			out = "if [[ \"$(" + dbusCommand + " | sed -n '3p')\" == \"      int32 0\" ]]; then echo \"PLAYING\"; fi";
+			dbusCommand = "if [[ \"$(" + dbusCommand + " | sed -n '3p')\" == \"      int32 0\" ]]; then echo \"PLAYING\"; fi";
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.GET_MEDIA_POSITION)) {
 			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "trackCurrentTime");
@@ -95,7 +96,7 @@ public class AmarokConfig implements IConfigProvider {
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
-			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "trackTotalTime")  + " | grep mtime | cut -d ' ' -f 2";
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "player", "trackTotalTime");
 			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
 				"org.freedesktop.MediaPlayer.GetMetadata", false) + " | grep mtime -A 1 | grep variant | sed -e \"s/[^0-9]*//\" | cut -d ' ' -f 2";
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
