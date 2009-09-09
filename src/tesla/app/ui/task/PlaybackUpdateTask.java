@@ -187,6 +187,7 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 						}
 						catch (NumberFormatException e) {
 							// Value returned was not a valid integer
+							out.mediaProgress.current = 0;
 						}
 					}
 					
@@ -204,6 +205,7 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 							}
 							catch (NumberFormatException e) {
 								// Value returned was not a valid integer
+								out.mediaProgress.max = 0;
 							}
 						}
 					}
