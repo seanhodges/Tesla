@@ -29,7 +29,6 @@ import tesla.app.service.connect.FakeConnection;
 import tesla.app.service.connect.IConnection;
 import tesla.app.service.connect.SSHConnection;
 import tesla.app.service.connect.ConnectionOptions.ConnectMode;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -37,13 +36,12 @@ import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
-public class CommandService extends Service {
+public class CommandService extends ConnectionHolder {
 
 	private static final int EXEC_POLL_PERIOD = 100; // Cycles
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
-	private volatile IConnection connection;
 	private volatile CommandFactory factory;
 	
 	private Timer commandExecutioner;
@@ -56,10 +54,10 @@ public class CommandService extends Service {
 		connectOptions = new ConnectionOptions(this);
 		
 		if (connectOptions.mode == ConnectMode.FAKE) {
-			connection = new FakeConnection();
+			setConnection(new FakeConnection());
 		}
 		else {
-			connection = new SSHConnection();
+			setConnection(new SSHConnection());
 		}
 		
 		factory = new CommandFactory(connectOptions.appSelection);
@@ -101,9 +99,13 @@ public class CommandService extends Service {
 		};
 	}
 	
-	public synchronized boolean connectAction() throws RemoteException {
+	public boolean connectAction() throws RemoteException {
 		boolean success = false;
+		
+		IConnection connection = getConnection();
+		
         try {
+        	
         	// Ignore fake connections, and loopback connections (for emulator)
         	if (connectOptions.mode == ConnectMode.SSH 
         			&& !connectOptions.hostname.equals("10.0.2.2")) {
@@ -123,7 +125,7 @@ public class CommandService extends Service {
 				}
         	}
         	
-			connection.connect(connectOptions);
+        	connection.connect(connectOptions);
 			
 			// Initialise the DBUS connection
 			String response = connection.sendCommand(factory.getInitScript());
@@ -142,17 +144,18 @@ public class CommandService extends Service {
 			broadcastError("Failed to connect to remote machine", e, true);
 			stopSelf();
 		}
+		
+		freeConnection();
 		return success;
 	}
 
 	public void onDestroy() {
 		super.onDestroy();
 		if (commandExecutioner != null) commandExecutioner.cancel();
-		if (connection != null && connection.isConnected()) connection.disconnect();
+		if (getConnection() != null && getConnection().isConnected()) getConnection().disconnect();
 	}
 	
 	private void handleCommands() {
-		
 		// Commands are executed in a Timer thread
 		// this moves them out of the event loop, and drops commands when new ones are requested
 		
@@ -162,6 +165,9 @@ public class CommandService extends Service {
 			public void run() {
 				if (nextCommand != null && nextCommand != lastCommand) {
 					lastCommand = nextCommand;
+					
+					IConnection connection = getConnection();
+					
 					try {
 						if (!nextCommand.getCommandString().equals("")) {
 							connection.sendCommand(nextCommand);
@@ -179,6 +185,8 @@ public class CommandService extends Service {
 							e1.printStackTrace();
 						}
 					}
+					
+					freeConnection();
 				}
 			}
 			
@@ -189,13 +197,15 @@ public class CommandService extends Service {
 		return factory.getCommand(key, ignoreAppCommand);
 	}
 
-	protected synchronized void sendCommandAction(Command command) {
+	protected void sendCommandAction(Command command) {
 		if (command != null) {
 			nextCommand = command;
 		}
 	}
 	
-	protected synchronized Command sendQueryAction(Command command) throws RemoteException {
+	protected Command sendQueryAction(Command command) throws RemoteException {
+		IConnection connection = getConnection();
+		
 		// Queries are returned synchronously
 		if (command != null) {
 			try {
@@ -210,6 +220,9 @@ public class CommandService extends Service {
 				System.out.println("FakeConnection: query received: " + command.getCommandString() + ", result: " + command.getOutput());
 			}
 		}
+		
+		freeConnection();
+		
 		return command;
 	}
 
