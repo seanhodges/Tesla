@@ -121,7 +121,7 @@ public class SSHConnection implements IConnection  {
 		return (session != null);
 	}
 	
-	public String sendCommand(Command command) throws ConnectionException {
+	public synchronized String sendCommand(Command command) throws ConnectionException {
 		StringBuffer stdOutBuffer = new StringBuffer();
 		if (session != null) {
 			try {

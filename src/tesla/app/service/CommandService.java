@@ -29,6 +29,7 @@ import tesla.app.service.connect.FakeConnection;
 import tesla.app.service.connect.IConnection;
 import tesla.app.service.connect.SSHConnection;
 import tesla.app.service.connect.ConnectionOptions.ConnectMode;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -36,13 +37,14 @@ import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
-public class CommandService extends ConnectionHolder {
+public class CommandService extends Service {
 
 	private static final int EXEC_POLL_PERIOD = 100; // Cycles
 	
 	private final RemoteCallbackList<IErrorHandler> callbacks = new RemoteCallbackList<IErrorHandler>();
 	
-	private volatile CommandFactory factory;
+	private static volatile CommandFactory factory;
+	private static volatile IConnection connection;
 	
 	private Timer commandExecutioner;
 	private Command nextCommand = null;
@@ -51,13 +53,14 @@ public class CommandService extends ConnectionHolder {
 	
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		
 		connectOptions = new ConnectionOptions(this);
 		
 		if (connectOptions.mode == ConnectMode.FAKE) {
-			setConnection(new FakeConnection());
+			connection = new FakeConnection();
 		}
 		else {
-			setConnection(new SSHConnection());
+			connection = new SSHConnection();
 		}
 		
 		factory = new CommandFactory(connectOptions.appSelection);
@@ -102,8 +105,6 @@ public class CommandService extends ConnectionHolder {
 	public boolean connectAction() throws RemoteException {
 		boolean success = false;
 		
-		IConnection connection = getConnection();
-		
         try {
         	
         	// Ignore fake connections, and loopback connections (for emulator)
@@ -145,14 +146,14 @@ public class CommandService extends ConnectionHolder {
 			stopSelf();
 		}
 		
-		freeConnection();
 		return success;
 	}
 
 	public void onDestroy() {
 		super.onDestroy();
+		
 		if (commandExecutioner != null) commandExecutioner.cancel();
-		if (getConnection() != null && getConnection().isConnected()) getConnection().disconnect();
+		if (connection != null && connection.isConnected()) connection.disconnect();
 	}
 	
 	private void handleCommands() {
@@ -165,8 +166,6 @@ public class CommandService extends ConnectionHolder {
 			public void run() {
 				if (nextCommand != null && nextCommand != lastCommand) {
 					lastCommand = nextCommand;
-					
-					IConnection connection = getConnection();
 					
 					try {
 						if (!nextCommand.getCommandString().equals("")) {
@@ -185,8 +184,6 @@ public class CommandService extends ConnectionHolder {
 							e1.printStackTrace();
 						}
 					}
-					
-					freeConnection();
 				}
 			}
 			
@@ -204,7 +201,6 @@ public class CommandService extends ConnectionHolder {
 	}
 	
 	protected Command sendQueryAction(Command command) throws RemoteException {
-		IConnection connection = getConnection();
 		
 		// Queries are returned synchronously
 		if (command != null) {
@@ -220,8 +216,6 @@ public class CommandService extends ConnectionHolder {
 				System.out.println("FakeConnection: query received: " + command.getCommandString() + ", result: " + command.getOutput());
 			}
 		}
-		
-		freeConnection();
 		
 		return command;
 	}
