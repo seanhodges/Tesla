@@ -1,6 +1,7 @@
 package tesla.app.command.helper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.*;
 
@@ -54,5 +55,9 @@ public class ExaileHelper implements ICommandHelper {
 			value = null;
 		}
 		return value;
+	}
+
+	public List<String> evaluateOutputAsList(String rawOut) {
+		return null;
 	}
 }

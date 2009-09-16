@@ -87,4 +87,8 @@ public class DCopHelper implements ICommandHelper {
 		}
 		return out;
 	}
+
+	public List<String> evaluateOutputAsList(String rawOut) {
+		return null;
+	}
 }

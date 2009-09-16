@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import tesla.app.command.Command;
+import tesla.app.command.helper.AmarokPlaylistHelper;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.DCopHelper;
 import tesla.app.command.provider.IConfigProvider;
@@ -110,6 +111,16 @@ public class AmarokConfig implements IConfigProvider {
 				"org.freedesktop.MediaPlayer.PositionSet", args);
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "saveCurrentPlaylist", false);
+			out = new AmarokPlaylistHelper().compileQuery(dcopCommand);
+		}
+		/*else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
+			// TODO: Implement this command
+		}
+		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
+			// TODO: Implement this command
+		}*/
 		return out;
 	}
 
@@ -126,6 +137,9 @@ public class AmarokConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
 			settings.put("ENABLED", "true");
 		}
 		return settings;

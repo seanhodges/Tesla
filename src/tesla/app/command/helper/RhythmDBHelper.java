@@ -18,6 +18,7 @@ package tesla.app.command.helper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
@@ -76,7 +77,7 @@ public class RhythmDBHelper implements ICommandHelper {
 			e.printStackTrace();
 		}
 		
-		return contentHandler.getOutput();
+		return contentHandler.getOutput().get(0);
 	}
 
 	public boolean evaluateOutputAsBoolean(String rawOut) {
@@ -84,6 +85,10 @@ public class RhythmDBHelper implements ICommandHelper {
 	}
 
 	public String evaluateOutputAsString(String rawOut) {
+		return null;
+	}
+
+	public List<String> evaluateOutputAsList(String rawOut) {
 		return null;
 	}
 }

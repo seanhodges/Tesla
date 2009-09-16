@@ -1,5 +1,6 @@
 package tesla.app.command.helper;
 
+import java.util.List;
 import java.util.Map;
 
 public class SimpleStringHelper implements ICommandHelper {
@@ -14,6 +15,10 @@ public class SimpleStringHelper implements ICommandHelper {
 
 	public String evaluateOutputAsString(String rawOut) {
 		return rawOut;
+	}
+
+	public List<String> evaluateOutputAsList(String rawOut) {
+		return null;
 	}
 
 }

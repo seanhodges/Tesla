@@ -163,4 +163,8 @@ public class DBusHelper implements ICommandHelper {
 		}
 		return out;
 	}
+
+	public List<String> evaluateOutputAsList(String rawOut) {
+		return null;
+	}
 }

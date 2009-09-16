@@ -16,7 +16,9 @@
 
 package tesla.app.command.helper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
@@ -33,24 +35,25 @@ public class RhythmDBParser extends DefaultHandler {
 	private static final String LENGTH = "mtime";
 	
 	private Map<String, String> out = new HashMap<String, String>();
+	private List<Map<String, String>> outList = new ArrayList<Map<String, String>>();
 	
 	public void startElement(String uri, String localName, String name,
 			Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, name, attributes);
 		
-		if (localName.equals("track-number")) {
+		if (localName.equalsIgnoreCase("track-number")) {
 			mode = TRACKNO;
 		}
-		else if (localName.equals("title")) {
+		else if (localName.equalsIgnoreCase("title")) {
 			mode = TITLE;
 		}
-		else if (localName.equals("artist")) {
+		else if (localName.equalsIgnoreCase("artist")) {
 			mode = ARTIST;
 		}
-		else if (localName.equals("album")) {
+		else if (localName.equalsIgnoreCase("album")) {
 			mode = ALBUM;
 		}
-		else if (localName.equals("mtime")) {
+		else if (localName.equalsIgnoreCase("mtime")) {
 			mode = LENGTH;
 		}
 		else {
@@ -69,10 +72,14 @@ public class RhythmDBParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String name)
 			throws SAXException {
 		super.endElement(uri, localName, name);
+		if (localName.equals("item") || localName.equals("entry")) {
+			outList.add(out);
+			out = new HashMap<String, String>();
+		}
 		mode = "";
 	}
 	
-	public Map<String, String> getOutput() {
-		return out;
+	public List<Map<String, String>> getOutput() {
+		return outList;
 	}
 }

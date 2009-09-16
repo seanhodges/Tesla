@@ -23,6 +23,10 @@ public class CommandHelperFactory {
 			command.setOutput(command.getOutput().substring(ExaileHelper.MAGIC_MARKER.length() + 1));
 			out = new ExaileHelper();
 		}
+		else if (data.startsWith(AmarokPlaylistHelper.MAGIC_MARKER)) {
+			command.setOutput(command.getOutput().substring(AmarokPlaylistHelper.MAGIC_MARKER.length() + 1));
+			out = new AmarokPlaylistHelper();
+		}
 		else {
 			out = new SimpleStringHelper();
 		}

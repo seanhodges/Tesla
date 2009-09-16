@@ -41,6 +41,7 @@ public final class Command implements Parcelable {
 	public static final String GET_MEDIA_POSITION = "get_media_position";
 	public static final String GET_MEDIA_LENGTH = "get_media_length";
 	public static final String SET_MEDIA_POSITION = "set_media_position";
+	public static final String GET_PLAYLIST = "get_playlist";
 
 	private String key;
 	private String commandString;

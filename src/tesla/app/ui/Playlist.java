@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import tesla.app.R;
+import tesla.app.command.Command;
+import tesla.app.command.helper.CommandHelperFactory;
+import tesla.app.command.helper.ICommandHelper;
 import tesla.app.command.provider.AppConfigProvider;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
@@ -42,14 +46,31 @@ public class Playlist extends AbstractTeslaListActivity {
 	}
 	
 	private void populatePlaylist() {
-		// TODO: Query the server for a playlist, and display it in a listview
-		providerList = new ArrayList<Map<String,String>>();
-		Map<String, String> item = new HashMap<String, String>();
-		item.put("icon", "");
-		item.put("title", "Test");
-		providerList.add(item);
+		// Get the playlist titles from the server
+		List<String> data = null;
+		try {
+			Command command = commandService.queryForCommand(Command.GET_PLAYLIST, false);
+			command = commandService.sendQuery(command);
+			if (command != null && command.getOutput() != null && command.getOutput() != "") {
+				ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
+				data = helper.evaluateOutputAsList(command.getOutput());
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-        ListAdapter providerSelector = new SimpleAdapter(
+		// Build a providerList containing the titles and corresponding icon
+		providerList = new ArrayList<Map<String,String>>();
+		for (String title : data) {
+			Map<String, String> item = new HashMap<String, String>();
+			item.put("icon", String.valueOf(R.drawable.app_icon_exaile));
+			item.put("title", title);
+			providerList.add(item);
+		}
+		
+		// Set up the list adapter
+		ListAdapter providerSelector = new SimpleAdapter(
         		this, providerList, R.layout.playlist_entry, 
         		new String[] { "icon", "title" }, 
         		new int[] { R.id.playlist_entry_icon, R.id.playlist_entry_title });
@@ -67,11 +88,11 @@ public class Playlist extends AbstractTeslaListActivity {
 	protected void onPhoneIsBusy() {
 		// Do nothing
 	}
-
+	
 	protected void onPhoneIsIdle() {
 		// Do nothing
 	}
-
+	
 	protected void onTeslaServiceDisconnected() {
 		// Do nothing
 	}
