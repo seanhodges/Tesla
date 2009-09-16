@@ -201,22 +201,14 @@ public class Playback extends AbstractTeslaActivity
 				updateUIHandler.postDelayed(updateUIRunnable, UI_UPDATE_PERIOD);
 				break;
 			case R.id.playlist:
-				new AlertDialog.Builder(Playback.this)
-					.setTitle("Not implemented")
-					.setMessage("Playlist support is not yet available.")
-					.setNegativeButton(getResources().getText(R.string.btn_close), 
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.dismiss();
-							}
-						}
-					)
-					.show();
+				// Start the playlist activity
+				Intent playlistIntent = new Intent(Playback.this, Playlist.class);
+				startActivity(playlistIntent);
 				break;
 			case R.id.volume:
 				// Start the volume control activity
-				Intent intent = new Intent(Playback.this, VolumeControl.class);
-				startActivity(intent);
+				Intent volumeIntent = new Intent(Playback.this, VolumeControl.class);
+				startActivity(volumeIntent);
 				break;
 			}
 			

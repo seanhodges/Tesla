@@ -49,6 +49,10 @@
 	<string name="shut_down_check_body">Are you sure you want to turn off the computer?</string>
 	<string name="shutting_down">Your PC is shutting down</string>
 	
+	<!-- App Selector -->
+	<string name="playlist_title">Playlist</string>
+	<string name="no_tracks">Playlist is empty</string>
+	
 	<!-- Volume control -->
 	<string name="volume_title">Volume</string>
 	<string name="volume_update">Volume is now</string>

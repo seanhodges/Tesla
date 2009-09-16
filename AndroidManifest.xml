@@ -24,6 +24,11 @@
         
         <activity android:name=".ui.Playback" android:screenOrientation="portrait" />
         
+        <activity android:name=".ui.Playlist" 
+        	android:screenOrientation="portrait" 
+        	android:label="@string/playlist_title"
+        	android:theme="@android:style/Theme.Dialog" />
+        	
         <activity android:name=".ui.VolumeControl" 
         	android:screenOrientation="portrait" 
         	android:label="@string/volume_title"
