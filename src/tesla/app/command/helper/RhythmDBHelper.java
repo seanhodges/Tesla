@@ -63,7 +63,7 @@ public class RhythmDBHelper implements ICommandHelper {
 		
 		rawOut = rawOut.trim();
 		
-		RhythmDBParser contentHandler = new RhythmDBParser();
+		XmlPlaylistParser contentHandler = new XmlPlaylistParser();
 		XMLReader reader;
 		try {
 			InputSource is = new InputSource();

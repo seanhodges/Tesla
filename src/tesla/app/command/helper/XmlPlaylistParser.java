@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class RhythmDBParser extends DefaultHandler {
+public class XmlPlaylistParser extends DefaultHandler {
 
 	private String mode = "";
 	private static final String TRACKNO = "tracknumber";

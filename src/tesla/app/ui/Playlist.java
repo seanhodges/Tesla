@@ -64,7 +64,7 @@ public class Playlist extends AbstractTeslaListActivity {
 		providerList = new ArrayList<Map<String,String>>();
 		for (String title : data) {
 			Map<String, String> item = new HashMap<String, String>();
-			item.put("icon", String.valueOf(R.drawable.app_icon_exaile));
+			item.put("icon", String.valueOf(R.drawable.note));
 			item.put("title", title);
 			providerList.add(item);
 		}

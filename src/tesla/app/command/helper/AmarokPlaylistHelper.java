@@ -42,7 +42,7 @@ public class AmarokPlaylistHelper implements ICommandHelper {
 	public List<String> evaluateOutputAsList(String rawOut) {
 		rawOut = rawOut.trim();
 		
-		RhythmDBParser contentHandler = new RhythmDBParser();
+		XmlPlaylistParser contentHandler = new XmlPlaylistParser();
 		XMLReader reader;
 		try {
 			InputSource is = new InputSource();
