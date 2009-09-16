@@ -25,12 +25,12 @@ import tesla.app.R;
 import tesla.app.command.Command;
 import tesla.app.command.helper.CommandHelperFactory;
 import tesla.app.command.helper.ICommandHelper;
-import tesla.app.command.provider.AppConfigProvider;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -46,6 +46,7 @@ public class Playlist extends AbstractTeslaListActivity {
 
 	protected void onTeslaServiceConnected() {
 		populatePlaylist();
+		refreshPlayingItem();
 	}
 	
 	private void populatePlaylist() {
@@ -101,7 +102,29 @@ public class Playlist extends AbstractTeslaListActivity {
 	}
 	
 	private void refreshPlayingItem() {
-		// TODO: Query the server for the currently playing item, and set the icon against the listview item
+		String data = null;
+		try {
+			commandService.registerErrorHandler(errorHandler);
+			Command command = commandService.queryForCommand(Command.GET_PLAYLIST_SELECTION, false);
+			command = commandService.sendQuery(command);
+			commandService.unregisterErrorHandler(errorHandler);
+			if (command != null && command.getOutput() != null && command.getOutput() != "") {
+				ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
+				data = helper.evaluateOutputAsString(command.getOutput());
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		// Need to redraw list somehow...
+		/*if (data != null) {
+			int playingIndex = Integer.parseInt(data);
+			if (playingIndex >= 0) {
+				ViewGroup item = (ViewGroup)getListView().getChildAt(playingIndex);
+				ImageView iconWidget = (ImageView)item.getChildAt(0);
+				iconWidget.setImageResource(R.drawable.currently_playing);
+			}
+		}*/
 	}
 	
 	protected void onPhoneIsBusy() {
