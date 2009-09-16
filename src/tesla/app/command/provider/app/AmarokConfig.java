@@ -115,12 +115,13 @@ public class AmarokConfig implements IConfigProvider {
 			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "saveCurrentPlaylist", false);
 			out = new AmarokPlaylistHelper().compileQuery(dcopCommand);
 		}
-		/*else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
-			// TODO: Implement this command
+		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
+			out = new DCopHelper().compileMethodCall(dcopDest, "playlist", "getActiveIndex");
 		}
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
-			// TODO: Implement this command
-		}*/
+			args.add("%i");
+			out = new DCopHelper().compileMethodCall(dcopDest, "playlist", "playByIndex", args);
+		}
 		return out;
 	}
 

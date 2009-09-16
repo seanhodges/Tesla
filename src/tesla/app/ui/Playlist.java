@@ -26,10 +26,13 @@ import tesla.app.command.Command;
 import tesla.app.command.helper.CommandHelperFactory;
 import tesla.app.command.helper.ICommandHelper;
 import tesla.app.command.provider.AppConfigProvider;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.view.View;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class Playlist extends AbstractTeslaListActivity {
@@ -49,14 +52,15 @@ public class Playlist extends AbstractTeslaListActivity {
 		// Get the playlist titles from the server
 		List<String> data = null;
 		try {
+			commandService.registerErrorHandler(errorHandler);
 			Command command = commandService.queryForCommand(Command.GET_PLAYLIST, false);
 			command = commandService.sendQuery(command);
+			commandService.unregisterErrorHandler(errorHandler);
 			if (command != null && command.getOutput() != null && command.getOutput() != "") {
 				ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
 				data = helper.evaluateOutputAsList(command.getOutput());
 			}
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -76,9 +80,24 @@ public class Playlist extends AbstractTeslaListActivity {
         		new int[] { R.id.playlist_entry_icon, R.id.playlist_entry_title });
         setListAdapter(providerSelector);
 	}
+
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		changePlayingItem(position);
+	}
 	
 	private void changePlayingItem(int itemIndex) {
-		// TODO: Send a command to the server to change the currently playing item to itemIndex 
+		try {
+			commandService.registerErrorHandler(errorHandler);
+			Command command = commandService.queryForCommand(Command.SET_PLAYLIST_SELECTION, false);
+			command.addArg(itemIndex);
+			commandService.sendCommand(command);
+			commandService.unregisterErrorHandler(errorHandler);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		setResult(Activity.RESULT_OK);
+		finish();
 	}
 	
 	private void refreshPlayingItem() {
