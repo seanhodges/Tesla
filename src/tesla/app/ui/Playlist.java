@@ -36,6 +36,7 @@ import android.widget.SimpleAdapter;
 public class Playlist extends AbstractTeslaListActivity {
 
 	private List<Map<String, String>> providerList;
+	private int entryIcon = R.drawable.note;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -58,6 +59,14 @@ public class Playlist extends AbstractTeslaListActivity {
 			if (command != null && command.getOutput() != null && command.getOutput() != "") {
 				ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
 				data = helper.evaluateOutputAsList(command.getOutput());
+				
+				Map<String, String> settings = command.getSettings();
+				if (settings.containsKey("ENTRY_ICON")) {
+					String iconType = settings.get("ENTRY_ICON");
+					if (iconType.equalsIgnoreCase("VIDEO")) {
+						entryIcon = R.drawable.clapboard;
+					}
+				}
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -67,7 +76,7 @@ public class Playlist extends AbstractTeslaListActivity {
 		providerList = new ArrayList<Map<String,String>>();
 		for (String title : data) {
 			Map<String, String> item = new HashMap<String, String>();
-			item.put("icon", String.valueOf(R.drawable.note));
+			item.put("icon", String.valueOf(entryIcon));
 			item.put("title", title);
 			providerList.add(item);
 		}
@@ -115,7 +124,6 @@ public class Playlist extends AbstractTeslaListActivity {
 			e.printStackTrace();
 		}
 		
-		// Need to redraw list somehow...
 		if (data != null) {
 			int playingIndex = Integer.parseInt(data);
 			if (playingIndex >= 0) {
