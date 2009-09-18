@@ -29,8 +29,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -101,6 +99,7 @@ public class Playlist extends AbstractTeslaListActivity {
 		finish();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void refreshPlayingItem() {
 		String data = null;
 		try {
@@ -117,14 +116,13 @@ public class Playlist extends AbstractTeslaListActivity {
 		}
 		
 		// Need to redraw list somehow...
-		/*if (data != null) {
+		if (data != null) {
 			int playingIndex = Integer.parseInt(data);
 			if (playingIndex >= 0) {
-				ViewGroup item = (ViewGroup)getListView().getChildAt(playingIndex);
-				ImageView iconWidget = (ImageView)item.getChildAt(0);
-				iconWidget.setImageResource(R.drawable.currently_playing);
+				Map<String, String> item = (Map<String, String>)getListAdapter().getItem(playingIndex); 
+				item.put("icon", String.valueOf(R.drawable.currently_playing));
 			}
-		}*/
+		}
 	}
 	
 	protected void onPhoneIsBusy() {
