@@ -37,6 +37,7 @@ public class Playlist extends AbstractTeslaListActivity {
 
 	private List<Map<String, String>> providerList;
 	private int entryIcon = R.drawable.note;
+	private boolean zeroIndexedPlaylist = true;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -67,6 +68,16 @@ public class Playlist extends AbstractTeslaListActivity {
 						entryIcon = R.drawable.clapboard;
 					}
 				}
+				
+				if (settings.containsKey("ZERO_INDEXED")) {
+					String iconType = settings.get("ZERO_INDEXED");
+					if (iconType.equalsIgnoreCase("TRUE")) {
+						zeroIndexedPlaylist = true;
+					}
+					else {
+						zeroIndexedPlaylist = false;
+					}
+				}
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -95,6 +106,9 @@ public class Playlist extends AbstractTeslaListActivity {
 	}
 	
 	private void changePlayingItem(int itemIndex) {
+		if (!zeroIndexedPlaylist) {
+			itemIndex++;
+		}
 		try {
 			commandService.registerErrorHandler(errorHandler);
 			Command command = commandService.queryForCommand(Command.SET_PLAYLIST_SELECTION, false);
@@ -126,6 +140,9 @@ public class Playlist extends AbstractTeslaListActivity {
 		
 		if (data != null) {
 			int playingIndex = Integer.parseInt(data);
+			if (!zeroIndexedPlaylist) {
+				playingIndex--;
+			}
 			if (playingIndex >= 0) {
 				Map<String, String> item = (Map<String, String>)getListAdapter().getItem(playingIndex); 
 				item.put("icon", String.valueOf(R.drawable.currently_playing));

@@ -86,6 +86,10 @@ public class VlcConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/TrackList", 
 				"org.freedesktop.MediaPlayer.GetCurrentTrack");
 		}
+		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
+			out = new VlcPlaylistHelper().compileSetPlaylistCommand();
+			
+		}
 		return out;
 	}
 

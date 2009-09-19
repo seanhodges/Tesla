@@ -14,7 +14,7 @@ public class VlcPlaylistHelper implements ICommandHelper {
 			builder.append("echo " + MAGIC_MARKER + ";");
 		}
 		// Query for each track in track list, and dump DBUS array
-		builder.append("for (( i=1; i<=$(" + getPlaylistLength + "); i++ )); do ");
+		builder.append("for (( i=0; i<$(" + getPlaylistLength + "); i++ )); do ");
 		builder.append(getEntryMetadata + " int32:$i; ");
 		builder.append("done");
 		return builder.toString();
@@ -22,6 +22,23 @@ public class VlcPlaylistHelper implements ICommandHelper {
 
 	public String compileQuery(String getPlaylistLength, String getEntryMetadata) {
 		return compileQuery(getPlaylistLength, getEntryMetadata, true);
+	}
+	
+	public String compileSetPlaylistCommand() {
+		StringBuilder builder = new StringBuilder();
+		// Query for each track in track list, and dump DBUS array
+		builder.append("selection=%i; ");
+		builder.append("playing=$(dbus-send --print-reply --dest=org.mpris.vlc /TrackList org.freedesktop.MediaPlayer.GetCurrentTrack | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2); ");
+		builder.append("until [[ $playing == $selection ]]; do ");
+		builder.append("if [[ $playing < $selection ]]; then ");
+		builder.append("dbus-send --print-reply --dest=org.mpris.vlc /Player org.freedesktop.MediaPlayer.Next; ");
+		builder.append("elif [[ $playing > $selection ]]; then ");
+		builder.append("dbus-send --print-reply --dest=org.mpris.vlc /Player org.freedesktop.MediaPlayer.Prev; ");
+		builder.append("fi; ");
+		builder.append("sleep 1; ");
+		builder.append("playing=$(dbus-send --print-reply --dest=org.mpris.vlc /TrackList org.freedesktop.MediaPlayer.GetCurrentTrack | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2); ");
+		builder.append("done");
+		return builder.toString();
 	}
 
 	public List<String> evaluateOutputAsList(String rawOut) {
