@@ -25,6 +25,7 @@ import tesla.app.command.Command;
 import tesla.app.command.helper.AmarokPlaylistHelper;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.DCopHelper;
+import tesla.app.command.helper.RelativePlaylistHelper;
 import tesla.app.command.provider.IConfigProvider;
 
 public class AmarokConfig implements IConfigProvider {
@@ -113,14 +114,30 @@ public class AmarokConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
 			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "saveCurrentPlaylist", false);
-			out = new AmarokPlaylistHelper().compileQuery(dcopCommand);
+			dcopCommand = new AmarokPlaylistHelper().compileQuery(dcopCommand);
+			String getPlaylistLength = new DBusHelper().compileMethodCall(dbusDest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetLength", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
+			String getEntryMetadata = new DBusHelper().compileMethodCall(dbusDest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetMetadata", false);
+			String dbusCommand = new RelativePlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
-			out = new DCopHelper().compileMethodCall(dcopDest, "playlist", "getActiveIndex");
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "getActiveIndex");
+			String dbusCommand = new DBusHelper().compileMethodCall(dbusDest, "/TrackList", "org.freedesktop.MediaPlayer.GetCurrentTrack");
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
 			args.add("%i");
-			out = new DCopHelper().compileMethodCall(dcopDest, "playlist", "playByIndex", args);
+			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "playByIndex", args);
+			String getPlaylistCommand = new DBusHelper().compileMethodCall(dbusDest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetCurrentTrack", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
+			String gotoPreviousTrackCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev", false);
+			String gotoNextTrackCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next", false);
+			String dbusCommand = new RelativePlaylistHelper().compileSetPlaylistCommand(getPlaylistCommand, gotoPreviousTrackCommand, gotoNextTrackCommand);
+			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		return out;
 	}

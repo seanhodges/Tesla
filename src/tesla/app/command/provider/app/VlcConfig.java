@@ -23,7 +23,7 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
-import tesla.app.command.helper.VlcPlaylistHelper;
+import tesla.app.command.helper.RelativePlaylistHelper;
 import tesla.app.command.provider.IConfigProvider;
 
 public class VlcConfig implements IConfigProvider {
@@ -79,15 +79,21 @@ public class VlcConfig implements IConfigProvider {
 			String getPlaylistLength = new DBusHelper().compileMethodCall(dest, "/TrackList", 
 				"org.freedesktop.MediaPlayer.GetLength", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
 			String getEntryMetadata = new DBusHelper().compileMethodCall(dest, "/TrackList", 
-					"org.freedesktop.MediaPlayer.GetMetadata", false);
-			out = new VlcPlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
+				"org.freedesktop.MediaPlayer.GetMetadata", false);
+			out = new RelativePlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
 			out = new DBusHelper().compileMethodCall(dest, "/TrackList", 
 				"org.freedesktop.MediaPlayer.GetCurrentTrack");
 		}
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
-			out = new VlcPlaylistHelper().compileSetPlaylistCommand();
+			String getPlaylistCommand = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetCurrentTrack", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
+			String gotoPreviousTrackCommand = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Prev", false);
+			String gotoNextTrackCommand = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.Next", false);
+			out = new RelativePlaylistHelper().compileSetPlaylistCommand(getPlaylistCommand, gotoPreviousTrackCommand, gotoNextTrackCommand);
 			
 		}
 		return out;

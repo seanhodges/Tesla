@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VlcPlaylistHelper implements ICommandHelper {
+public class RelativePlaylistHelper implements ICommandHelper {
 	
-	public static final String MAGIC_MARKER = "[vlcplaylist]";
+	public static final String MAGIC_MARKER = "[relativeplaylist]";
 	
 	public String compileQuery(String getPlaylistLength, String getEntryMetadata, boolean includeMarker) {
 		StringBuilder builder = new StringBuilder();
@@ -24,19 +24,20 @@ public class VlcPlaylistHelper implements ICommandHelper {
 		return compileQuery(getPlaylistLength, getEntryMetadata, true);
 	}
 	
-	public String compileSetPlaylistCommand() {
+	public String compileSetPlaylistCommand(String getCurrentTrack, String gotoPreviousTrack, String gotoNextTrack) {
+		// This navigates up or down the track list until the selected track is found 
+		// FIXME: This process is slow, ideally we should be setting the track list selection directly
 		StringBuilder builder = new StringBuilder();
-		// Query for each track in track list, and dump DBUS array
 		builder.append("selection=%i; ");
-		builder.append("playing=$(dbus-send --print-reply --dest=org.mpris.vlc /TrackList org.freedesktop.MediaPlayer.GetCurrentTrack | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2); ");
+		builder.append("playing=$(" + getCurrentTrack + "); ");
 		builder.append("until [[ $playing == $selection ]]; do ");
 		builder.append("if [[ $playing < $selection ]]; then ");
-		builder.append("dbus-send --print-reply --dest=org.mpris.vlc /Player org.freedesktop.MediaPlayer.Next; ");
+		builder.append(gotoNextTrack + "; ");
 		builder.append("elif [[ $playing > $selection ]]; then ");
-		builder.append("dbus-send --print-reply --dest=org.mpris.vlc /Player org.freedesktop.MediaPlayer.Prev; ");
+		builder.append(gotoPreviousTrack + "; ");
 		builder.append("fi; ");
 		builder.append("sleep 1; ");
-		builder.append("playing=$(dbus-send --print-reply --dest=org.mpris.vlc /TrackList org.freedesktop.MediaPlayer.GetCurrentTrack | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2); ");
+		builder.append("playing=$(" + getCurrentTrack + "); ");
 		builder.append("done");
 		return builder.toString();
 	}
@@ -48,7 +49,11 @@ public class VlcPlaylistHelper implements ICommandHelper {
 		for (String item : items) {
 			// Extract the title and add to the output
 			Map<String, String> data = new DBusHelper().evaluateOutputAsMap(item);
-			if (data.containsKey("location")) {
+			if (data.containsKey("title")) {
+				String title = data.get("title");
+				out.add(title);
+			}
+			else if (data.containsKey("location")) {
 				String title = data.get("location");
 				// Strip the URI prefix if present
 				if (title != null && (title.startsWith("file:/") || title.startsWith("/"))) {
