@@ -19,6 +19,7 @@
 		android:padding="5dip"
 		android:gravity="center_vertical|left"
 		android:text="This is a test"
+		android:singleLine="true"
 		android:layout_width="fill_parent" />
 	
 </LinearLayout>
