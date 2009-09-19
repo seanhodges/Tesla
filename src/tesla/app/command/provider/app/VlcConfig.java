@@ -23,6 +23,7 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
+import tesla.app.command.helper.VlcPlaylistHelper;
 import tesla.app.command.provider.IConfigProvider;
 
 public class VlcConfig implements IConfigProvider {
@@ -74,6 +75,17 @@ public class VlcConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.PositionSet", args);
 		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
+			String getPlaylistLength = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetLength", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
+			String getEntryMetadata = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+					"org.freedesktop.MediaPlayer.GetMetadata", false);
+			out = new VlcPlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
+		}
+		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
+			out = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetCurrentTrack");
+		}
 		return out;
 	}
 
@@ -88,6 +100,10 @@ public class VlcConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_MEDIA_POSITION)) {
 			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
+			settings.put("ENABLED", "true");
+			settings.put("ENTRY_ICON", "video");
 		}
 		return settings;
 	}

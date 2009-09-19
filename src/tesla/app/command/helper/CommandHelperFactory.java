@@ -27,6 +27,10 @@ public class CommandHelperFactory {
 			command.setOutput(command.getOutput().substring(AmarokPlaylistHelper.MAGIC_MARKER.length() + 1));
 			out = new AmarokPlaylistHelper();
 		}
+		else if (data.startsWith(VlcPlaylistHelper.MAGIC_MARKER)) {
+			command.setOutput(command.getOutput().substring(VlcPlaylistHelper.MAGIC_MARKER.length() + 1));
+			out = new VlcPlaylistHelper();
+		}
 		else {
 			out = new SimpleStringHelper();
 		}
