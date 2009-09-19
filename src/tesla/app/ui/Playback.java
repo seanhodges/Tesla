@@ -45,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -67,7 +68,6 @@ public class Playback extends AbstractTeslaActivity
 	
 	private boolean stopSongInfoPolling = false;
 	private boolean appReportingIfPlaying = false;
-	private boolean seekBarEnabled = false;
 	private String versionString;
 	
 	private Handler updateUIHandler = new Handler();
@@ -134,12 +134,15 @@ public class Playback extends AbstractTeslaActivity
 		}
 		
 		showHideSeekBar();
+		showHidePlaylistButton();
 		
 		// Update the song info now, and start the polling update 
 		updateUI();
 	}
 	
 	private void showHideSeekBar() {
+		boolean seekBarEnabled = false;
+		
 		// Turn on the seek bar if the player can support it
 		try {
 			commandService.registerErrorHandler(errorHandler);
@@ -165,6 +168,33 @@ public class Playback extends AbstractTeslaActivity
 	        }
 	    	View mediaInfoPanel = (View)findViewById(R.id.media_info_panel);
 	    	mediaInfoPanel.setPadding(-1, panelTop, -1, -1);
+
+			commandService.unregisterErrorHandler(errorHandler);
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void showHidePlaylistButton() {
+		boolean playlistEnabled = false;
+		
+		// Turn on the playlist if the player can support it
+		try {
+			commandService.registerErrorHandler(errorHandler);
+			Command command = commandService.queryForCommand(Command.GET_PLAYLIST, false);
+			Map<String, String> settings = command.getSettings();
+			if (settings.containsKey("ENABLED")) {
+				playlistEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
+			}
+			
+			// Hide the seek bar if the player does not support it
+			int visible = View.VISIBLE;
+			if (!playlistEnabled) {
+				visible = View.INVISIBLE;
+			}
+			Button playlistButton = (Button)findViewById(R.id.playlist);
+			playlistButton.setVisibility(visible);
 
 			commandService.unregisterErrorHandler(errorHandler);
 			
@@ -238,10 +268,8 @@ public class Playback extends AbstractTeslaActivity
 			commandService.registerErrorHandler(errorHandler);
 			switch (seekBar.getId()) {
 			case R.id.media_progress:
-				if (seekBarEnabled) {
-					command = commandService.queryForCommand(Command.SET_MEDIA_POSITION, false);
-					command.addArg(new Integer(seekBar.getProgress()));
-				}
+				command = commandService.queryForCommand(Command.SET_MEDIA_POSITION, false);
+				command.addArg(new Integer(seekBar.getProgress()));
 				break;
 			}
 			
