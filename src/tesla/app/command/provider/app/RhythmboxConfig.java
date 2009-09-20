@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import tesla.app.command.Command;
+import tesla.app.command.helper.AmarokPlaylistHelper;
 import tesla.app.command.helper.DBusHelper;
+import tesla.app.command.helper.DCopHelper;
+import tesla.app.command.helper.RelativePlaylistHelper;
 import tesla.app.command.helper.RhythmDBHelper;
 import tesla.app.command.provider.IConfigProvider;
 
@@ -85,6 +88,21 @@ public class RhythmboxConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
 				"org.gnome.Rhythmbox.Player.setElapsed", args);
 		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
+			// Get artist and album.. somehow
+			// Query RhythmDB for matching songs
+			out = new RhythmDBHelper().compileQuery(artist, album);
+			// Add getOutputAsList() impl for RhythmDB helper
+		}
+		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
+			// Remove this command, and match selection against currently playing song title
+		}
+		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
+			args.add(new DBusHelper().evaluateArg("%s"));
+			args.add(new DBusHelper().evaluateArg("false"));
+			out = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Shell", 
+				"org.gnome.Rhythmbox.Shell.loadURI", args);
+		}
 		
 		return out;
 	}
@@ -102,6 +120,9 @@ public class RhythmboxConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
 			settings.put("ENABLED", "true");
 		}
 		return settings;
