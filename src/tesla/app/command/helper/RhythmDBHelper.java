@@ -77,7 +77,11 @@ public class RhythmDBHelper implements ICommandHelper {
 			e.printStackTrace();
 		}
 		
-		return contentHandler.getOutput().get(0);
+		Map<String, String> firstEntry = null;
+		if (contentHandler.getOutput().size() > 0) {
+			firstEntry = contentHandler.getOutput().get(0);
+		}
+		return firstEntry;
 	}
 
 	public boolean evaluateOutputAsBoolean(String rawOut) {
