@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import tesla.app.command.Command;
-import tesla.app.command.helper.AmarokPlaylistHelper;
 import tesla.app.command.helper.DBusHelper;
-import tesla.app.command.helper.DCopHelper;
-import tesla.app.command.helper.RelativePlaylistHelper;
 import tesla.app.command.helper.RhythmDBHelper;
 import tesla.app.command.provider.IConfigProvider;
 
@@ -91,7 +88,7 @@ public class RhythmboxConfig implements IConfigProvider {
 		else if (key.equals(Command.GET_PLAYLIST)) {
 			// Get artist and album.. somehow
 			// Query RhythmDB for matching songs
-			out = new RhythmDBHelper().compileQuery(artist, album);
+			//out = new RhythmDBHelper().compileQuery(artist, album);
 			// Add getOutputAsList() impl for RhythmDB helper
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
@@ -123,7 +120,7 @@ public class RhythmboxConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
-			settings.put("ENABLED", "true");
+			settings.put("ENABLED", "false");
 		}
 		return settings;
 	}
