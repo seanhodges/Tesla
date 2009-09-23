@@ -45,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -188,13 +189,23 @@ public class Playback extends AbstractTeslaActivity
 				playlistEnabled = Boolean.parseBoolean(settings.get("ENABLED"));
 			}
 			
-			// Hide the seek bar if the player does not support it
+			// Hide the playlist button if the player does not support it
 			int visible = View.VISIBLE;
 			if (!playlistEnabled) {
-				visible = View.INVISIBLE;
+				visible = View.GONE;
 			}
 			Button playlistButton = (Button)findViewById(R.id.playlist);
 			playlistButton.setVisibility(visible);
+			
+			Button volumeButton = (Button)findViewById(R.id.volume);
+			LayoutParams layout = volumeButton.getLayoutParams();
+			if (!playlistEnabled) {
+				layout.width = LayoutParams.FILL_PARENT;
+			}
+			else {
+				layout.width = LayoutParams.WRAP_CONTENT;
+			}
+			volumeButton.setLayoutParams(layout);
 
 			commandService.unregisterErrorHandler(errorHandler);
 			
