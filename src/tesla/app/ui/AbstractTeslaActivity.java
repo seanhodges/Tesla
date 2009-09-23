@@ -239,6 +239,12 @@ public abstract class AbstractTeslaActivity extends Activity {
 			else if (commandKey.equals(Command.VOL_CURRENT)) { idCommand = 10; }
 			else if (commandKey.equals(Command.VOL_MUTE)) { idCommand = 11; }
 			else if (commandKey.equals(Command.LAUNCH_PLAYER)) { idCommand = 12; }
+			else if (commandKey.equals(Command.GET_MEDIA_LENGTH)) { idCommand = 13; }
+			else if (commandKey.equals(Command.GET_MEDIA_POSITION)) { idCommand = 14; }
+			else if (commandKey.equals(Command.SET_MEDIA_POSITION)) { idCommand = 15; }
+			else if (commandKey.equals(Command.GET_PLAYLIST)) { idCommand = 16; }
+			else if (commandKey.equals(Command.GET_PLAYLIST_SELECTION)) { idCommand = 17; }
+			else if (commandKey.equals(Command.SET_PLAYLIST_SELECTION)) { idCommand = 18; }
 		}
 		
 		// Build the code
