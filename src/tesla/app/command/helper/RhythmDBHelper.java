@@ -60,27 +60,28 @@ public class RhythmDBHelper implements ICommandHelper {
 	}
 	
 	public Map<String, String> evaluateOutputAsMap(String rawOut) {
+		Map<String, String> firstEntry = null;
 		
 		rawOut = rawOut.trim();
-		
-		XmlPlaylistParser contentHandler = new XmlPlaylistParser();
-		XMLReader reader;
-		try {
-			InputSource is = new InputSource();
-			is.setByteStream((InputStream)new ByteArrayInputStream(rawOut.getBytes("UTF-8")));
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            SAXParser sp = spf.newSAXParser();
-            reader = sp.getXMLReader(); 
-			reader.setContentHandler(contentHandler);
-			reader.parse(is);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (rawOut.length() > 0) {
+			XmlPlaylistParser contentHandler = new XmlPlaylistParser();
+			XMLReader reader;
+			try {
+				InputSource is = new InputSource();
+				is.setByteStream((InputStream)new ByteArrayInputStream(rawOut.getBytes("UTF-8")));
+	            SAXParserFactory spf = SAXParserFactory.newInstance();
+	            SAXParser sp = spf.newSAXParser();
+	            reader = sp.getXMLReader(); 
+				reader.setContentHandler(contentHandler);
+				reader.parse(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (contentHandler.getOutput().size() > 0) {
+				firstEntry = contentHandler.getOutput().get(0);
+			}
 		}
 		
-		Map<String, String> firstEntry = null;
-		if (contentHandler.getOutput().size() > 0) {
-			firstEntry = contentHandler.getOutput().get(0);
-		}
 		return firstEntry;
 	}
 
