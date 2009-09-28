@@ -23,7 +23,8 @@ public class InitScriptProvider {
 		return script;
 	}
 	
-	private static String script = "QUERY_ENVIRON=\"$(grep DBUS_SESSION_BUS_ADDRESS= ~/.dbus/session-bus/*-0 | cut -d '=' -f 2,3,4)\"; " +
+	private static String script = "XDG_ID=\"$(echo $XDG_SESSION_COOKIE | cut -d '-' -f 1)\"; " +
+			"QUERY_ENVIRON=\"$(grep DBUS_SESSION_BUS_ADDRESS= ~/.dbus/session-bus/${XDG_ID}-0 | cut -d '=' -f 2,3,4)\"; " +
 			"if [[ \"${QUERY_ENVIRON}\" != \"\" ]]; then " +
 			"	export DBUS_SESSION_BUS_ADDRESS=\"${QUERY_ENVIRON}\"; " +
 			"	echo success; " +
