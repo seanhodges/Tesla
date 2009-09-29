@@ -112,7 +112,7 @@ public class VlcConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
-			settings.put("ENABLED", "false");
+			settings.put("ENABLED", "true");
 			settings.put("ENTRY_ICON", "video");
 		}
 		return settings;

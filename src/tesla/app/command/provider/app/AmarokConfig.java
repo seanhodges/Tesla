@@ -158,7 +158,7 @@ public class AmarokConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
-			settings.put("ENABLED", "false");
+			settings.put("ENABLED", "true");
 		}
 		return settings;
 	}
