@@ -25,7 +25,7 @@ import tesla.app.command.Command;
 import tesla.app.command.helper.AmarokPlaylistHelper;
 import tesla.app.command.helper.DBusHelper;
 import tesla.app.command.helper.DCopHelper;
-import tesla.app.command.helper.RelativePlaylistHelper;
+import tesla.app.command.helper.MprisPlaylistHelper;
 import tesla.app.command.provider.IConfigProvider;
 
 public class AmarokConfig implements IConfigProvider {
@@ -119,7 +119,7 @@ public class AmarokConfig implements IConfigProvider {
 				"org.freedesktop.MediaPlayer.GetLength", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
 			String getEntryMetadata = new DBusHelper().compileMethodCall(dbusDest, "/TrackList", 
 				"org.freedesktop.MediaPlayer.GetMetadata", false);
-			String dbusCommand = new RelativePlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
+			String dbusCommand = new MprisPlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
@@ -136,7 +136,7 @@ public class AmarokConfig implements IConfigProvider {
 				"org.freedesktop.MediaPlayer.Prev", false);
 			String gotoNextTrackCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
 				"org.freedesktop.MediaPlayer.Next", false);
-			String dbusCommand = new RelativePlaylistHelper().compileSetPlaylistCommand(getPlaylistCommand, gotoPreviousTrackCommand, gotoNextTrackCommand);
+			String dbusCommand = new MprisPlaylistHelper().compileRecursePlaylistSetCommand(getPlaylistCommand, gotoPreviousTrackCommand, gotoNextTrackCommand);
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		return out;
