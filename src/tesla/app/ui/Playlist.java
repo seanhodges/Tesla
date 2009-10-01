@@ -85,17 +85,27 @@ public class Playlist extends AbstractTeslaListActivity {
 		
 		// Build a providerList containing the titles and corresponding icon
 		providerList = new ArrayList<Map<String,String>>();
-		for (String title : data) {
+		for (String entry : data) {
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("icon", String.valueOf(entryIcon));
-			item.put("title", title);
+			if (entry != null && (entry.startsWith("file:/") || entry.startsWith("/"))) {
+				// Playlist is URI-based
+				String title = entry.substring(entry.lastIndexOf("/") + 1);
+				item.put("title", title);
+				item.put("uri", entry);
+			}
+			else {
+				// Playlist is index-based
+				item.put("title", entry);
+			}
+			
 			providerList.add(item);
 		}
 		
 		// Set up the list adapter
 		ListAdapter providerSelector = new SimpleAdapter(
         		this, providerList, R.layout.playlist_entry, 
-        		new String[] { "icon", "title" }, 
+        		new String[] { "icon", "title", "entry" }, 
         		new int[] { R.id.playlist_entry_icon, R.id.playlist_entry_title });
         setListAdapter(providerSelector);
 	}
@@ -112,7 +122,14 @@ public class Playlist extends AbstractTeslaListActivity {
 		try {
 			commandService.registerErrorHandler(errorHandler);
 			Command command = commandService.queryForCommand(Command.SET_PLAYLIST_SELECTION, false);
-			command.addArg(itemIndex);
+			if (providerList.get(itemIndex).containsKey("uri")) {
+				String entryId = providerList.get(itemIndex).get("uri");
+				command.addArg(entryId);
+			}
+			else {
+				command.addArg(itemIndex);
+			}
+			
 			commandService.sendCommand(command);
 			commandService.unregisterErrorHandler(errorHandler);
 		} catch (RemoteException e) {
