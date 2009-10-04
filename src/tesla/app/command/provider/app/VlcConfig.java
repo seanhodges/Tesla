@@ -87,14 +87,7 @@ public class VlcConfig implements IConfigProvider {
 				"org.freedesktop.MediaPlayer.GetCurrentTrack");
 		}
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
-			/*String getPlaylistCommand = new DBusHelper().compileMethodCall(dest, "/TrackList", 
-				"org.freedesktop.MediaPlayer.GetCurrentTrack", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
-			String gotoPreviousTrackCommand = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Prev", false);
-			String gotoNextTrackCommand = new DBusHelper().compileMethodCall(dest, "/Player", 
-				"org.freedesktop.MediaPlayer.Next", false);
-			out = new MprisPlaylistHelper().compileRecursePlaylistSetCommand(getPlaylistCommand, gotoPreviousTrackCommand, gotoNextTrackCommand);*/
-			out = new MprisPlaylistHelper().compileRebuildPlaylistSetCommand(null, null, null);
+			out = new MprisPlaylistHelper().compileRebuildPlaylistSetCommand(dest, "/TrackList");
 		}
 		return out;
 	}
