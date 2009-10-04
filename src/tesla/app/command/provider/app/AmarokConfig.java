@@ -130,13 +130,7 @@ public class AmarokConfig implements IConfigProvider {
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
 			args.add("%i");
 			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "playByIndex", args);
-			String getPlaylistCommand = new DBusHelper().compileMethodCall(dbusDest, "/TrackList", 
-				"org.freedesktop.MediaPlayer.GetCurrentTrack", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
-			String gotoPreviousTrackCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.Prev", false);
-			String gotoNextTrackCommand = new DBusHelper().compileMethodCall(dbusDest, "/Player", 
-				"org.freedesktop.MediaPlayer.Next", false);
-			String dbusCommand = new MprisPlaylistHelper().compileRecursePlaylistSetCommand(getPlaylistCommand, gotoPreviousTrackCommand, gotoNextTrackCommand);
+			String dbusCommand = new MprisPlaylistHelper().compileRebuildPlaylistSetCommand(dcopDest, "/TrackList");
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		return out;
