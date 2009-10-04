@@ -60,7 +60,10 @@ public class Playback extends AbstractTeslaActivity
 			PlaybackUpdateListener,
 			OnSeekBarChangeListener {
 
-	private static final long UI_UPDATE_PERIOD = 2000;
+	private static final long UI_UPDATE_PERIOD = 2000; // UI refresh frequency (milliseconds)
+	private static final int SEEK_BACK_AMOUNT = 10000; // Seek back button amount (milliseconds)
+	private static final int SEEK_FORWARD_AMOUNT = 5000; // Seek forward button amount (milliseconds)
+	
 	private static final int APP_SELECTOR_RESULT = 1;
 	
 	// Options menu item ID's
@@ -95,12 +98,16 @@ public class Playback extends AbstractTeslaActivity
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.next_song);
         targetButton.setOnClickListener(this);
+        targetButton = this.findViewById(R.id.seek_back);
+        targetButton.setOnClickListener(this);
+        targetButton = this.findViewById(R.id.seek_forward);
+        targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.playlist);
         targetButton.setOnClickListener(this);
         targetButton = this.findViewById(R.id.volume);
         targetButton.setOnClickListener(this);
         
-        SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
+        SeekBar seekBar = (SeekBar)findViewById(R.id.seek_progress);
         seekBar.setOnSeekBarChangeListener(this);
 		
         // Get the version string
@@ -158,8 +165,8 @@ public class Playback extends AbstractTeslaActivity
 			if (!seekBarEnabled) {
 				visible = View.INVISIBLE;
 			}
-			SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
-	        seekBar.setVisibility(visible);
+			View seekPanel = (View)findViewById(R.id.seek_panel);
+	        seekPanel.setVisibility(visible);
 	        
 	        // If the seek bar is hidden, move the media info 
 	        // panel down a bit to accommodate the missing space
@@ -220,7 +227,7 @@ public class Playback extends AbstractTeslaActivity
 	
     public void onClick(View v) {
 		Command command = null;
-		
+		SeekBar seekBar = (SeekBar)findViewById(R.id.seek_progress);
 		try {
 			commandService.registerErrorHandler(errorHandler);
 			switch (v.getId()) {
@@ -240,6 +247,14 @@ public class Playback extends AbstractTeslaActivity
 				command = commandService.queryForCommand(Command.NEXT, false);
 				updateUIHandler.removeCallbacks(updateUIRunnable);
 				updateUIHandler.postDelayed(updateUIRunnable, UI_UPDATE_PERIOD);
+				break;
+			case R.id.seek_back:
+				seekBar.setProgress(seekBar.getProgress() - SEEK_BACK_AMOUNT);
+				onStopTrackingTouch(seekBar);
+				break;
+			case R.id.seek_forward:
+				seekBar.setProgress(seekBar.getProgress() + SEEK_FORWARD_AMOUNT);
+				onStopTrackingTouch(seekBar);
 				break;
 			case R.id.playlist:
 				// Start the playlist activity
@@ -278,7 +293,7 @@ public class Playback extends AbstractTeslaActivity
 		try {
 			commandService.registerErrorHandler(errorHandler);
 			switch (seekBar.getId()) {
-			case R.id.media_progress:
+			case R.id.seek_progress:
 				command = commandService.queryForCommand(Command.SET_MEDIA_POSITION, false);
 				command.addArg(new Integer(seekBar.getProgress()));
 				break;
@@ -496,7 +511,7 @@ public class Playback extends AbstractTeslaActivity
 	}
 
 	public void onMediaProgressChanged(int currentProgress, int mediaLength) {
-		SeekBar seekBar = (SeekBar)findViewById(R.id.media_progress);
+		SeekBar seekBar = (SeekBar)findViewById(R.id.seek_progress);
 		seekBar.setMax(mediaLength);
 		seekBar.setProgress(currentProgress);
 	}
