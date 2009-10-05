@@ -130,7 +130,7 @@ public class AmarokConfig implements IConfigProvider {
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
 			args.add("%i");
 			String dcopCommand = new DCopHelper().compileMethodCall(dcopDest, "playlist", "playByIndex", args);
-			String dbusCommand = new MprisPlaylistHelper().compileRebuildPlaylistSetCommand(dcopDest, "/TrackList");
+			String dbusCommand = new MprisPlaylistHelper().compileRebuildPlaylistSetCommand(dbusDest, "/TrackList");
 			out = compileCompositeCommand(dcopCommand, dbusCommand);
 		}
 		return out;
