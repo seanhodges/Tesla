@@ -103,6 +103,12 @@ public class BansheeConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof banshee 1>/dev/null || DISPLAY=:0 banshee &>/dev/null & sleep 5 && echo success";
+		StringBuilder builder = new StringBuilder();
+		builder.append("dbus-send --print-reply --dest=org.bansheeproject.Banshee /org/bansheeproject/Banshee/ClientWindow org.bansheeproject.Banshee.ClientWindow.Present &>/dev/null; ");
+		builder.append("if [[ $? != 0 ]]; then ");
+		builder.append("DISPLAY=:0 banshee-1 &>/dev/null & sleep 5; ");
+		builder.append("fi; ");
+		builder.append("echo success");
+		return builder.toString();
 	}
 }
