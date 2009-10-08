@@ -249,11 +249,11 @@ public class Playback extends AbstractTeslaActivity
 				updateUIHandler.postDelayed(updateUIRunnable, UI_UPDATE_PERIOD);
 				break;
 			case R.id.seek_back:
-				seekBar.setProgress(seekBar.getProgress() - SEEK_BACK_AMOUNT);
+				seekBar.setProgress(getSeekAmount(seekBar, false));
 				onStopTrackingTouch(seekBar);
 				break;
 			case R.id.seek_forward:
-				seekBar.setProgress(seekBar.getProgress() + SEEK_FORWARD_AMOUNT);
+				seekBar.setProgress(getSeekAmount(seekBar, true));
 				onStopTrackingTouch(seekBar);
 				break;
 			case R.id.playlist:
@@ -276,6 +276,19 @@ public class Playback extends AbstractTeslaActivity
 			// Failed to send command
 			e.printStackTrace();
 		}
+	}
+
+	private int getSeekAmount(SeekBar seekBar, boolean seekForwards) {
+		int amount = -SEEK_BACK_AMOUNT;
+		if (seekForwards) {
+			amount = SEEK_FORWARD_AMOUNT;
+		}
+		if (seekBar.getMax() < 1000) {
+			// If the song is reported as less than 1000ms in length, treat it as seconds
+			// TODO: This is hacky, need a better implementation
+			amount = amount / 1000;
+		}
+		return seekBar.getProgress() + amount;
 	}
 
 	public void onProgressChanged(SeekBar seekBar, int progress,
