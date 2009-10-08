@@ -109,9 +109,9 @@ public final class Command implements Parcelable {
 	private String parseArguments(String out)
 				throws IllegalArgumentException {
 		// Add the arguments to the command
-		while (stillHasArgs(out)) {
+		boolean success = true;
+		while (success && stillHasArgs(out)) {
 			for (Object arg : args) {
-				boolean success = false;
 				// !!! Remember to add new data types to stillHasArgs()
 				if (arg instanceof String) {
 					if (out.contains("%s")) {
@@ -144,9 +144,6 @@ public final class Command implements Parcelable {
 						out = out.replaceFirst("%b", ((Boolean)arg).toString());
 						success = true;
 					}
-				}
-				if (!success) {
-					throw new IllegalArgumentException("Argument " + arg.toString() + " is not valid for command");
 				}
 			}
 		}

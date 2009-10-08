@@ -70,13 +70,8 @@ public class Playlist extends AbstractTeslaListActivity {
 				}
 				
 				if (settings.containsKey("ZERO_INDEXED")) {
-					String iconType = settings.get("ZERO_INDEXED");
-					if (iconType.equalsIgnoreCase("TRUE")) {
-						zeroIndexedPlaylist = true;
-					}
-					else {
-						zeroIndexedPlaylist = false;
-					}
+					String zeroIndexed = settings.get("ZERO_INDEXED");
+					zeroIndexedPlaylist = Boolean.parseBoolean(zeroIndexed);
 				}
 			}
 		} catch (RemoteException e) {
@@ -122,13 +117,13 @@ public class Playlist extends AbstractTeslaListActivity {
 		try {
 			commandService.registerErrorHandler(errorHandler);
 			Command command = commandService.queryForCommand(Command.SET_PLAYLIST_SELECTION, false);
+			String entryId = "";
 			if (providerList.get(itemIndex).containsKey("uri")) {
-				String entryId = providerList.get(itemIndex).get("uri");
-				command.addArg(entryId);
+				entryId = providerList.get(itemIndex).get("uri");
+				
 			}
-			else {
-				command.addArg(itemIndex);
-			}
+			command.addArg(entryId);
+			command.addArg(itemIndex);
 			
 			commandService.sendCommand(command);
 			commandService.unregisterErrorHandler(errorHandler);
