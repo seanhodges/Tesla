@@ -23,6 +23,7 @@ import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.DBusHelper;
+import tesla.app.command.helper.MprisPlaylistHelper;
 import tesla.app.command.provider.IConfigProvider;
 
 public class DragonPlayerConfig implements IConfigProvider {
@@ -75,6 +76,24 @@ public class DragonPlayerConfig implements IConfigProvider {
 			out = new DBusHelper().compileMethodCall(dest, "/Player", 
 				"org.freedesktop.MediaPlayer.PositionSet", args);
 		}
+		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
+			out = new DBusHelper().compileMethodCall(dest, "/Player", 
+				"org.freedesktop.MediaPlayer.GetMetadata", false) + " | grep length -A 1 | grep variant | sed -e \"s/[^0-9]*//\" | cut -d ' ' -f 2";
+		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
+			String getPlaylistLength = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetLength", false) + " | grep int32 | sed -e 's/   //' | cut -d ' ' -f 2";
+			String getEntryMetadata = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetMetadata", false);
+			out = new MprisPlaylistHelper().compileQuery(getPlaylistLength, getEntryMetadata);
+		}
+		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
+			out = new DBusHelper().compileMethodCall(dest, "/TrackList", 
+				"org.freedesktop.MediaPlayer.GetCurrentTrack");
+		}
+		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
+			out = new MprisPlaylistHelper().compileRebuildPlaylistSetCommand(dest, "/TrackList");
+		}
 		return out;
 	}
 
@@ -86,6 +105,16 @@ public class DragonPlayerConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_MEDIA_INFO)) {
+			settings.put("ENABLED", "true");
+		}
+		else if (key.equals(Command.GET_MEDIA_POSITION)) {
+			settings.put("ENABLED", "false");
+		}
+		else if (key.equals(Command.GET_PLAYLIST)) {
+			settings.put("ENABLED", "false");
+			settings.put("ENTRY_ICON", "video");
 		}
 		return settings;
 	}

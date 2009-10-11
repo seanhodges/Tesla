@@ -456,7 +456,9 @@ public class Playback extends AbstractTeslaActivity
 		TextView labelAlbum = (TextView)this.findViewById(R.id.song_album);
 		ImageView artwork = (ImageView)this.findViewById(R.id.album_cover);
 		
-		if (info.title != null && info.artist != null && info.album != null) {
+		if (info.title != null && !info.title.equals("")
+				&& info.artist != null && info.album != null
+				&& !(info.artist.equals("") && info.album.equals(""))) {
 			// All media info is available
 			String newTitle = info.title;
 			if (info.track != null) {
