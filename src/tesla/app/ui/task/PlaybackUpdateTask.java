@@ -16,11 +16,13 @@
 
 package tesla.app.ui.task;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import tesla.app.command.Command;
 import tesla.app.command.helper.CommandHelperFactory;
 import tesla.app.command.helper.ICommandHelper;
+import tesla.app.command.helper.SimpleStringHelper;
 import tesla.app.mediainfo.MediaInfo;
 import tesla.app.mediainfo.MediaInfoFactory;
 import tesla.app.service.business.ICommandController;
@@ -106,7 +108,14 @@ public class PlaybackUpdateTask extends AsyncTask<ICommandController, Boolean, P
 					ICommandHelper helper = CommandHelperFactory.getHelperForCommand(command);
 					
 					Map<String, String> output;
-					output = helper.evaluateOutputAsMap(command.getOutput());
+					if (helper instanceof SimpleStringHelper) {
+						String title = helper.evaluateOutputAsString(command.getOutput());
+						output = new HashMap<String, String>();
+						output.put("title", title);
+					}
+					else {
+						output = helper.evaluateOutputAsMap(command.getOutput());
+					}
 					
 					if (output != null) {
 						out.info.track = output.get("tracknumber");

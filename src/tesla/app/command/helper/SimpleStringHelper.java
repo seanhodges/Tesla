@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleStringHelper implements ICommandHelper {
-	
+
 	public boolean evaluateOutputAsBoolean(String rawOut) {
 		return Boolean.parseBoolean(rawOut);
 	}

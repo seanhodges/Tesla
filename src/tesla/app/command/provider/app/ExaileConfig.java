@@ -10,9 +10,10 @@ import tesla.app.command.provider.IConfigProvider;
 
 public class ExaileConfig implements IConfigProvider {
 
+	private static final String dest = "org.exaile.Exaile";
+	private static final String legacyDest = "org.exaile.DBusInterface";
+	
 	public String getCommand(String key) {
-		final String dest = "org.exaile.Exaile";
-		final String legacyDest = "org.exaile.DBusInterface";
 		String out = null;
 		if (key.equals(Command.PLAY) || key.equals(Command.PAUSE)) {
 			String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
@@ -52,17 +53,17 @@ public class ExaileConfig implements IConfigProvider {
 				"org.exaile.Exaile.GetVolume");
 		}*/
 		else if (key.equals(Command.GET_MEDIA_INFO)) {
-			String command = "echo " + ExaileHelper.MAGIC_MARKER + "; " +  new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+			String command = "echo " + ExaileHelper.MAGIC_MARKER + "; " + new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
 				"org.exaile.Exaile.Query", false);
 			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
-				"org.exaile.DBusInterface.get_title", false);
+				"org.exaile.DBusInterface.get_title", false) + " | grep string | cut -d '\"' -f 2";
 			out = compileCompositeCommand(command, legacyCommand);
 		}
 		else if (key.equals(Command.IS_PLAYING)) {
 			String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
-				"org.exaile.Exaile.IsPlaying");
+				"org.exaile.Exaile.Query", false) + " | grep 'string' | cut -d ',' -f 1 | cut -d ' ' -f 6";
 			String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
-				"org.exaile.DBusInterface.IsPlaying");
+				"org.exaile.DBusInterface.status");
 			out = compileCompositeCommand(command, legacyCommand);
 		}
 		
@@ -96,6 +97,17 @@ public class ExaileConfig implements IConfigProvider {
 	}
 
 	public String getLaunchAppCommand() {
-		return "pidof exaile 1>/dev/null || DISPLAY=:0 exaile &>/dev/null & sleep 5 && echo success";
+		String command = new DBusHelper().compileMethodCall(dest, "/org/exaile/Exaile", 
+		"org.exaile.Exaile.Query");
+		String legacyCommand = new DBusHelper().compileMethodCall(legacyDest, "/DBusInterfaceObject", 
+			"org.exaile.DBusInterface.query");
+		String getRunning = compileCompositeCommand(command, legacyCommand);
+		StringBuilder builder = new StringBuilder();
+		builder.append(getRunning + " &>/dev/null; ");
+		builder.append("if [[ $? != 0 ]]; then ");
+		builder.append("DISPLAY=:0 exaile &>/dev/null & sleep 5; ");
+		builder.append("fi; ");
+		builder.append("echo success");
+		return builder.toString();
 	}
 }
