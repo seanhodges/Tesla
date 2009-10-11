@@ -18,6 +18,7 @@ package tesla.app.command.helper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,41 @@ public class RhythmDBHelper implements ICommandHelper {
 		return compileQuery(uriCommand, true);
 	}
 	
+	public String getPlaylist() {
+		String artist = "Snow Patrol";
+		String album = "Eyes Open";
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append("echo " + MAGIC_MARKER + ";");
+		builder.append("rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then rhythmdb_path=~/.local/share/rhythmbox/rhythmdb.xml; fi; ");
+		builder.append("python -c \"");
+		builder.append(		"import libxml2; "); 
+		builder.append(		"doc = libxml2.parseFile('${rhythmdb_path}'); "); 
+		builder.append(		"ctxt = doc.xpathNewContext(); ");
+		builder.append(		"res = ctxt.xpathEval('//entry[@type=\\\"song\\\"]/album[.=\\\"" + album + "\\\"]/../artist[.=\\\"" + artist + "\\\"]/..'); \n"); 
+		builder.append(		"for item in res: \n");
+		builder.append(		"	print item; \n");
+		builder.append(		"ctxt.xpathFreeContext(); doc.freeDoc()\" ");
+		return builder.toString();
+	}
+	
+	public String getSelectedPlaylistEntry() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("echo " + MAGIC_MARKER + ";");
+		builder.append("rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then rhythmdb_path=~/.local/share/rhythmbox/rhythmdb.xml; fi; ");
+		builder.append("uri=\"$(qdbus org.gnome.Rhythmbox /org/gnome/Rhythmbox/Player getPlayingUri | sed -e \"s/'/\\\'/g\")\"; "); 
+		builder.append("if [[ ${uri} != \"\" ]]; then ");
+		builder.append(		"python -c \"");
+		builder.append(			"import libxml2;  ");
+		builder.append(			"doc = libxml2.parseFile('${rhythmdb_path}');  ");
+		builder.append(			"ctxt = doc.xpathNewContext();  ");
+		builder.append(			"res = ctxt.xpathEval('//entry[@type=\\\"song\\\"]/location[.=\\\"${uri}\\\"]/../track-number');  ");
+		builder.append(			"print res[0]; "); 
+		builder.append(			"ctxt.xpathFreeContext(); doc.freeDoc()\" ");
+		builder.append("fi ");
+		return builder.toString();
+	}
+	
 	public Map<String, String> evaluateOutputAsMap(String rawOut) {
 		Map<String, String> firstEntry = null;
 		
@@ -90,10 +126,40 @@ public class RhythmDBHelper implements ICommandHelper {
 	}
 
 	public String evaluateOutputAsString(String rawOut) {
-		return null;
+		String out = "";
+		if (rawOut != null && rawOut.length() > 0 && rawOut.indexOf("<track-number>") >= 0) {
+			// Return the track number value
+			out = out.substring("<track-number>".length() - 1, rawOut.length() - "</track-number>".length());
+		}
+		return out;
 	}
 
 	public List<String> evaluateOutputAsList(String rawOut) {
-		return null;
+		List<String> out = new ArrayList<String>();
+		
+		rawOut = rawOut.trim();
+		if (rawOut.length() > 0) {
+			XmlPlaylistParser contentHandler = new XmlPlaylistParser();
+			XMLReader reader;
+			try {
+				InputSource is = new InputSource();
+				is.setByteStream((InputStream)new ByteArrayInputStream(rawOut.getBytes("UTF-8")));
+	            SAXParserFactory spf = SAXParserFactory.newInstance();
+	            SAXParser sp = spf.newSAXParser();
+	            reader = sp.getXMLReader(); 
+				reader.setContentHandler(contentHandler);
+				reader.parse(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			if (contentHandler.getOutput().size() > 0) {
+				for (Map<String, String> entry : contentHandler.getOutput()) {
+					out.add(entry.get("location"));
+				}
+			}
+		}
+		
+		return out;
 	}
 }

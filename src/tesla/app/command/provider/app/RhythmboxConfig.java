@@ -93,12 +93,10 @@ public class RhythmboxConfig implements IConfigProvider {
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
 			// Get artist and album.. somehow
-			// Query RhythmDB for matching songs
-			//out = new RhythmDBHelper().compileQuery(artist, album);
-			// Add getOutputAsList() impl for RhythmDB helper
+			out = new RhythmDBHelper().getPlaylist();
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
-			// Remove this command, and match selection against currently playing song title
+			out = new RhythmDBHelper().getSelectedPlaylistEntry();
 		}
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
 			args.add(new DBusHelper().evaluateArg("%s"));
@@ -126,7 +124,7 @@ public class RhythmboxConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
-			settings.put("ENABLED", "false");
+			settings.put("ENABLED", "true");
 		}
 		return settings;
 	}
