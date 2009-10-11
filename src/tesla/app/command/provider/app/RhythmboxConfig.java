@@ -69,12 +69,10 @@ public class RhythmboxConfig implements IConfigProvider {
 				"org.gnome.Rhythmbox.Player.getPlaying");
 		}
 		else if (key.equals(Command.GET_MEDIA_POSITION)) {
-			String isPlaying = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
-			"org.gnome.Rhythmbox.Player.getPlaying", false) + " | awk \"/true$/{print \\\"true\\\"}\" ";
 			String getElapsed = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
 				"org.gnome.Rhythmbox.Player.getElapsed");
 			String outputZero = "method return sender=:1.74 -> dest=:1.83 reply_serial=2\n   uint32 0";
-			out = "if [[ $(" + isPlaying + ") == 'true' ]]; then " + getElapsed + "; else echo -e '" + outputZero + "'; fi";
+			out = getElapsed + " 2>/dev/null; if [[ $? != '0' ]]; then echo -e '" + outputZero + "'; fi";
 		}
 		else if (key.equals(Command.GET_MEDIA_LENGTH)) {
 			String isPlaying = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
