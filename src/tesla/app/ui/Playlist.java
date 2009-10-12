@@ -89,7 +89,7 @@ public class Playlist extends AbstractTeslaListActivity {
 				item.put("title", title);
 				item.put("uri", entry);
 			}
-			else {
+			else if (entry != null) {
 				// Playlist is index-based
 				item.put("title", entry);
 			}
@@ -151,7 +151,7 @@ public class Playlist extends AbstractTeslaListActivity {
 		}
 		
 		if (data != null) {
-			int playingIndex = Integer.parseInt(data);
+			int playingIndex = Integer.parseInt(data.trim());
 			if (!zeroIndexedPlaylist) {
 				playingIndex--;
 			}

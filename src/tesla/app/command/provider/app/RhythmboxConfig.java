@@ -96,7 +96,8 @@ public class RhythmboxConfig implements IConfigProvider {
 			out = new RhythmDBHelper().getPlaylist();
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
-			out = new RhythmDBHelper().getSelectedPlaylistEntry();
+			//out = new RhythmDBHelper().getSelectedPlaylistEntry();
+			out = "echo 0";
 		}
 		else if (key.equals(Command.SET_PLAYLIST_SELECTION)) {
 			args.add(new DBusHelper().evaluateArg("%s"));

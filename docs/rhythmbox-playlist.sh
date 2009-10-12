@@ -10,8 +10,10 @@ import libxml2;
 doc = libxml2.parseFile('${rhythmdb_path}'); 
 ctxt = doc.xpathNewContext(); 
 res = ctxt.xpathEval('//entry[@type=\"song\"]/album[.=\"Eyes Open\"]/../artist[.=\"Snow Patrol\"]/..'); 
+print \"<playlist>\";
 for item in res: 
 	print item; 
+print \"</playlist>\";
 ctxt.xpathFreeContext(); 
 doc.freeDoc()" 
 

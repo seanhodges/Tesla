@@ -72,8 +72,10 @@ public class RhythmDBHelper implements ICommandHelper {
 		builder.append(		"doc = libxml2.parseFile('${rhythmdb_path}'); "); 
 		builder.append(		"ctxt = doc.xpathNewContext(); ");
 		builder.append(		"res = ctxt.xpathEval('//entry[@type=\\\"song\\\"]/album[.=\\\"" + album + "\\\"]/../artist[.=\\\"" + artist + "\\\"]/..'); \n"); 
+		builder.append(		"print \\\"<playlist>\\\"; \n");
 		builder.append(		"for item in res: \n");
 		builder.append(		"	print item; \n");
+		builder.append(		"print \\\"</playlist>\\\"; \n");
 		builder.append(		"ctxt.xpathFreeContext(); doc.freeDoc()\" ");
 		return builder.toString();
 	}
@@ -137,7 +139,7 @@ public class RhythmDBHelper implements ICommandHelper {
 	public List<String> evaluateOutputAsList(String rawOut) {
 		List<String> out = new ArrayList<String>();
 		
-		rawOut = rawOut.trim();
+		rawOut = rawOut.trim().replaceAll("\n", "");
 		if (rawOut.length() > 0) {
 			XmlPlaylistParser contentHandler = new XmlPlaylistParser();
 			XMLReader reader;
@@ -155,7 +157,9 @@ public class RhythmDBHelper implements ICommandHelper {
 			
 			if (contentHandler.getOutput().size() > 0) {
 				for (Map<String, String> entry : contentHandler.getOutput()) {
-					out.add(entry.get("location"));
+					if (entry.containsKey("title")) {
+						out.add(entry.get("title"));
+					}
 				}
 			}
 		}

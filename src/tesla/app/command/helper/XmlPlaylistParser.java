@@ -33,6 +33,7 @@ public class XmlPlaylistParser extends DefaultHandler {
 	private static final String ARTIST = "artist";
 	private static final String ALBUM = "album";
 	private static final String LENGTH = "mtime";
+	private static final String LOCATION = "location";
 	
 	private Map<String, String> out = new HashMap<String, String>();
 	private List<Map<String, String>> outList = new ArrayList<Map<String, String>>();
@@ -41,7 +42,7 @@ public class XmlPlaylistParser extends DefaultHandler {
 			Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, name, attributes);
 		
-		if (localName.equalsIgnoreCase("track-number")) {
+		if (localName.equalsIgnoreCase("track-number") || localName.equalsIgnoreCase("tracknumber")) {
 			mode = TRACKNO;
 		}
 		else if (localName.equalsIgnoreCase("title")) {
@@ -55,6 +56,9 @@ public class XmlPlaylistParser extends DefaultHandler {
 		}
 		else if (localName.equalsIgnoreCase("mtime")) {
 			mode = LENGTH;
+		}
+		else if (localName.equalsIgnoreCase("location") || localName.equalsIgnoreCase("uri")) {
+			mode = LOCATION;
 		}
 		else {
 			mode = "";
