@@ -92,8 +92,9 @@ public class RhythmboxConfig implements IConfigProvider {
 				"org.gnome.Rhythmbox.Player.setElapsed", args);
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
-			// Get artist and album.. somehow
-			out = new RhythmDBHelper().getPlaylist();
+			String uriCommand = new DBusHelper().compileMethodCall(dest, "/org/gnome/Rhythmbox/Player", 
+					"org.gnome.Rhythmbox.Player.getPlayingUri", false);
+			out = new RhythmDBHelper().getPlaylist(uriCommand);
 		}
 		else if (key.equals(Command.GET_PLAYLIST_SELECTION)) {
 			//out = new RhythmDBHelper().getSelectedPlaylistEntry();
