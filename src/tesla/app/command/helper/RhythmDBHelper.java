@@ -69,7 +69,7 @@ public class RhythmDBHelper implements ICommandHelper {
 		builder.append("uri=\"${uri/\\\"/}\"; ");
 		builder.append("if [[ ${uri} != \"\" ]]; then ");
 		builder.append(	"python -c \"");
-		builder.append(			"\nimport libxml2; ");
+		builder.append(			"\nimport libxml2");
 		builder.append(			"\ndoc = libxml2.parseFile('${rhythmdb_path}')"); 
 		builder.append(			"\nctxt = doc.xpathNewContext()");
 		builder.append(			"\ntrackData = ctxt.xpathEval('//entry[@type=\\\'song\\\']/location[.=\\\'${uri}\\\']/../*')");
@@ -167,8 +167,10 @@ public class RhythmDBHelper implements ICommandHelper {
 				e.printStackTrace();
 			}
 			
-			if (contentHandler.getOutput().size() > 0) {
-				for (Map<String, String> entry : contentHandler.getOutput()) {
+			List<Map<String, String>> albumData = sortPlaylistData(contentHandler.getOutput());
+			
+			if (albumData.size() > 0) {
+				for (Map<String, String> entry : albumData) {
 					if (entry.containsKey("title")) {
 						out.add(entry.get("title"));
 					}
@@ -177,5 +179,11 @@ public class RhythmDBHelper implements ICommandHelper {
 		}
 		
 		return out;
+	}
+
+	private List<Map<String, String>> sortPlaylistData(
+			List<Map<String, String>> albumData) {
+		// TODO: Sort album by track number
+		return albumData;
 	}
 }
