@@ -1,5 +1,7 @@
 #!/bin/bash
 
+uri="file:///home/sean/Music/Avril%20Lavigne/Let%20Go/03%20-%20Sk8er%20Boi.mp3"
+
 echo [rhythmdb];
 rhythmdb_path=~/.gnome2/rhythmbox/rhythmdb.xml; 
 if test -e ~/.local/share/rhythmbox/rhythmdb.xml; then 
@@ -9,7 +11,13 @@ python -c "
 import libxml2; 
 doc = libxml2.parseFile('${rhythmdb_path}'); 
 ctxt = doc.xpathNewContext(); 
-res = ctxt.xpathEval('//entry[@type=\"song\"]/album[.=\"Eyes Open\"]/../artist[.=\"Snow Patrol\"]/..'); 
+res = ctxt.xpathEval('//entry[@type=\"song\"]/location[.=\"${uri}\"]/..'); 
+print res;
+for item in res: 
+	print item;
+	artist = res.get('artist');
+	album = res.get('album');
+res = ctxt.xpathEval('//entry[@type=\"song\"]/artist[.=\"' + artist + '\"]/album[.=\"' + album + '\"]/..'); 
 print \"<playlist>\";
 for item in res: 
 	print item; 
