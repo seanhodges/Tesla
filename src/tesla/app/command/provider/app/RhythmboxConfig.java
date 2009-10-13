@@ -126,7 +126,7 @@ public class RhythmboxConfig implements IConfigProvider {
 			settings.put("ENABLED", "true");
 		}
 		else if (key.equals(Command.GET_PLAYLIST)) {
-			settings.put("ENABLED", "true");
+			settings.put("ENABLED", "false");
 		}
 		return settings;
 	}
